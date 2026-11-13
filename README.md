@@ -123,14 +123,14 @@ Live cloud runs read keys from environment variables documented in [`.env.exampl
 
 ## Testing
 
-All 36 automated tests (mathematical invariants, adversarial parsing, blinded summarizer, mocked provider contracts, crash recovery, CLI commands, and live Playwright responsive DOM/E2E verification) run offline with zero API charges:
+All 37 automated tests (mathematical invariants, adversarial parsing, blinded summarizer, mocked provider contracts, crash recovery, cross-process `PYTHONHASHSEED` determinism, CLI commands, and live Playwright responsive DOM/E2E verification) run offline with zero API charges:
 
 ```bash
 .venv/bin/ruff check src tests
 .venv/bin/pytest --cov=apart_epistemics --cov-report=term-missing -v
 ```
 
-Latest verified suite run: `All checks passed!`, `36 passed` (`93%` total package statement coverage; `98%` on `engine.py` and `report.py`, `100%` on `models.py` and `summarizer.py`).
+Latest verified suite run: `All checks passed!`, `37 passed` (`93%` total package statement coverage; `98%` on `report.py`, `97%` on `engine.py`, `100%` on `models.py` and `summarizer.py`).
 
 ---
 

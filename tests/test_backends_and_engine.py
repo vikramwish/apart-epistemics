@@ -432,3 +432,48 @@ def test_direct_vendor_adapters_and_replay_reproduction(
         out_dir=tmp_path / "replay",
     )
     assert out_live["summaries"][0].model_dump() == replayed["summaries"][0].model_dump()
+
+
+def test_cross_process_determinism_and_truncated_jsonl_resume(tmp_path: Path) -> None:
+    import os
+    import subprocess
+    import sys
+
+    outs = []
+    for hseed in ("111", "999"):
+        sub_out = tmp_path / f"det_{hseed}.jsonl"
+        code = (
+            "import json; from pathlib import Path; "
+            "from apart_epistemics.backends import SyntheticEpistemicBackend; "
+            "from apart_epistemics.datasets import build_numeric_core_tasks; "
+            "from apart_epistemics.engine import run_numeric_core; "
+            f"recs = run_numeric_core(build_numeric_core_tasks()[:1], ['C3'], 4, 2, 1, "
+            f"Path({str(sub_out)!r}), SyntheticEpistemicBackend(seed=42), seed=42); "
+            "print(json.dumps([round(r.agent_log10_after, 6) for r in recs]))"
+        )
+        env = dict(os.environ, PYTHONHASHSEED=hseed)
+        proc = subprocess.run(
+            [sys.executable, "-c", code],
+            capture_output=True,
+            text=True,
+            env=env,
+            check=True,
+        )
+        outs.append(proc.stdout.strip())
+    assert outs[0] == outs[1]
+
+    # Verify truncated trailing line recovery in run_numeric_core
+    trunc_path = tmp_path / "trunc.jsonl"
+    tasks = build_numeric_core_tasks()[:1]
+    backend = SyntheticEpistemicBackend(seed=42)
+    full = run_numeric_core(tasks, ["C3"], 4, 2, 1, trunc_path, backend, seed=42)
+    lines = trunc_path.read_text(encoding="utf-8").splitlines()
+    # Keep first 5 valid lines and corrupt the 6th trailing line
+    trunc_path.write_text(
+        "\n".join(lines[:5] + ['{"condition_id": "C3", "broken']) + "", encoding="utf-8"
+    )
+    repaired = run_numeric_core(tasks, ["C3"], 4, 2, 1, trunc_path, backend, seed=42)
+    assert len(repaired) == len(full)
+    assert [round(r.agent_log10_after, 6) for r in repaired] == [
+        round(r.agent_log10_after, 6) for r in full
+    ]

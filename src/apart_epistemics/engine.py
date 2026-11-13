@@ -11,6 +11,8 @@ from collections import defaultdict
 from pathlib import Path
 from typing import Any
 
+from pydantic import ValidationError
+
 from apart_epistemics.backends import BudgetExceededError, ReplayBackend
 from apart_epistemics.datasets import (
     assign_models_for_condition,
@@ -693,14 +695,27 @@ def _load_existing_numeric_records(
     existing: dict[tuple[str, str, int, int, str], NumericEstimateRecord] = {}
     if not runs_path.exists():
         return existing
-    with runs_path.open("r", encoding="utf-8") as fh:
-        for line in fh:
-            stripped = line.strip()
-            if not stripped:
-                continue
+    raw_lines = runs_path.read_text(encoding="utf-8").splitlines()
+    had_truncated_tail = False
+    for idx, line in enumerate(raw_lines):
+        stripped = line.strip()
+        if not stripped:
+            continue
+        try:
             rec = NumericEstimateRecord.model_validate_json(stripped)
-            key = (rec.condition_id, rec.question_id, rec.replicate, rec.round_idx, rec.agent_id)
-            existing[key] = rec
+        except ValidationError:
+            # Tolerate a single truncated final line if a previous run died mid-write.
+            if idx == len(raw_lines) - 1:
+                had_truncated_tail = True
+                continue
+            raise
+        key = (rec.condition_id, rec.question_id, rec.replicate, rec.round_idx, rec.agent_id)
+        existing[key] = rec
+    if had_truncated_tail:
+        clean_lines = [r.model_dump_json() for r in existing.values()]
+        runs_path.write_text(
+            "\n".join(clean_lines) + ("\n" if clean_lines else ""), encoding="utf-8"
+        )
     return existing
 
 

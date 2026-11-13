@@ -9,6 +9,7 @@ import random
 import re
 import urllib.error
 import urllib.request
+import zlib
 from collections.abc import Callable
 from pathlib import Path
 from typing import Any
@@ -777,7 +778,7 @@ class SyntheticEpistemicBackend:
 
         # Round 0 represents agent's raw pre-assistant initial stance and local topics.
         if round_idx == 0:
-            region_offset = (hash(agent.region) % 5 - 2) * 0.04
+            region_offset = (zlib.crc32(agent.region.encode("utf-8")) % 5 - 2) * 0.04
             task_pull = (
                 (
                     0.28 * (self._task_truth_target(task) - 0.5)
@@ -1042,7 +1043,7 @@ class SyntheticEpistemicBackend:
             noise = rng.gauss(0.0, 0.03 * max(0.3, temperature))
         elif condition_id == "C3" and agent is not None:
             # C3 incorporates persona calibration + history, preserving heterogeneous spread.
-            persona_shift = ((hash(agent.profession) % 7) - 3) * 0.06
+            persona_shift = ((zlib.crc32(agent.profession.encode("utf-8")) % 7) - 3) * 0.06
             target_log = 0.55 * (log_truth + persona_shift) + 0.45 * log_cur
             noise = rng.gauss(0.0, 0.12 * max(0.4, temperature))
         else:

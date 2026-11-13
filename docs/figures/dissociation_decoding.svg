@@ -25,8 +25,8 @@
   <text x="233.0" y="140.5" font-family="monospace" font-size="10" fill="#171614">0.10</text>
   <rect x="178" y="145" width="148.3" height="10" rx="2" fill="#C84B31"/>
   <text x="331.3" y="153.5" font-family="monospace" font-size="10" fill="#171614">0.28</text>
-  <rect x="178" y="158" width="155.6" height="10" rx="2" fill="#245A7A"/>
-  <text x="338.6" y="166.5" font-family="monospace" font-size="10" fill="#171614">0.30</text>
+  <rect x="178" y="158" width="155.5" height="10" rx="2" fill="#245A7A"/>
+  <text x="338.5" y="166.5" font-family="monospace" font-size="10" fill="#171614">0.30</text>
   <text x="166" y="208" text-anchor="end" font-family="sans-serif" font-size="12" fill="#171614">Topic Entropy (Norm)</text>
   <rect x="178" y="186" width="2.0" height="10" rx="2" fill="#8C2D19"/>
   <text x="185.0" y="194.5" font-family="monospace" font-size="10" fill="#171614">0.00</text>
