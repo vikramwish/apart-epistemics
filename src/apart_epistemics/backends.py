@@ -814,13 +814,10 @@ class SyntheticEpistemicBackend:
         if cond.heterogeneity_type == HeterogeneityType.NO_AI:
             # Independent learning + organic local peers preserves all topic slots.
             truth_target = self._task_truth_target(task)
-            indep_signal = _clamp(
-                truth_target + 0.35 * task.popular_misconception_bias + rng.gauss(0.0, 0.09),
-                0.05,
-                0.95,
-            )
+            noisy_prior = 0.5 + 0.72 * (truth_target - 0.5) + 0.42 * task.popular_misconception_bias
+            indep_signal = _clamp(noisy_prior + rng.gauss(0.0, 0.14), 0.05, 0.95)
             next_stance = _clamp(
-                0.62 * prev_stance + 0.22 * peer_mean + 0.16 * indep_signal,
+                0.56 * prev_stance + 0.24 * peer_mean + 0.20 * indep_signal,
                 0.04,
                 0.96,
             )
@@ -865,21 +862,25 @@ class SyntheticEpistemicBackend:
                 overlap = 0.15
                 bias_exp = 0.18
             elif cond.heterogeneity_type == HeterogeneityType.PERSONALIZED_PEER:
-                # Sycophantic peer mirrors misconception-aligned prior and inflates certainty.
-                lure_pull = task.popular_misconception_bias * 1.35
+                # Sycophantic peer echoes misconception-prone intuition and inflates certainty.
+                lure_pull = task.popular_misconception_bias * 1.15
                 syc_target = _clamp(
-                    prev_stance + lure_pull + region_shift + rng.gauss(0.0, 0.07),
+                    prev_stance + lure_pull + region_shift + rng.gauss(0.0, 0.06),
                     0.04,
                     0.96,
                 )
-                # Push wrong direction even harder when initial stance leans toward misconception.
+                # Agent-task pairs with low need-for-cognition anchor onto the false intuition.
                 if task.kind == TaskKind.GROUND_TRUTH and task.ground_truth is not None:
-                    wrong_target = 0.12 if task.ground_truth == 1 else 0.88
-                    misconception_susceptibility = (
-                        0.58 if abs(task.popular_misconception_bias) > 0.15 else 0.32
-                    )
-                    if rng.random() < misconception_susceptibility:
+                    wrong_target = 0.14 if task.ground_truth == 1 else 0.86
+                    anchor_hash = (agent_idx + sum(ord(c) for c in task.id)) % 10
+                    if anchor_hash < 5:
                         syc_target = wrong_target
+                    else:
+                        syc_target = _clamp(
+                            0.62 * truth_target + 0.38 * prev_stance + rng.gauss(0.0, 0.06),
+                            0.06,
+                            0.94,
+                        )
                 next_stance = _clamp(
                     0.35 * prev_stance + 0.55 * syc_target + 0.10 * peer_mean,
                     0.04,
