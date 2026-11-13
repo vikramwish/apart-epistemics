@@ -87,7 +87,7 @@ def _render_dissociation_svg(summaries: list[ConditionSummary]) -> str:
     ]
 
     w, h = 760, 400
-    left, right, top = 178, 36, 78
+    left, right, top = 178, 56, 78
     row_h = 54
     chart_w = w - left - right
     lines: list[str] = [
@@ -154,16 +154,16 @@ def _render_dissociation_svg(summaries: list[ConditionSummary]) -> str:
 def _render_epistemic_quadrant_svg(summaries: list[ConditionSummary]) -> str:
     """Scatter plot: Effective Topic Count (X) vs Ground-Truth Calibration 1-Brier (Y)."""
     w, h = 760, 430
-    left, right, top, bottom = 74, 42, 72, 68
+    left, right, top, bottom = 74, 58, 72, 68
     pw = w - left - right
     ph = h - top - bottom
 
     xs = [s.effective_topic_count for s in summaries] or [1.0]
     ys = [max(0.0, 1.0 - s.brier_score) for s in summaries] or [0.5]
     x_min = max(0.5, min(xs) - 0.5)
-    x_max = max(x_min + 1.0, max(xs) + 0.6)
-    y_min = max(0.35, min(ys) - 0.05)
-    y_max = min(1.0, max(y_min + 0.1, max(ys) + 0.05))
+    x_max = max(x_min + 1.0, max(xs) + 0.85)
+    y_min = max(0.35, min(ys) - 0.06)
+    y_max = min(1.02, max(y_min + 0.1, max(ys) + 0.05))
 
     def px(val: float) -> float:
         return left + ((val - x_min) / (x_max - x_min)) * pw
@@ -216,6 +216,17 @@ def _render_epistemic_quadrant_svg(summaries: list[ConditionSummary]) -> str:
         f'font-size="12" fill="{_PALETTE["ink"]}">Calibration Score (1 - Brier)</text>'
     )
 
+    label_offsets = {
+        "us_k1_greedy": (0.0, -1.0, "start"),
+        "us_k1": (12.0, 3.0, "start"),
+        "cn_k1": (0.0, 14.0, "start"),
+        "cn_k4": (0.0, -1.0, "middle"),
+        "divergent_sft_pair": (-4.0, 16.0, "end"),
+        "cross_national_k4": (0.0, -12.0, "middle"),
+        "personalized_advisor": (-10.0, 15.0, "end"),
+        "personalized_peer": (-12.0, 3.0, "end"),
+        "no_ai": (0.0, 16.0, "middle"),
+    }
     for s in summaries:
         cx = px(s.effective_topic_count)
         cy = py(max(0.0, 1.0 - s.brier_score))
@@ -225,9 +236,18 @@ def _render_epistemic_quadrant_svg(summaries: list[ConditionSummary]) -> str:
             f'  <circle cx="{cx:.1f}" cy="{cy:.1f}" r="{radius:.1f}" fill="{col}" '
             f'fill-opacity="0.78" stroke="{_PALETTE["ink"]}" stroke-width="1"/>'
         )
-        dy = -radius - 5 if cy > top + 28 else radius + 12
+        dx, dy_raw, anchor = label_offsets.get(
+            s.condition_id,
+            (0.0, -radius - 5 if cy > top + 28 else radius + 12, "middle"),
+        )
+        if s.condition_id in ("us_k1_greedy", "cn_k4", "cross_national_k4"):
+            dy_raw = -radius - 5
+        elif s.condition_id in ("cn_k1", "personalized_advisor", "divergent_sft_pair"):
+            dy_raw = radius + 12
+        elif s.condition_id == "no_ai":
+            dy_raw = radius + 14
         lines.append(
-            f'  <text x="{cx:.1f}" y="{cy + dy:.1f}" text-anchor="middle" '
+            f'  <text x="{cx + dx:.1f}" y="{cy + dy_raw:.1f}" text-anchor="{anchor}" '
             f'font-family="sans-serif" font-size="10.5" fill="{_PALETTE["ink"]}">'
             f"{html.escape(_short_label(s.condition_id))}</text>"
         )
