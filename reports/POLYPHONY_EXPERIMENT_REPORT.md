@@ -25,14 +25,88 @@ Both **Dialectical Counter-Anchoring** (`P2`) and **Cross-Architecture Polyphony
 
 ---
 
+## Mathematical Framework: Two-Level Hierarchical Page Diversity Theorem
+
+For any evaluation cell $(q, c, r, b)$ with $N$ agents indexed across $K$ distinct model architectures $k \in \{1, \dots, K\}$ of cluster sizes $n_k$ ($\sum_{k=1}^K n_k = N$), let $y_{ki}$ denote either agent $(k, i)$'s post-update belief `agent_log10_after` or raw assistant estimate `assistant_log10` in $\log_{10}$ space, $y^\star = \log_{10}(Y^\star)$ the log-truth, $\bar{y}_k = \frac{1}{n_k}\sum_{i=1}^{n_k} y_{ki}$ the architecture mean, and $\bar{y} = \frac{1}{N}\sum_{k=1}^K n_k \bar{y}_k$ the grand crowd mean.
+
+### Theorem (Exact Two-Level ANOVA Decomposition of Crowd Error)
+
+Define collective squared error $E_{\text{crowd}}$, mean individual error $\bar{E}_{\text{ind}}$, between-architecture variance $D_{\text{between}}$, and within-architecture variance $D_{\text{within}}$:
+
+$$
+E_{\text{crowd}} = (\bar{y} - y^\star)^2, \qquad
+\bar{E}_{\text{ind}} = \frac{1}{N}\sum_{k=1}^K \sum_{i=1}^{n_k} (y_{ki} - y^\star)^2,
+$$
+
+$$
+D_{\text{between}} = \frac{1}{N}\sum_{k=1}^K n_k (\bar{y}_k - \bar{y})^2, \qquad
+D_{\text{within}} = \frac{1}{N}\sum_{k=1}^K \sum_{i=1}^{n_k} (y_{ki} - \bar{y}_k)^2.
+$$
+
+Then at both the blended agent-belief level and the direct assistant-prediction level:
+
+$$
+E_{\text{crowd}} = \bar{E}_{\text{ind}} - D_{\text{between}} - D_{\text{within}}.
+$$
+
+### Proof
+
+Writing $(y_{ki} - y^\star) = (y_{ki} - \bar{y}) + (\bar{y} - y^\star)$ and averaging squared deviations across all $N$ units eliminates the cross-term $2(\bar{y} - y^\star)\frac{1}{N}\sum_{k,i}(y_{ki} - \bar{y}) = 0$, giving Page's flat identity $E_{\text{crowd}} = \bar{E}_{\text{ind}} - D$ with $D = \frac{1}{N}\sum_{k,i}(y_{ki} - \bar{y})^2$. Decomposing each deviation around its architecture mean $\bar{y}_k$:
+
+$$
+\begin{aligned}
+D &= \frac{1}{N}\sum_{k=1}^K \sum_{i=1}^{n_k} \bigl((y_{ki} - \bar{y}_k) + (\bar{y}_k - \bar{y})\bigr)^2 \\
+  &= \frac{1}{N}\sum_{k=1}^K \sum_{i=1}^{n_k} (y_{ki} - \bar{y}_k)^2
+   + \frac{1}{N}\sum_{k=1}^K n_k (\bar{y}_k - \bar{y})^2
+   + \frac{2}{N}\sum_{k=1}^K (\bar{y}_k - \bar{y}) \underbrace{\sum_{i=1}^{n_k} (y_{ki} - \bar{y}_k)}_{= 0} \\
+  &= D_{\text{within}} + D_{\text{between}}. \qquad \square
+\end{aligned}
+$$
+
+### Finite-Cluster Permutation Bias Correction ($D_{\text{excess}}$) and EVRR
+
+Even under a pure random-label null where $K$ model tags are assigned arbitrarily to exchangeable draws from one distribution ($1 < K < N$), one-way ANOVA sampling variance yields $\mathbb{E}[D_{\text{between}}] = \frac{K - 1}{N - K}\mathbb{E}[D_{\text{within}}]$. To distinguish genuine architectural separation from small-sample cluster noise, [`compute_hierarchical_page_decomposition`](../src/apart_epistemics/metrics.py) defines:
+
+$$
+D_{\text{excess}} = D_{\text{between}} - \frac{K - 1}{N - K} D_{\text{within}}, \qquad
+\text{between\_share} = \frac{D_{\text{between}}}{D}.
+$$
+
+At our balanced polyphony allocation ($N = 8$, $K = 4$, $n_k = 2$), the random-label expectation multiplier is $\frac{4 - 1}{8 - 4} = 0.75$, so $D_{\text{excess}} > 0$ certifies systematic cross-architecture divergence above IID stochastic variance. Across multi-round updates $x_{i,t} = (1 - \alpha)x_{i,t-1} + \alpha a_{i,t}$ ($\alpha = 0.4$), passive belief inertia alone contracts prior variance by $(1 - \alpha)^2 = 0.36$ per round; [`analyze_numeric_core`](../src/apart_epistemics/engine/numeric_core.py) normalizes total and decomposed variance retention against this passive floor via the **Epistemic Variance Retention Ratio (`EVRR`)**:
+
+$$
+\text{EVRR} = \frac{D}{(1 - \alpha)^2 D_{\text{before}}}, \qquad
+\text{evrr\_between} = \frac{D_{\text{between}}}{(1 - \alpha)^2 D_{\text{before}}}, \qquad
+\text{evrr\_within} = \frac{D_{\text{within}}}{(1 - \alpha)^2 D_{\text{before}}}.
+$$
+
+Both flat (`identity_residual`) and two-level (`hierarchical_identity_residual`) verification residuals across all 160 agent cells and all 160 assistant cells hold to machine precision (`max_identity_residual = 1.3878e-16 < 1e-12`).
+
+---
+
 ## Experimental Design & Prompt Isolation
 
 ### 1. Clean-Room 16-Task Benchmark Selection (Cold Probe)
 To avoid textbook-memorization ceiling effects while holding strict independence, we audited 24 candidate pre-2026 verifiable scientific, hydrological, energy-system, and infrastructure quantities (each with `numeric_truth >= 120.0`), ran a 5-call/task cold + biased-prior probe (`4` cold model estimates + `1` biased-prior probe on `gemma-4-26b-a4b-it` shifted by $\pm 0.30\ \log_{10}$ units; `120` initial probe calls plus `4` `8192`-token `qwen3.8-27b` retries, `0` parse misses across all final 24 rows), excluded pure memorized ceiling items (`E_cold < 1e-4` and `D_cold < 1e-4`) where non-ceiling items were available (`12` non-ceiling + top `4` remaining by uncertainty-and-pull score $S = D_{\text{cold}} + E_{\text{cold}} + 0.25 \cdot |y_{\text{biased}} - c_{\text{gemma}}|$), and stratified the top 16 items objectively by cold cross-model variance $D_{\text{cold}}$ descending:
 
-- **`high_spread` (`n = 6`, exact 3 `-0.8` / 3 `+0.8` bias):** `nrg_us_hydro_2023_twh` (`D=0.18163`), `sci_lhc_dipole_magnets_count` (`D=0.12918`), `hyd_paijanne_tunnel_km` (`D=0.10178`), `inf_gbt_height_m` (`D=0.04013`), `hyd_delaware_aqueduct_km` (`D=0.02550`), `nrg_france_nuclear_2022_twh` (`D=0.00255`).
-- **`low_spread` (`n = 6`, exact 3 `-0.8` / 3 `+0.8` bias):** `inf_elt_collecting_area_m2` (`D=0.00135`), `mat_molybdenum_melting_c` (`D=0.00043`), `nrg_us_wind_2023_twh` (`D=0.00041`), `nrg_norway_hydro_2023_twh` (`D=0.00020`), `hyd_murray_darling_area_km2` (`D=0.00012`), `env_ipcc_1750_ch4_ppb` (`D=0.00007`).
-- **`control` (`n = 4`, exact 2 `-0.8` / 2 `+0.8` bias):** `nrg_us_nuclear_2023_twh` (`D=0.00006`), `hyd_lake_superior_vol_km3` (`D=0.00005`, `pull=0.2820`), `inf_snolab_depth_m` (`D=0.00004`), `inf_north_sea_link_km` (`D=0.00000`, `pull=0.2888`).
+| Task ID | Domain | Stratum | `D_cold` | Ground Truth | Unit | Bias | Authoritative Source |
+| --- | --- | --- | ---: | ---: | --- | ---: | --- |
+| `nrg_us_hydro_2023_twh` | `hydroelectric_grids` | `high_spread` | `0.18163` | `240` | `terawatt-hours` | `-0.8` | U.S. EIA 2023 Electric Power Data |
+| `sci_lhc_dipole_magnets_count` | `accelerator_hardware` | `high_spread` | `0.12918` | `1,232` | `magnets` | `-0.8` | CERN LHC Official Hardware Specs |
+| `hyd_paijanne_tunnel_km` | `water_tunnels` | `high_spread` | `0.10178` | `120` | `kilometers` | `+0.8` | Helsinki Region Env. Services (HSY) |
+| `inf_gbt_height_m` | `radio_observatories` | `high_spread` | `0.04013` | `148` | `meters` | `+0.8` | NRAO Green Bank Observatory Specs |
+| `hyd_delaware_aqueduct_km` | `water_conveyance` | `high_spread` | `0.02550` | `137` | `kilometers` | `+0.8` | NYC DEP Aqueduct Tunnel Record |
+| `nrg_france_nuclear_2022_twh` | `nuclear_energy_systems` | `high_spread` | `0.00255` | `279` | `terawatt-hours` | `-0.8` | RTE France 2022 Electricity Report |
+| `inf_elt_collecting_area_m2` | `optical_observatories` | `low_spread` | `0.00135` | `978` | `square meters` | `+0.8` | ESO Extremely Large Telescope Specs |
+| `mat_molybdenum_melting_c` | `refractory_metallurgy` | `low_spread` | `0.00043` | `2,623` | `degrees Celsius` | `-0.8` | NIST / CRC Handbook Standard |
+| `nrg_us_wind_2023_twh` | `wind_energy_systems` | `low_spread` | `0.00041` | `425` | `terawatt-hours` | `+0.8` | U.S. EIA 2023 Electric Power Data |
+| `nrg_norway_hydro_2023_twh` | `nordic_hydro_systems` | `low_spread` | `0.00020` | `136` | `terawatt-hours` | `+0.8` | U.S. EIA International Energy Stats |
+| `hyd_murray_darling_area_km2` | `hydrological_basins` | `low_spread` | `0.00012` | `1,061,469` | `square kilometers` | `-0.8` | Murray-Darling Basin Authority (MDBA) |
+| `env_ipcc_1750_ch4_ppb` | `atmospheric_biogeochemistry` | `low_spread` | `0.00007` | `729` | `parts per billion` | `-0.8` | IPCC AR6 WG1 (2021, Year 1750) |
+| `nrg_us_nuclear_2023_twh` | `national_nuclear_grids` | `control` | `0.00006` | `775` | `terawatt-hours` | `+0.8` | U.S. EIA 2023 Electric Power Data |
+| `hyd_lake_superior_vol_km3` | `limnology_hydrology` | `control` | `0.00005` | `12,100` | `cubic kilometers` | `-0.8` | U.S. EPA / NOAA GLERL Datum |
+| `inf_snolab_depth_m` | `underground_observatories` | `control` | `0.00004` | `2,070` | `meters` | `-0.8` | SNOLAB Creighton Mine Level 6800 |
+| `inf_north_sea_link_km` | `subsea_hvdc_cables` | `control` | `0.00000` | `720` | `kilometers` | `+0.8` | National Grid / Statnett Link Specs |
 
 ### 2. Conditions, Blend Rule, and Prompt Neutrality
 Every condition runs `16` questions $\times$ `8` agents $\times$ `2` rounds $\times$ `1` replicate (`256` agent-round rows per condition; **`1,280` total rows**) using identical initial Round-1 agent priors (`seed = 42`, `start_bias_weight = 0.22`, `start_sd = 0.24`) and damped `log10` update weight `alpha = 0.4`:
@@ -152,6 +226,34 @@ Computing Page's exact identity directly on the assistant predictions $a_{i,t}$ 
 | **`control` (`n=4`)** | `0.021152` | `0.035119` | `0.014186` | `0.012884` | **`0.009991`** | `0.002856` | `0.002079` | `0.003227` (`-0.000377`) |
 
 In every single stratum (`high_spread`, `low_spread`, and `control`), `P4` yields the lowest Round-2 agent `crowd_error`, and on `low_spread` + `control` questions `P4` also lowers direct assistant crowd error below `P3` (`0.000636` and `0.002079`).
+
+### Capability vs. Diversity Identification & Per-Question Consistency (`14 / 16` Win Rate)
+
+Because `deepseek-v4-flash` (`0.001977`) and `glm-5.2` (`0.003922`) exhibit lower standalone assistant MSE than `gemma-4-26b-a4b-it` (`0.026725`) inside `P3`/`P4`, a natural question is whether polyphony improved accuracy merely by substituting stronger individual models rather than via cross-architecture diversity. Two internal comparisons refute a pure capability explanation:
+
+1. **Zero Model-Substitution Control (`P2` vs. `P1`, fixed $K = 1$ `gemma-4-26b-a4b-it`):** Both arms use the exact same model on all `256` calls (`P1` assistant MSE `0.026725` vs. `P2` `0.029649`), yet adding dialectical counter-anchoring cuts Round-2 `crowd_error` by **48.4%** (`0.022899 -> 0.011818`, Holm `p = 0.008027`) across **14 / 16 questions (`87.5%`)**.
+2. **Same-Ensemble Diversity Separation (`P4` vs. `P3`, identical 4-model pool):** Both arms run the exact same `48/48/48/48` architectural split (`64` observations per model). In Round 2, `P4` actually has **higher** average individual agent error (`avg_indiv_err = 0.021534` vs. `0.019078` in `P3`) and higher raw `assistant_crowd_error` (`0.005770` vs. `0.002339`), yet **`P4` beats `P3` on final `crowd_error` (`0.007692` vs. `0.010058`, `-23.5%`, Wilcoxon `p = 0.028768`)** because its cross-architecture variance **nearly doubles** (`D_between = 0.009007` vs. `0.004842`; `D_excess = +0.005381` vs. `+0.001709`). By the Two-Level Page Identity ($E_{\text{crowd}} = \bar{E}_{\text{ind}} - D_{\text{within}} - D_{\text{between}}$), an accuracy gain accompanied by rising $\bar{E}_{\text{ind}}$ can arise **only** from diversity cancellation ($D$).
+
+Per-question Round-2 `crowd_error` across all 16 tasks confirms the consistency of both interventions (`P1 > P0` herding harm on **13 / 16**, `P2 < P1` on **14 / 16**, `P3 < P1` on **12 / 16**, and `P4 < P1` on **14 / 16**):
+
+| Question ID | Stratum | `P0` | `P1` | `P2` | `P3` | `P4` |
+| --- | --- | ---: | ---: | ---: | ---: | ---: |
+| `nrg_us_hydro_2023_twh` | `high_spread` | `0.01881` | `0.00869` | `0.00416` | `0.00388` | **`0.00226`** |
+| `sci_lhc_dipole_magnets_count` | `high_spread` | `0.01679` | `0.01679` | `0.01679` | `0.01679` | `0.01679` |
+| `hyd_paijanne_tunnel_km` | `high_spread` | **`0.00692`** | `0.01247` | `0.00845` | `0.01394` | `0.01067` |
+| `inf_gbt_height_m` | `high_spread` | `0.00524` | `0.04271` | `0.02778` | `0.00706` | **`0.00158`** |
+| `hyd_delaware_aqueduct_km` | `high_spread` | `0.02028` | `0.04698` | `0.02446` | `0.01363` | **`0.00852`** |
+| `nrg_france_nuclear_2022_twh` | `high_spread` | **`0.00002`** | `0.00179` | `0.00103` | `0.00276` | `0.00604` |
+| `inf_elt_collecting_area_m2` | `low_spread` | `0.00332` | `0.00284` | `0.00164` | `0.00119` | **`0.00089`** |
+| `mat_molybdenum_melting_c` | `low_spread` | `0.01276` | `0.01478` | `0.01309` | `0.01331` | **`0.01247`** |
+| `nrg_us_wind_2023_twh` | `low_spread` | **`0.01041`** | `0.05410` | `0.02138` | `0.02278` | `0.01201` |
+| `nrg_norway_hydro_2023_twh` | `low_spread` | **`0.00399`** | `0.01615` | `0.00534` | `0.00692` | `0.00547` |
+| `hyd_murray_darling_area_km2` | `low_spread` | `0.00568` | `0.00601` | `0.00607` | `0.00452` | **`0.00412`** |
+| `env_ipcc_1750_ch4_ppb` | `low_spread` | `0.00230` | `0.00262` | **`0.00216`** | `0.00263` | `0.00231` |
+| `nrg_us_nuclear_2023_twh` | `control` | `0.00428` | `0.00793` | **`0.00326`** | `0.00425` | `0.00347` |
+| `hyd_lake_superior_vol_km3` | `control` | `0.06209` | `0.10245` | `0.03434` | `0.03211` | **`0.01757`** |
+| `inf_snolab_depth_m` | `control` | `0.00934` | `0.01488` | `0.00965` | **`0.00872`** | `0.01341` |
+| `inf_north_sea_link_km` | `control` | `0.00890` | `0.01522` | `0.00950` | `0.00646` | **`0.00552`** |
 
 ---
 
