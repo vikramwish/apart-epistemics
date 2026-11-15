@@ -1,0 +1,31 @@
+suite_name: "Polyphony Replication 2025 (P0-P4 + 8 Control Arms, 40 Filtered Tasks, Replicates=3)"
+seed: 42
+num_agents: 8
+num_rounds: 2
+tasks_per_track: 40
+numeric_tasks: 40
+numeric_tasks_file: "configs/polyphony_replication_tasks_2025.filtered.json"
+numeric_start_bias_weight: 0.22
+numeric_start_sd: 0.24
+numeric_replicates: 3
+alpha: 0.4
+numeric_conditions:
+  - P0
+  - P1
+  - P2
+  - P3
+  - P4
+  - P0_POLY
+  - P1_REFLECT
+  - P0_DS
+  - P1_DS
+  - P0_QWEN
+  - P1_QWEN
+  - P0_GLM
+  - P1_GLM
+numeric_models:
+  - gemma-4-26b-a4b-it
+  - deepseek-v4-flash
+  - qwen3.8-27b
+  - glm-5.2
+conditions: []
