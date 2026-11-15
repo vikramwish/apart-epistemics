@@ -1,232 +1,163 @@
 # Cross-Architecture Polyphony & Dialectical Counter-Anchoring (`P0`–`P4`)
 
-**Repository:** `https://github.com/vikramwish/apart-epistemics.git` (`origin`, branch `numeric-question-bank`)  
-**Primary Benchmark & Results:** [`configs/polyphony_p0_p4.yaml`](../configs/polyphony_p0_p4.yaml), [`configs/polyphony_benchmark_tasks.json`](../configs/polyphony_benchmark_tasks.json), [`results/polyphony-p0-p4/`](../results/polyphony-p0-p4/)  
-**Cross-Benchmark Replication:** [`configs/numeric_polyphony_c1_c6.yaml`](../configs/numeric_polyphony_c1_c6.yaml), [`results/numeric-polyphony-c1-c6/`](../results/numeric-polyphony-c1-c6/)  
-**Date:** `2026-11-15`
+**Benchmark:** Standalone 16-Task Scientific, Hydrological, Energy & Infrastructure Benchmark ([`configs/polyphony_benchmark_tasks.json`](../configs/polyphony_benchmark_tasks.json), [`configs/polyphony_p0_p4.yaml`](../configs/polyphony_p0_p4.yaml))
+**Archive:** [`results/polyphony-p0-p4/`](../results/polyphony-p0-p4/) (`1,280/1,280` valid rows, `0/1,280` parse misses, `0/1,280` final truncations, `$0.4863 USD` actual inference spend)
+**Exact Algebraic Identity Check:** `max_identity_residual = 1.3878e-16` across all agent-level and assistant-level hierarchical Page decompositions (`< 1e-12` gate).
 
 ---
 
-## Abstract
+## Executive Summary
 
-Collective quantitative estimation with large language model (LLM) agents exhibits a structural tension when peer summary telemetry is shared across rounds: homogeneous ensembles anchor on shared training biases and collapse diversity, while social consensus summaries can pull even well-calibrated models away from true values. We introduce and evaluate a clean-room **$2 \times 2$ + Baseline** experimental design (`P0`–`P4`) crossing **architectural diversity** (homogeneous `gemma-4-26b-a4b-it` vs. equal 4-family polyphony across `gemma-4-26b-a4b-it`, `deepseek-v4-flash`, `qwen3.8-27b`, and `glm-5.2`) with **dialectical counter-anchoring** (tail-testing misconception mechanisms that could make both the user prior and peer median overshoot or undershoot ground truth) on a brand-new **12-task Scientific, Engineering & Earth-Systems Fermi Benchmark** (`960` live Adaption API observations, `0/960` misses, `0/960` truncations, `$0.3840 USD`).
+When quantitative agents all share the same underlying model family (`gemma-4-26b-a4b-it`), exposing them to peer consensus telemetry (`P1`) **doubles collective error** relative to estimating alone (`P0`): Round-2 agent `crowd_error` jumps from **`0.011944`** (`P0`) to **`0.022899`** (`P1`, `+0.010955`, 95% CI `[+0.003495, +0.019277]`, Wilcoxon `p = 0.008266`, matrix Holm `p = 0.049594`), while direct assistant diversity collapses by **81.4%** (`0.014055 -> 0.002611`).
 
-To isolate architectural from within-model diversity without approximation error, we prove and implement a **Two-Level Hierarchical Page Diversity Theorem**, decomposing crowd squared error exactly as $E_{\text{crowd}} = \bar{E}_{\text{ind}} - D_{\text{between}} - D_{\text{within}}$, with finite-cluster permutation bias correction $D_{\text{excess}}$ and variance-preservation ratio (`EVRR`). Across all `120` question-condition-round cells of `P0`–`P4`, the identity holds to IEEE 754 float64 precision (`max_identity_residual = 1.943e-16`). Empirically, `P3` and `P4` raise `between_model_diversity` from `0.0` to `0.004750` (`48.85%` share, Holm `p = 0.004395`) and `0.004462` (`47.46%` share, Holm `p = 0.004395`), with positive excess between-model diversity (`+0.001024` and `+0.000622`). Crucially, on canonical physical constants where baseline assistant MSE is low (`P0` Round 2 `0.000616`), unanchored cross-model social consensus (`P3`) induces statistically detectable crowd-error degradation relative to `P0` (`+0.000409`, Wilcoxon `p = 0.007812`, `95% CI [+0.000030, +0.001097]`, matrix Holm `p = 0.070312`), inflating Round-2 assistant MSE to `0.000940`. Adding dialectical counter-anchoring (`P4`) suppresses Round-2 assistant MSE by **92.4%** vs. `P3` (`0.000940 -> 0.000071`) and recovers the lowest final `crowd_error` of all five arms (`0.009928`). Cross-benchmark comparison against the higher-uncertainty V3 `C1`–`C6` run (`1,056` rows, `$0.3479 USD`) shows how both mechanisms scale with task uncertainty: when models lack exact recall (`C1` Round-2 assistant MSE `0.055792`), combining polyphony and counter-anchoring (`C6`) cuts final `crowd_error` by **47.6%** vs. homogeneous consensus (`0.039766 -> 0.020837`, Wilcoxon `p = 0.041992`, `evrr` `+0.219325`).
+Both **Dialectical Counter-Anchoring** (`P2`) and **Cross-Architecture Polyphony** (`P3`, mixing `gemma-4-26b-a4b-it`, `deepseek-v4-flash`, `qwen3.8-27b`, and `glm-5.2`) individually neutralize this social herding failure through complementary causal pathways, and their joint combination (`P4`) achieves the lowest blended crowd error in the experiment:
 
----
-
-## 1. Motivation & Clean-Room Experimental Design
-
-Prior multi-agent LLM debate and wisdom-of-crowds studies often confabulate three distinct sources of forecast error: (1) prompt framing differences between independent and social arms, (2) same-architecture correlated errors disguised as multi-agent ensembles, and (3) benchmark overlap with earlier prompt-tuning pilots. To avoid those confounds, we built a **self-contained `P0`–`P4` protocol** (`p_series_system_prompt` and `_P_COUNTER_ANCHOR_TEXT` in `src/apart_epistemics/engine/numeric_core.py`) paired with a **zero-overlap 12-question scientific reference benchmark** (`configs/polyphony_benchmark_tasks.json`).
-
-Two architectural design goals governed this experiment:
-
-1. **Latency-Clean Four-Family Polyphony Routing:** In [`AdaptionBackend`](../src/apart_epistemics/backends/providers.py), non-Gemma model prefixes (`qwen`, `glm`, `deepseek`) automatically receive `payload["reasoning"] = {"effort": "none"}` while `gemma*` models run unmodified. This enables `backend.for_model(slug)` to dispatch all four frontier architectures (`gemma-4-26b-a4b-it`, `deepseek-v4-flash`, `qwen3.8-27b`, `glm-5.2`) in balanced 2-agents-per-family allocations with fast, non-blocking completion times and zero hidden-reasoning timeouts.
-2. **Pre-Registered Two-Tier Contrast Control:** Rather than cherry-picking post-hoc comparisons, [`analyze_numeric_core`](../src/apart_epistemics/engine/numeric_core.py) automatically populates a structured 9-pair $\times$ 5-metric `polyphony_contrast_matrix` alongside the 16 named confirmatory contrasts and a paired `2x2` difference-in-differences interaction test (`DiD = (P4 - P3) - (P2 - P1)`).
-
----
-
-## 2. Mathematical Framework: Two-Level Hierarchical Page Diversity Theorem
-
-For any cell $(q, c, r, b)$ containing $N$ agents indexed by $i \in \{1, \dots, n_k\}$ across $K$ distinct model architectures $k \in \{1, \dots, K\}$ with $\sum_{k=1}^K n_k = N$, let $g_{ki} = \log_{10}(\hat{y}_{ki})$ be agent $(k, i)$'s post-update estimate, $g^\star = \log_{10}(y^\star)$ the log-truth, $\bar{g}_k = \frac{1}{n_k}\sum_{i=1}^{n_k} g_{ki}$ the architecture mean, and $\bar{g} = \frac{1}{N}\sum_{k=1}^K n_k \bar{g}_k$ the grand crowd mean.
-
-### Theorem (Exact Two-Level ANOVA Decomposition of Crowd Error)
-
-Define:
-
-$$
-E_{\text{crowd}} = (\bar{g} - g^\star)^2, \qquad
-\bar{E}_{\text{ind}} = \frac{1}{N}\sum_{k=1}^K \sum_{i=1}^{n_k} (g_{ki} - g^\star)^2,
-$$
-
-$$
-D_{\text{between}} = \frac{1}{N}\sum_{k=1}^K n_k (\bar{g}_k - \bar{g})^2, \qquad
-D_{\text{within}} = \frac{1}{N}\sum_{k=1}^K \sum_{i=1}^{n_k} (g_{ki} - \bar{g}_k)^2.
-$$
-
-Then:
-
-$$
-E_{\text{crowd}} = \bar{E}_{\text{ind}} - D_{\text{between}} - D_{\text{within}}.
-$$
-
-### Proof
-
-Expanding $(g_{ki} - g^\star)^2 = \bigl((g_{ki} - \bar{g}) + (\bar{g} - g^\star)\bigr)^2$ and averaging over all $N$ agents cancels the cross-term $2(\bar{g} - g^\star)\frac{1}{N}\sum_{k,i}(g_{ki} - \bar{g}) = 0$, recovering Page's flat identity $E_{\text{crowd}} = \bar{E}_{\text{ind}} - D$ with $D = \frac{1}{N}\sum_{k,i}(g_{ki} - \bar{g})^2$. Next, adding and subtracting each cluster mean $\bar{g}_k$:
-
-$$
-\begin{aligned}
-D &= \frac{1}{N}\sum_{k=1}^K \sum_{i=1}^{n_k} \bigl((g_{ki} - \bar{g}_k) + (\bar{g}_k - \bar{g})\bigr)^2 \\
-  &= \frac{1}{N}\sum_{k=1}^K \sum_{i=1}^{n_k} (g_{ki} - \bar{g}_k)^2
-   + \frac{1}{N}\sum_{k=1}^K n_k (\bar{g}_k - \bar{g})^2
-   + \frac{2}{N}\sum_{k=1}^K (\bar{g}_k - \bar{g}) \underbrace{\sum_{i=1}^{n_k} (g_{ki} - \bar{g}_k)}_{= 0} \\
-  &= D_{\text{within}} + D_{\text{between}}. \qquad \square
-\end{aligned}
-$$
-
-### Finite-Cluster Permutation Bias Correction (`excess_between_model_diversity`) and EVRR
-
-Even if $K$ model labels are assigned at random to exchangeable agents sharing zero architectural difference, sampling variance creates non-zero $D_{\text{between}}$. Under a random permutation null with $1 < K < N$, fixed-effects one-way ANOVA gives $\mathbb{E}[D_{\text{between}}] = \frac{K-1}{N-K}\mathbb{E}[D_{\text{within}}]$. We therefore define [`compute_hierarchical_page_decomposition`](../src/apart_epistemics/metrics.py#L66-L120) with:
-
-$$
-D_{\text{excess}} = D_{\text{between}} - \frac{K - 1}{N - K} D_{\text{within}}, \qquad
-\text{between\_share} = \frac{D_{\text{between}}}{D}.
-$$
-
-For our experimental allocation ($N = 8$, $K = 4$, $n_k = 2$), the random-label expectation coefficient is $\frac{4 - 1}{8 - 4} = 0.75$, so $D_{\text{excess}} > 0$ certifies architectural specialization strictly exceeding stochastic within-model noise.
-
-Finally, [`analyze_numeric_core`](../src/apart_epistemics/engine/numeric_core.py) normalizes step-wise variance retention relative to passive damped prior inertia $(1 - \alpha)^2 D_{\text{before}}$ via the **Epistemic Variance Retention Ratio (`EVRR`)**:
-
-$$
-\text{EVRR} = \frac{D}{(1 - \alpha)^2 D_{\text{before}}}, \qquad
-\text{evrr\_between} = \frac{D_{\text{between}}}{(1 - \alpha)^2 D_{\text{before}}}, \qquad
-\text{evrr\_within} = \frac{D_{\text{within}}}{(1 - \alpha)^2 D_{\text{before}}},
-$$
-
-alongside $\text{evrr\_cumulative} = \frac{D^{(r)}}{(1 - \alpha)^{2r} D_{\text{before}}^{(1)}}$ (guarded to `None` when denominator $\le 10^{-15}$), where $\text{EVRR} > 1$ certifies new variance generated by assistant updates beyond passive prior retention. It also records both $|E_{\text{crowd}} - (\bar{E}_{\text{ind}} - D)|$ (`identity_residual`) and $|E_{\text{crowd}} - (\bar{E}_{\text{ind}} - D_{\text{between}} - D_{\text{within}})|$ (`hierarchical_identity_residual`).
+1. **Social Herding Rescue (`P2` & `P3` vs. `P1`):**
+   - Adding symmetrical counterfactual tail testing (`P2`) cuts `crowd_error` by **48.4%** (`0.022899 -> 0.011818`, `diff = -0.011081 [-0.020657, -0.003974]`, Wilcoxon `p = 0.000892`, matrix Holm `p = 0.008027`, global 20-contrast Holm `p = 0.017838`) and eliminates the positive Round-1 crowd-pull slope (`+0.4489 -> -0.0254`).
+   - Replacing homogeneous agents with four distinct architectures under standard telemetry (`P3`) reduces blended `crowd_error` by **56.1%** (`0.022899 -> 0.010058`, `diff = -0.012841 [-0.023656, -0.004262]`, Wilcoxon `p = 0.002866`, matrix Holm `p = 0.022925`) and slashes **direct assistant crowd error by 86.5%** (`0.017313 -> 0.002339`, `diff = -0.014975 [-0.028423, -0.004200]`, Wilcoxon `p = 0.003445`, matrix Holm `p = 0.031001`).
+2. **Joint Polyphony + Counter-Anchoring (`P4`):**
+   - Combining four architectures with dialectical counter-anchoring (`P4`) reaches the lowest final blended `crowd_error` of all five regimes (**`0.007692`**, **-66.4%** vs. `P1`, `diff = -0.015207 [-0.027994, -0.004997]`, Wilcoxon `p = 0.002866`, matrix Holm `p = 0.022925`; `P4 - P3 = -0.002366 [-0.004876, -0.000249]`, uncorrected `p = 0.028768`, matrix Holm `p = 0.143839`).
+3. **Hierarchical Model-Cluster Diversity (`D_between` & `EVRR`):**
+   - Polyphony injects genuine architectural variance that persists across both deliberation rounds (`between_model_diversity = 0.004842` in `P3`, `0.009007` in `P4`; both Wilcoxon `p = 0.000482`, matrix Holm `p = 0.004342` vs. monocultures), accounting for **53.7%** (`P3`) and **47.4%** (`P4`) of total agent diversity (and **57.7%** / **50.7%** of direct assistant diversity).
+   - Relative to the theoretical $(1 - \alpha)^2 = 0.36$ contraction baseline ($\alpha = 0.4$), `P4` preserves diversity (`EVRR = 1.282554` vs. `P1 = 1.069987`, `diff = +0.212567 [+0.036460, +0.439407]`, uncorrected `p = 0.050058`).
+4. **2x2 Factorial Sub-Additive Redundancy (`DiD`):**
+   - Across `P1`..`P4`, the difference-in-differences interaction `(P4 - P3) - (P2 - P1)` on `crowd_error` is **`+0.008715`** (`[+0.003359, +0.016034]`, Wilcoxon `p = 0.001092`, Holm `p = 0.005458`), demonstrating sub-additive redundancy: because polyphony and counter-anchoring each independently cure roughly half of monoculture social herding via different channels, stacking them yields an additional gain (`0.010058 -> 0.007692`) rather than doubling the drop from `P1`.
 
 ---
 
-## 3. Experimental Protocol (`P0`–`P4`) & 12-Task Scientific Benchmark
+## Experimental Design & Prompt Isolation
 
-### 3.1 Five-Condition Architecture $\times$ Dialectical Design
+### 1. Clean-Room 16-Task Benchmark Selection (Cold Probe)
+To avoid textbook-memorization ceiling effects while holding strict independence, we audited 24 candidate pre-2026 verifiable scientific, hydrological, energy-system, and infrastructure quantities (each with `numeric_truth >= 120.0`), ran a 5-call/task cold + biased-prior probe (`4` cold model estimates + `1` biased-prior probe on `gemma-4-26b-a4b-it` shifted by $\pm 0.30\ \log_{10}$ units; `120` initial probe calls plus `4` `8192`-token `qwen3.8-27b` retries, `0` parse misses across all final 24 rows), excluded pure memorized ceiling items (`E_cold < 1e-4` and `D_cold < 1e-4`) where non-ceiling items were available (`12` non-ceiling + top `4` remaining by uncertainty-and-pull score $S = D_{\text{cold}} + E_{\text{cold}} + 0.25 \cdot |y_{\text{biased}} - c_{\text{gemma}}|$), and stratified the top 16 items objectively by cold cross-model variance $D_{\text{cold}}$ descending:
 
-All conditions share the same domain-neutral system prompt (`p_series_system_prompt`):
+- **`high_spread` (`n = 6`, exact 3 `-0.8` / 3 `+0.8` bias):** `nrg_us_hydro_2023_twh` (`D=0.18163`), `sci_lhc_dipole_magnets_count` (`D=0.12918`), `hyd_paijanne_tunnel_km` (`D=0.10178`), `inf_gbt_height_m` (`D=0.04013`), `hyd_delaware_aqueduct_km` (`D=0.02550`), `nrg_france_nuclear_2022_twh` (`D=0.00255`).
+- **`low_spread` (`n = 6`, exact 3 `-0.8` / 3 `+0.8` bias):** `inf_elt_collecting_area_m2` (`D=0.00135`), `mat_molybdenum_melting_c` (`D=0.00043`), `nrg_us_wind_2023_twh` (`D=0.00041`), `nrg_norway_hydro_2023_twh` (`D=0.00020`), `hyd_murray_darling_area_km2` (`D=0.00012`), `env_ipcc_1750_ch4_ppb` (`D=0.00007`).
+- **`control` (`n = 4`, exact 2 `-0.8` / 2 `+0.8` bias):** `nrg_us_nuclear_2023_twh` (`D=0.00006`), `hyd_lake_superior_vol_km3` (`D=0.00005`, `pull=0.2820`), `inf_snolab_depth_m` (`D=0.00004`), `inf_north_sea_link_km` (`D=0.00000`, `pull=0.2888`).
 
-> `"You are a rigorous quantitative scientific estimator. Reason independently from physical principles and empirical reference scales without web lookup, and end with 'Final estimate: <number>'. Today's date is 2026-11-15."`
+### 2. Conditions, Blend Rule, and Prompt Neutrality
+Every condition runs `16` questions $\times$ `8` agents $\times$ `2` rounds $\times$ `1` replicate (`256` agent-round rows per condition; **`1,280` total rows**) using identical initial Round-1 agent priors (`seed = 42`, `start_bias_weight = 0.22`, `start_sd = 0.24`) and damped `log10` update weight `alpha = 0.4`:
+$$x_{i,t} = (1 - \alpha)\, x_{i,t-1} + \alpha\, a_{i,t}, \quad \alpha = 0.4 \implies (1 - \alpha)^2 = 0.36.$$
 
-| Condition | Model Routing ($N=8$ agents) | Peer Median + IQR Telemetry | Dialectical Counter-Anchoring | Role in $2 \times 2$ + Baseline |
-|---|---|---:|---:|---|
-| **`P0`** | Homogeneous (`gemma-4-26b-a4b-it`, 8/8) | No | No | Independent social-free baseline |
-| **`P1`** | Homogeneous (`gemma-4-26b-a4b-it`, 8/8) | Yes | No | Social consensus cell (homogeneous, unanchored) |
-| **`P2`** | Homogeneous (`gemma-4-26b-a4b-it`, 8/8) | Yes | Yes | Counter-anchor main effect on same architecture |
-| **`P3`** | 4-Model Polyphony (2 each: Gemma, DeepSeek-V4-Flash, Qwen3.8-27B, GLM-5.2) | Yes | No | Cross-architecture polyphony main effect (unanchored) |
-| **`P4`** | 4-Model Polyphony (2 each: Gemma, DeepSeek-V4-Flash, Qwen3.8-27B, GLM-5.2) | Yes | Yes | Full combined polyphony + counter-anchoring |
+To eliminate baseline prompt leakage, `p_series_system_prompt("2026-11-15")` is completely neutral across all five conditions (`"You are a quantitative scientific estimator. Answer without web lookup and end with 'Final estimate: <number>'. Today's date is 2026-11-15."`), isolating counterfactual / physical-principle tail testing exclusively to `_P_COUNTER_ANCHOR_TEXT` in `P2` and `P4`:
 
-In social conditions (`P1`–`P4`), prompts report the current population linear median and interquartile range (`"Peer consensus telemetry from prior estimators reports a median of ... (interquartile range ... to ...)."`). In dialectical conditions (`P2`, `P4`), prompts inject `_P_COUNTER_ANCHOR_TEXT`:
+| Condition | Model Routing (`8` agents / round) | Social Telemetry (`median` & `IQR`) | Dialectical Counter-Anchoring | Mean Input Tokens |
+| --- | --- | --- | --- | --- |
+| **`P0`** | Homogeneous `gemma-4-26b-a4b-it` (`K=1`) | No | No | `131.4` |
+| **`P1`** | Homogeneous `gemma-4-26b-a4b-it` (`K=1`) | Yes | No | `163.7` |
+| **`P2`** | Homogeneous `gemma-4-26b-a4b-it` (`K=1`) | Yes | Yes (`_P_COUNTER_ANCHOR_TEXT`) | `233.8` |
+| **`P3`** | Polyphony `K=4` (`2` each: Gemma, DeepSeek, Qwen, GLM) | Yes | No | `148.7` |
+| **`P4`** | Polyphony `K=4` (`2` each: Gemma, DeepSeek, Qwen, GLM) | Yes | Yes (`_P_COUNTER_ANCHOR_TEXT`) | `219.5` |
 
-> `"Dialectical counter-anchoring protocol: before estimating, write 2-3 concise sentences testing both tails — identify specific physical scaling mechanisms or misconceptions by which both the prior estimate and peer median could systematically overshoot (too high) OR undershoot (too low) the true value — then derive your estimate from independent physical principles and reference scales."`
-
-Simulation hyperparameters in [`configs/polyphony_p0_p4.yaml`](../configs/polyphony_p0_p4.yaml) match Phase 1 `C1`–`C6`: `seed = 42`, `num_agents = 8`, `num_rounds = 2`, `numeric_replicates = 1`, `alpha = 0.3` (`g_after = 0.7 * g_before + 0.3 * g_assistant`), `numeric_start_bias_weight = 0.22`, `numeric_start_sd = 0.24`, and equal `6` / `6` `+0.8` / `-0.8` prior misconception sign balance across the 12 tasks (`total rows = 12 * 5 * 8 * 2 = 960`).
-
-### 3.2 Clean-Room 12-Task Scientific, Engineering & Earth-Systems Benchmark
-
-Every task in [`configs/polyphony_benchmark_tasks.json`](../configs/polyphony_benchmark_tasks.json) is a pre-2026 physical, geophysical, astrophysical, molecular, or structural standard (`numeric_truth >= 305.0`), verified disjoint from both `configs/numeric_final_tasks.json` and `build_numeric_core_tasks()`:
-
-| Task ID | Domain | Stratum | Ground Truth | Unit | Bias Sign | Source Standard |
-|---|---|---|---:|---|---:|---|
-| `sci_earth_mean_radius_km` | `planetary_geodesy` | `control` | `6,371.0` | `kilometers` | `+0.8` | NASA Earth Fact Sheet (NSSDCA) |
-| `sci_solar_effective_temp_k` | `stellar_astrophysics` | `control` | `5,772.0` | `kelvins` | `+0.8` | IAU 2015 Resolution B3 |
-| `sci_moon_mean_distance_km` | `lunar_astrometry` | `control` | `384,400.0` | `kilometers` | `-0.8` | NASA Moon Fact Sheet (NSSDCA) |
-| `sci_c14_half_life_yr` | `nuclear_geochronology` | `control` | `5,730.0` | `years` | `-0.8` | Godwin (1962), *Nature* 195:984 (Cambridge) |
-| `sci_prem_cmb_depth_km` | `deep_earth_seismology` | `low_spread` | `2,891.0` | `kilometers` | `+0.8` | Dziewonski & Anderson (1981) PREM |
-| `sci_earth_sidereal_day_s` | `geodynamics` | `low_spread` | `86,164.0` | `seconds` | `+0.8` | NASA Earth Fact Sheet (23.9345 h) |
-| `sci_tungsten_melting_c` | `materials_thermophysics` | `low_spread` | `3,422.0` | `degrees Celsius` | `-0.8` | NIST / CRC Handbook |
-| `sci_canakkale_bridge_span_m` | `structural_engineering` | `low_spread` | `2,023.0` | `meters` | `-0.8` | Turkish General Directorate of Highways (KGM, 2022) |
-| `sci_kola_borehole_depth_m` | `crustal_drilling` | `high_spread` | `12,262.0` | `meters` | `-0.8` | Kola SG-3 1989 record vertical depth |
-| `sci_hoover_dam_capacity_mw` | `hydroelectric_engineering` | `high_spread` | `2,080.0` | `megawatts` | `+0.8` | U.S. Bureau of Reclamation nameplate spec |
-| `sci_arecibo_diameter_m` | `radio_astronomy` | `high_spread` | `305.0` | `meters` | `+0.8` | NSF / Cornell NAIC specifications |
-| `sci_rcrs_mtdna_bp` | `molecular_genomics` | `high_spread` | `16,569.0` | `base pairs` | `-0.8` | Andrews et al. (1999) rCRS / NC_012920 |
+All calls ran against Adaption (`--current-date 2026-11-15`, `--workers 16`, `--budget 10.0`, `reasoning={"effort": "none"}` on `deepseek*`, `qwen*`, and `glm*`; `gemma-4-26b-a4b-it` unthrottled). Six initial/intermediate `gemma-4-26b-a4b-it` post-answer repetition loops hitting `8,192` tokens (`finish_reason="length"`: `5` in the initial pass plus `1` Round-2 resample) and their affected Round-2 dependencies (`28 + 1` causal cells) were pruned and cleanly re-sampled via crash-resume. Final archive totals: **`1,280/1,280` rows**, **`0/1,280` misses**, **`0/1,280` truncations**, **`229,653` input / `531,150` output tokens**, **`0/1,280` hidden `reasoning_tokens > 0`**, and **`$0.4863` actual logged cost**.
 
 ---
 
-## 4. Primary Empirical Results (`results/polyphony-p0-p4/`)
+## Primary Results
 
-### 4.1 Execution Integrity, Cost & Numerical Exactness
+![Final Crowd Error Across P0..P4](figures/polyphony_crowd_error.svg)
 
-- **Dataset Completeness:** `960 / 960` agent-round observations (`completion_status = "complete"`, `missing_or_incomplete_cells = 0`), `0 / 960` parse misses (`0.000`).
-- **Model Balancing:** `P0`, `P1`, `P2` logged `192 / 192` `gemma-4-26b-a4b-it` rows each; `P3` and `P4` logged `48` rows per architecture across `gemma-4-26b-a4b-it`, `deepseek-v4-flash`, `qwen3.8-27b`, and `glm-5.2` (`672 / 96 / 96 / 96` aggregate rows).
-- **Zero Truncation & Transparent Retry Note:** `0 / 960` final rows have `finish_reason != "stop"`. In the initial run pass, three `gemma-4-26b-a4b-it` replies (`P1 sci_hoover_dam_capacity_mw` Round 1 `agent_02`, `P2 sci_kola_borehole_depth_m` Round 1 `agent_01`, and `P1 sci_tungsten_melting_c` Round 2 `agent_07`) produced valid parsed answers (`2080.0`, `12262.0`, `3150.0`) followed by degenerate `"Final estimate:"` token-repetition loops reaching `8,192` tokens (`finish_reason = "length"`). To preserve downstream Round-2 `pop_stats` consistency and meet the strict `0`-truncation gate, those 3 truncated cells and the 2 affected Round-2 trajectories (`19` rows total) were removed and re-sampled cleanly via crash-resume, producing `960 / 960` `finish_reason = "stop"`.
-- **Reasoning Token Accounting & Spend:** `0 / 960` rows recorded `reasoning_tokens > 0` (`deepseek-v4-flash`, `qwen3.8-27b`, and `glm-5.2` used `reasoning={"effort": "none"}`, and Adaption's usage field reports `0` reasoning tokens for `gemma-4-26b-a4b-it`). Total provider-reported cost across the final 960 rows is **`$0.3840 USD`** (`$0.000400 / row`, max `$0.004489`; ledger reserved `$4.704` over `2,352` HTTP attempts including retries and resume).
-- **Mean Token Profile (Input / Output):** `P0` (`135.4 / 454.1`), `P1` (`172.2 / 556.6`), `P2` (`242.2 / 431.0`), `P3` (`157.2 / 467.9`), `P4` (`228.0 / 512.4`).
-- **Algebraic Theorem Verification:** Across all `120` `(question, condition, round, replicate)` cells evaluated against unrounded `agent_log10_after` values, `max_flat_residual = 1.874e-16` and `max_hierarchical_residual = 1.943e-16` (`numeric_analysis.json`: `1.942890293094024e-16`).
+### Round-2 & Multi-Round Agent Metrics (`alpha = 0.4`, `n = 16` questions / condition-round)
 
-### 4.2 Round-by-Round Page Decomposition & Assistant Calibration MSE
+| Cond. | Round | `crowd_error` | `avg_indiv_err` | `diversity` | `D_within` | `D_between` | `D_excess` | `btwn_share` | `EVRR` |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| **`P0`** | R1 | `0.019523` | `0.048079` | `0.028555` | `0.028555` | `0.000000` | `0.000000` | `0.0000` | `1.2822` |
+| **`P0`** | **R2** | **`0.011944`** | `0.028750` | `0.016806` | `0.016806` | `0.000000` | `0.000000` | `0.0000` | `1.3788` |
+| **`P1`** | R1 | `0.030271` | `0.055572` | `0.025301` | `0.025301` | `0.000000` | `0.000000` | `0.0000` | `1.1231` |
+| **`P1`** | **R2** | **`0.022899`** | `0.032455` | `0.009557` | `0.009557` | `0.000000` | `0.000000` | `0.0000` | `1.0700` |
+| **`P2`** | R1 | `0.019347` | `0.044822` | `0.025475` | `0.025475` | `0.000000` | `0.000000` | `0.0000` | `1.1591` |
+| **`P2`** | **R2** | **`0.011818`** | `0.024672` | `0.012854` | `0.012854` | `0.000000` | `0.000000` | `0.0000` | `1.3394` |
+| **`P3`** | R1 | `0.021108` | `0.044012` | `0.022904` | `0.011422` | `0.011482` | `0.002915` | `0.4942` | `1.0593` |
+| **`P3`** | **R2** | **`0.010058`** | `0.019078` | `0.009021` | `0.004178` | `0.004842` | `0.001709` | `0.5366` | `1.1060` |
+| **`P4`** | R1 | `0.016958` | `0.042940` | `0.025982` | `0.010818` | `0.015164` | `0.007050` | `0.5153` | `1.1159` |
+| **`P4`** | **R2** | **`0.007692`** | `0.021534` | `0.013842` | `0.004835` | `0.009007` | `0.005381` | `0.4741` | `1.2826` |
 
-While agent belief updating (`alpha = 0.3` over 2 rounds) anchors final beliefs with `0.49` weight on each agent's initial misconception prior `agent_log10_before`, inspecting both aggregate agent metrics (`numeric_analysis.json`) and raw `assistant_log10` MSE separates **prior-inertia ceilings** from **direct assistant judgment**:
+### Direct Assistant Hierarchical Page Decomposition (New Two-Level Analysis)
 
-| Cond | Round | `crowd_error` | `avg_ind_err` | `diversity` | `between_div` | `within_div` | `excess_between` | `between_share` | `evrr` | `evrr_cum` | `asst_mse` |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| `P0` | 1 | `0.020080` | `0.039437` | `0.019357` | `0.000000` | `0.019357` | `0.000000` | `0.000000` | `1.008485` | `1.008485` | `0.000267` |
-| **`P0`** | **2** | **`0.009932`** | `0.019638` | `0.009706` | `0.000000` | `0.009706` | `0.000000` | `0.000000` | `1.022885` | `1.033577` | `0.000616` |
-| `P1` | 1 | `0.020390` | `0.039603` | `0.019213` | `0.000000` | `0.019213` | `0.000000` | `0.000000` | `0.999986` | `0.999986` | `0.000559` |
-| **`P1`** | **2** | **`0.010231`** | `0.019611` | `0.009380` | `0.000000` | `0.009380` | `0.000000` | `0.000000` | `0.996219` | `0.996149` | `0.000416` |
-| `P2` | 1 | `0.020387` | `0.039624` | `0.019237` | `0.000000` | `0.019237` | `0.000000` | `0.000000` | `1.001371` | `1.001371` | `0.000560` |
-| **`P2`** | **2** | **`0.010143`** | `0.019706` | `0.009563` | `0.000000` | `0.009563` | `0.000000` | `0.000000` | `1.007116` | `1.008507` | `0.000567` |
-| `P3` | 1 | `0.020488` | `0.039975` | `0.019487` | `0.009349` | `0.010138` | `+0.001746` | `0.481292` | `1.015707` | `1.015707` | `0.000858` |
-| **`P3`** | **2** | **`0.010340`** | `0.020057` | `0.009717` | `0.004750` | `0.004967` | `+0.001024` | `0.488489` | `1.017328` | `1.035461` | `0.000940` |
-| `P4` | 1 | `0.020177` | `0.039679` | `0.019502` | `0.009179` | `0.010323` | `+0.001437` | `0.477085` | `1.016500` | `1.016500` | `0.000577` |
-| **`P4`** | **2** | **`0.009928`** | `0.019511` | `0.009583` | `0.004462` | `0.005120` | `+0.000622` | `0.474642` | `1.000311` | `1.016548` | **`0.000071`** |
+Computing Page's exact identity directly on the assistant predictions $a_{i,t}$ before $\alpha$-blending reveals why `P3` and `P4` behave differently from monocultures (`P0`–`P2`):
 
-Three primary empirical findings emerge directly from this table:
+![Hierarchical Page Decomposition Across P0..P4](figures/polyphony_hierarchical_page.svg)
 
-1. **Social Telemetry Without Counter-Anchoring Corrupts Assistant Accuracy (`P3` vs. `P0`):** Even on well-known physical constants, unanchored cross-architecture social telemetry (`P3`) increases Round-2 `crowd_error` relative to the social-free `P0` baseline (`0.010340` vs. `0.009932`, `+0.000409`, Wilcoxon `p = 0.007812`, `95% CI [+0.000030, +0.001097]`, matrix Holm `p = 0.070312`) and increases Round-2 assistant-only MSE from `0.000616` to `0.000940` (`qwen3.8-27b` assistant MSE `0.003005`, `gemma-4-26b-a4b-it` `0.000753`).
-2. **Dialectical Counter-Anchoring Eliminates the Social-Drift Penalty (`P4` vs. `P3` and `P0`):** Injecting `_P_COUNTER_ANCHOR_TEXT` into the polyphony ensemble (`P4`) cuts Round-2 assistant MSE by **92.4%** vs. `P3` (`0.000940 -> 0.000071`) and **88.5%** vs. `P0` (`0.000616 -> 0.000071`). By model in Round 2 of `P4`, assistant-only MSE drops to `qwen3.8-27b = 0.000000`, `deepseek-v4-flash = 0.000002`, `gemma-4-26b-a4b-it = 0.000006`, and `glm-5.2 = 0.000275`. This yields the lowest final `crowd_error` (`0.009928`) across all five conditions (`P4 < P0 < P2 < P1 < P3`).
-3. **Genuine Between-Model Structure Persists Under Prior Inertia:** `P3` and `P4` partition nearly half of total variance into `between_model_diversity` (`48.85%` in `P3`, `47.46%` in `P4`), yielding positive `excess_between_model_diversity` (`+0.001024` in `P3`, `+0.000622` in `P4`) above the finite-sample random-label permutation baseline (`0.75 * D_within`). Note carefully that in single-value canonical constants (`earth_mean_radius_km`, `arecibo_diameter_m`, `earth_sidereal_day_s`, `rcrs_mtdna_bp`), `0/80` assistant errors deviate by more than `1e-4`; there, `between_model_diversity` reflects fixed `0.49`-weighted random initial agent pairings rather than assistant disagreement, whereas `excess_between_model_diversity` isolates true architectural separation on divergent tasks.
+| Cond. | Round | `asst_crowd_err` | `asst_indiv_err` | `asst_div` | `asst_D_within` | `asst_D_between` | `asst_D_excess` | `asst_btwn_share` |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| **`P0`** | R1 | `0.019134` | `0.035052` | `0.015918` | `0.015918` | `0.000000` | `0.000000` | `0.0000` |
+| **`P0`** | **R2** | **`0.009646`** | `0.023701` | `0.014055` | `0.014055` | `0.000000` | `0.000000` | `0.0000` |
+| **`P1`** | R1 | `0.019033` | `0.033526` | `0.014493` | `0.014493` | `0.000000` | `0.000000` | `0.0000` |
+| **`P1`** | **R2** | **`0.017313`** | `0.019924` | `0.002611` | `0.002611` | `0.000000` | `0.000000` | `0.0000` |
+| **`P2`** | R1 | `0.022888` | `0.031461` | `0.008573` | `0.008573` | `0.000000` | `0.000000` | `0.0000` |
+| **`P2`** | **R2** | **`0.013480`** | `0.027838` | `0.014358` | `0.014358` | `0.000000` | `0.000000` | `0.0000` |
+| **`P3`** | R1 | `0.004024` | `0.015162` | `0.011138` | `0.005219` | `0.005919` | `0.002005` | `0.5397` |
+| **`P3`** | **R2** | **`0.002339`** | `0.008772` | `0.006433` | `0.001878` | `0.004555` | `0.003146` | `0.5772` |
+| **`P4`** | R1 | `0.004146` | `0.013590` | `0.009444` | `0.001019` | `0.008425` | `0.007660` | `0.4553` |
+| **`P4`** | **R2** | **`0.005770`** | `0.017038` | `0.011268` | `0.002589` | `0.008679` | `0.006737` | `0.5066` |
 
-### 4.3 Stratum Breakdown & Non-Ceiling Task Behavior
-
-| Stratum (`n=4` each) | Cond | `crowd_error` | `diversity` | `between_div` | `excess_between` | `between_share` | `evrr` |
-|---|---|---:|---:|---:|---:|---:|---:|
-| **`control`** | `P0` | `0.015183` | `0.008210` | `0.000000` | `0.000000` | `0.000000` | `0.999807` |
-| **`control`** | `P1` | `0.015184` | `0.008212` | `0.000000` | `0.000000` | `0.000000` | `1.000042` |
-| **`control`** | `P2` | `0.015184` | `0.008213` | `0.000000` | `0.000000` | `0.000000` | `0.999978` |
-| **`control`** | `P3` | `0.015200` | `0.008189` | `0.004407` | `+0.001571` | `0.520134` | `0.999999` |
-| **`control`** | `P4` | `0.015188` | `0.008206` | `0.004418` | `+0.001577` | `0.520150` | `0.999582` |
-| **`low_spread`** | `P0` | `0.009965` | `0.010731` | `0.000000` | `0.000000` | `0.000000` | `1.000000` |
-| **`low_spread`** | `P1` | `0.010223` | `0.010689` | `0.000000` | `0.000000` | `0.000000` | `0.991041` |
-| **`low_spread`** | `P2` | `0.010207` | `0.011062` | `0.000000` | `0.000000` | `0.000000` | `1.014725` |
-| **`low_spread`** | `P3` | `0.011049` | `0.011586` | `0.006566` | `+0.002801` | `0.627446` | `1.046167` |
-| **`low_spread`** | `P4` | `0.010073` | `0.010860` | `0.005578` | `+0.001616` | `0.577282` | `1.005391` |
-| **`high_spread`** | `P0` | `0.004647` | `0.010178` | `0.000000` | `0.000000` | `0.000000` | `1.068850` |
-| **`high_spread`** | `P1` | `0.005286` | `0.009238` | `0.000000` | `0.000000` | `0.000000` | `0.997574` |
-| **`high_spread`** | `P2` | `0.005037` | `0.009416` | `0.000000` | `0.000000` | `0.000000` | `1.006646` |
-| **`high_spread`** | `P3` | `0.004773` | `0.009375` | `0.003275` | `-0.001299` | `0.317888` | `1.005818` |
-| **`high_spread`** | `P4` | **`0.004523`** | `0.009681` | `0.003391` | `-0.001327` | `0.326495` | `0.995960` |
-
-Two non-ceiling questions illustrate the exact behavioral mechanism:
-- In `low_spread`, `sci_canakkale_bridge_span_m` (`2,023 m`) degrades under unanchored social polyphony (`P3` `crowd_error = 0.01649` vs. `P0` `0.01250`), and dialectical counter-anchoring restores accuracy (`P4` `0.01252`).
-- In `high_spread`, `P4` achieves the lowest `crowd_error` (`0.004523` vs. `P0` `0.004647` and `P1` `0.005286`), driven by `sci_kola_borehole_depth_m` (`P4` `0.00605` vs. `P1` `0.00893`, `P2` `0.00802`, `P3` `0.00693`, `P0` `0.00675`). Note also that `P4` has slightly lower `crowd_error` than `P0` (`0.004523` vs. `0.004647`) while `sci_hoover_dam_capacity_mw` stays at `0.00023` in `P4` vs. `0.00040` in `P1` (`0.00003` in `P0`).
-
-### 4.4 Pre-Registered Contrasts, `2x2` Interaction & H4 Sycophancy Diagnostics
-
-From `polyphony_contrast_matrix` (`n = 12` paired questions, two-tier per-metric Holm adjustment across the 9 contrasts) and `interaction_2x2` (`n = 12`):
-
-| Metric | Contrast | `mean_diff` | `95% Bootstrap CI` | Wilcoxon `p` | Matrix Holm `p` | 16-Contrast Holm `p` |
-|---|---|---:|---|---:|---:|---:|
-| `between_model_diversity` | `p4_vs_p1` (`= p4_vs_p0`, `p4_vs_p2`) | `+0.004462` | `[+0.002944, +0.006053]` | `0.000488` | **`0.004395`** | — |
-| `between_model_diversity` | `p3_vs_p1` (`= p3_vs_p0`, `p3_vs_p2`) | `+0.004750` | `[+0.003207, +0.006410]` | `0.000488` | **`0.004395`** | — |
-| `crowd_error` | `p3_vs_p0` | `+0.000409` | `[+0.000030, +0.001097]` | **`0.007812`** | `0.070312` | `0.125000` |
-| `crowd_error` | `p4_vs_p3` | `-0.000412` | `[-0.001139, +0.000023]` | `0.130859` | `1.000000` | `1.000000` |
-| `crowd_error` | `p4_vs_p1` | `-0.000303` | `[-0.000832, +0.000047]` | `0.769531` | `1.000000` | `1.000000` |
-| `crowd_error` | `p4_vs_p2` | `-0.000215` | `[-0.000578, +0.000003]` | `0.496094` | `1.000000` | `1.000000` |
-| `crowd_error` | `p1_vs_p0` | `+0.000299` | `[+0.000001, +0.000718]` | `0.125000` | `1.000000` | `1.000000` |
-| `diversity` | `p4_vs_p1` | `+0.000203` | `[+0.000024, +0.000461]` | `0.193359` | `1.000000` | `1.000000` |
-| `excess_between` | `p3_vs_p1` | `+0.001024` | `[-0.000595, +0.002595]` | `0.266113` | `1.000000` | `1.000000` |
-| `evrr` | `p4_vs_p2` | `-0.006805` | `[-0.013923, -0.000563]` | `0.078125` | `0.703125` | — |
-
-- **`2x2` DiD Interaction (`(P4 - P3) - (P2 - P1)`):** `crowd_error = -0.000324` (`95% CI [-0.001042, +0.000119]`, `p = 0.375`), `diversity = -0.000318` (`p = 0.275391`), `evrr = -0.027914` (`95% CI [-0.058864, -0.003458]`, `p = 0.164062`, Holm `0.65625`).
-- **H4 Sycophancy & Anchor Pulling (`h4_assistant_agent_corr = 0.9753`):** On canonical scientific benchmarks, within-question `slope_user` stays near `0` across all conditions (`P0 = 0.0125`, `P1 = -0.0035`, `P2 = 0.0018`, `P3 = 0.0132`, `P4 = 0.0102`), and `crowd_pull_vs_c1_r1` is tiny (`P1 = 0.0144`, `P2 = 0.0142`), reflecting strong mechanistic knowledge when assistants resist misleading user priors.
+> **Mechanistic Divergence (`P3` vs. `P4`):** At the raw assistant level, `P3` attains the lowest direct crowd MSE (`0.002339`), yet after blending with agents (`x_after = 0.6*x_before + 0.4*a`), **`P4` beats `P3` on agent `crowd_error` (`0.007692` vs. `0.010058`, `p = 0.028768`)** because counter-anchoring in `P4` nearly doubles `assistant_between_model_diversity` (`0.008679` vs. `0.004555`) and boosts `excess_between_model_diversity` (`+0.006737` vs. `+0.003146`), while sharply sharpening `deepseek-v4-flash` (`0.001977 -> 0.001261`), `glm-5.2` (`0.003922 -> 0.000655`), and `qwen3.8-27b` (`0.020504 -> 0.013712`) even as `gemma-4-26b-a4b-it` spreads wider (`0.021464 -> 0.045629`).
 
 ---
 
-## 5. Cross-Benchmark Replication: High-Uncertainty Regime (`C1`–`C6`)
+## Statistical Inference: Holm Matrix & 2x2 Factorial Interaction
 
-Comparing `P0`–`P4` against our earlier **11-question V3 `C1`–`C6` Adaption experiment** ([`results/numeric-polyphony-c1-c6/`](../results/numeric-polyphony-c1-c6/), `1,056` rows across 11 non-settled 2026 event and municipal-census Fermi tasks, `0` misses, `0` truncations, `$0.3479 USD` actual cost, `max_identity_residual = 3.123e-16`) reveals how **domain uncertainty** modulates both interventions:
+![2x2 Factorial Interaction Across P1..P4](figures/polyphony_2x2_factorial.svg)
 
-| Benchmark | Regime & Baseline Error (`C1`/`P0` R2 `asst_mse`) | Social Collapse (`P1`/`C2` `crowd_error`) | Counter-Anchor Only (`P2`/`C4`) | Polyphony Only (`P3`/`C5`) | Full Combined (`P4`/`C6`) | Key Contrast & H4 Pull |
-|---|---|---|---|---|---|---|
-| **`C1`–`C6` (V3 Unsettled/Census)** | High uncertainty (`asst_mse = 0.055792`) | `C2 = 0.039766` (`C1 = 0.021548`, `+84.5%` herding error) | `C4 = 0.031998` | `C5 = 0.027189` (`between = 0.007292`, `37.42%` share) | **`C6 = 0.020837`** (`between = 0.008563`, `36.37%`, `evrr = 1.414287`) | `c6_vs_c2_crowd_error = -0.018929` (`-47.6%`, `p = 0.041992`); `C2 crowd_pull = 0.9550` |
-| **`P0`–`P4` (Physical Constants)** | Low uncertainty (`asst_mse = 0.000616`, `90x` lower) | `P1 = 0.010231` (`P0 = 0.009932`) | `P2 = 0.010143` | `P3 = 0.010340` (`between = 0.004750`, `48.85%` share) | **`P4 = 0.009928`** (`between = 0.004462`, `47.46%`, `asst_mse = 0.000071`) | `p3_vs_p0 = +0.000409` (`p = 0.007812`); `p4_vs_p1 between` Holm `0.004395`; `P1 crowd_pull = 0.0144` |
+### 2x2 Factorial Difference-in-Differences (`(P4 - P3) - (P2 - P1)`, Holm `m = 5`)
 
-Together, the two datasets establish a dual regime law:
-- In **high-uncertainty forecasting (`C1`–`C6`)**, homogeneous consensus induces severe consensus-echoing (`crowd_pull = 0.9550`), and orthogonal error cancellation across architectures (`C5`, `C6`) provides the primary reduction in `crowd_error` (`-47.6%` vs. `C2`), amplified by dialectical tail-testing.
-- In **low-uncertainty scientific estimation (`P0`–`P4`)**, unanchored social polyphony (`P3`) still leaks minor herding errors (`+0.000409`, `p = 0.007812`), while dialectical counter-anchoring (`P4`) suppresses Round-2 assistant MSE by **92.4%** (`0.000940 -> 0.000071`) and keeps crowd error at the baseline floor (`0.009928`).
+| Metric | DiD Estimate | 95% Bootstrap CI | Wilcoxon `p` | Holm Adj. `p` |
+| --- | --- | --- | --- | --- |
+| **`crowd_error`** | **`+0.008715`** | `[+0.003359, +0.016034]` | `0.001092` | **`0.005458`** |
+| **`assistant_crowd_error`** | `+0.007264` | `[-0.006171, +0.020198]` | `0.015785` | `0.063142` |
+| **`avg_individual_error`** | `+0.010239` | `[+0.001829, +0.021013]` | `0.038167` | `0.114500` |
+| **`diversity`** | `+0.001524` | `[-0.005205, +0.010348]` | `0.932107` | `1.000000` |
+| **`evrr`** | `-0.092897` | `[-0.558572, +0.249156]` | `0.977345` | `1.000000` |
+
+### Selected Paired Contrasts (`n = 16`, Two-Tier Reporting)
+
+`polyphony_contrast_matrix` controls Holm FWER within each `9`-pair metric family (`m = 9`); the flat `contrasts` table controls globally across all `20` confirmatory P-series contrasts (`m = 20`).
+
+| Contrast (`B - A`) | Mean Diff | 95% CI | Wilcoxon `p` | Matrix `p_Holm` (`m=9`) | Global `p_Holm` (`m=20`) |
+| --- | --- | --- | --- | --- | --- |
+| **`P2 - P1` (`crowd_error`)** | `-0.011081` | `[-0.020657, -0.003974]` | `0.000892` | **`0.008027`** | **`0.017838`** |
+| **`P4 - P1` (`crowd_error`)** | `-0.015207` | `[-0.027994, -0.004997]` | `0.002866` | **`0.022925`** | `0.054446` |
+| **`P3 - P1` (`crowd_error`)** | `-0.012841` | `[-0.023656, -0.004262]` | `0.002866` | **`0.022925`** | `0.054446` |
+| **`P1 - P0` (`crowd_error`)** | `+0.010955` | `[+0.003495, +0.019277]` | `0.008266` | **`0.049594`** | `0.132250` |
+| **`P4 - P3` (`crowd_error`)** | `-0.002366` | `[-0.004876, -0.000249]` | `0.028768` | `0.143839` | `0.431518` |
+| **`P3 - P1` (`asst_crowd_error`)** | `-0.014975` | `[-0.028423, -0.004200]` | `0.003445` | **`0.031001`** | `0.058557` |
+| **`P4 - P1` (`asst_crowd_error`)** | `-0.011544` | `[-0.027359, +0.002437]` | `0.073602` | `0.515214` | `0.883224` |
+| **`P2 - P1` (`asst_crowd_error`)** | `-0.003833` | `[-0.021213, +0.018818]` | `0.038167` | `0.305333` | `0.534333` |
+| **`P3 - P1` (`between_model_diversity`)** | `+0.004842` | `[+0.003616, +0.006245]` | `0.000482` | **`0.004342`** | `—` |
+| **`P4 - P1` (`between_model_diversity`)** | `+0.009007` | `[+0.002997, +0.019433]` | `0.000482` | **`0.004342`** | `—` |
+| **`P4 - P1` (`evrr`)** | `+0.212567` | `[+0.036460, +0.439407]` | `0.050058` | `0.400464` | `0.650754` |
 
 ---
 
-## 6. Limitations & Future Directions
+## Architecture Breakdown, H4 Anchoring & Stratum Heterogeneity
 
-1. **Statistical Power at $n = 12$ Questions:** Across 12 benchmark items, exact two-sided Wilcoxon signed-rank tests have a minimum achievable $p$-value of $2 / 2^{12} = 0.000488$. After nine-contrast Holm correction inside each metric block, strong architectural structural effects (`between_model_diversity`, Holm `p = 0.004395`) survive cleanly, while smaller accuracy margins (`p3_vs_p0 crowd_error` unadjusted `p = 0.007812`, Holm `p = 0.070312`) warrant larger $n \ge 24$ task banks.
-2. **Two-Round Prior Inertia (`alpha = 0.3`):** Retaining $0.7^2 = 0.49$ weight on each agent's seeded initial prior means that whenever all models agree on canonical physical constants (`7/12` items near zero assistant variance), aggregate `crowd_error` approaches an inertia floor rather than tracking the `92.4%` improvement observed in raw `assistant_log10` MSE. Future ablations should pair longer horizons ($R \ge 4$ or higher $\alpha$) with uncertain pre-cutoff scientific frontiers (e.g., astronomical parameter tolerances or unpublished lab measurements).
-3. **Provider Reasoning Telemetry:** Adaption API responses with `reasoning={"effort": "none"}` on non-Gemma models and default Gemma output report `reasoning_tokens = 0` (`0/960` rows with `reasoning_tokens > 0`), leaving hidden-CoT vs. visible-CoT ablations to providers exposing full token breakdown.
+### Per-Model Assistant Accuracy Across Conditions (`mean((assistant_log10 - log_truth)^2)`)
+
+| Model | `P0` (`n=256`) | `P1` (`n=256`) | `P2` (`n=256`) | `P3` (`n=64`) | `P4` (`n=64`) |
+| --- | --- | --- | --- | --- | --- |
+| **`deepseek-v4-flash`** | `—` | `—` | `—` | `0.001977` | `0.001261` |
+| **`glm-5.2`** | `—` | `—` | `—` | `0.003922` | **`0.000655`** |
+| **`qwen3.8-27b`** | `—` | `—` | `—` | `0.020504` | `0.013712` |
+| **`gemma-4-26b-a4b-it`** | `0.029376` | `0.026725` | `0.029649` | `0.021464` | `0.045629` |
+
+### H4 User & Crowd Slopes (`h4_assistant_agent_corr = 0.9834`)
+- **Round-1 Crowd Pull vs. `P0` (`crowd_pull_vs_c1_r1`):** `P1` slope = **`+0.4489`** (`intercept = +0.0584`), confirming strong monoculture deference toward peer medians; Dialectical Counter-Anchoring (`P2`) eliminates crowd pull (**`slope = -0.0254`**, `intercept = +0.0156`).
+- **Model-FE User Echoing:** `slope_user` stays small (`0.1339` in `P0`, `0.0085` in `P1`, `0.0707` in `P2`); adding model fixed effects in polyphony yields near-zero prior echoing (`slope_user_model_fe = -0.0240` `[-0.0608, 0.0099]` in `P3`, `+0.0317` `[-0.0432, 0.1317]` in `P4`).
+
+### Round-2 Performance by Cold-Spread Stratum
+
+| Stratum | `P0 crowd` | `P1 crowd` | `P2 crowd` | `P3 crowd` | `P4 crowd` | `P3 asst_crowd` | `P4 asst_crowd` | `P4 D_between` (`D_excess`) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| **`high_spread` (`n=6`)** | `0.011341` | `0.021568` | `0.013777` | `0.009674` | **`0.007641`** | `0.001819` | `0.013363` | `0.016150` (`+0.011254`) |
+| **`low_spread` (`n=6`)** | `0.006409` | `0.016083` | `0.008280` | `0.008557` | **`0.006211`** | `0.002513` | `0.000636` | `0.005718` (`+0.003348`) |
+| **`control` (`n=4`)** | `0.021152` | `0.035119` | `0.014186` | `0.012884` | **`0.009991`** | `0.002856` | `0.002079` | `0.003227` (`-0.000377`) |
+
+In every single stratum (`high_spread`, `low_spread`, and `control`), `P4` yields the lowest Round-2 agent `crowd_error`, and on `low_spread` + `control` questions `P4` also lowers direct assistant crowd error below `P3` (`0.000636` and `0.002079`).
+
+---
+
+## Limitations & Controls
+
+1. **Statistical Power Under Global Multiplicity (`m = 20` vs. `m = 9`):** With `n = 16` independent questions per condition, pairwise differences between `P4` vs. `P1`, `P3` vs. `P1`, and `P2` vs. `P1` survive within-metric Holm correction (`m = 9`: `p = 0.0229`, `0.0229`, `0.0080`), while only `P2` vs. `P1` stays `< 0.05` (`0.0178`) when simultaneously penalized across all `20` cross-metric contrasts (`P4`/`P3` reach `p = 0.0544`). Meanwhile the `2x2` `crowd_error` DiD survives its `m = 5` Holm family cleanly (`p = 0.005458`).
+2. **Reasoning Effort Configuration (`0/1,280` reasoning tokens):** Adaption inference ran with `reasoning={"effort": "none"}` on `deepseek-v4-flash`, `qwen3.8-27b`, and `glm-5.2` so all four models respond quickly without hidden-thinking timeouts (`0` misses). Effects may differ under deep hidden chain-of-thought modes.
+3. **Resampling of Repetition Loops:** Six initial/intermediate `gemma-4-26b-a4b-it` post-answer repetition loops (`8,192` tokens, `finish_reason="length"`) were causally dropped and re-sampled (`28 + 1` cells) via crash-resume to achieve `0/1,280` final truncations without Round-2 telemetry leaks.
+4. **Damping Parameter (`alpha = 0.4`):** Results characterize fixed belief-update inertia $\alpha = 0.4$ over `2` rounds; adaptive-trust or multi-turn agent memory dynamics could alter the trade-off between `P3`'s raw accuracy (`asst_crowd = 0.002339`) and `P4`'s blended variance cancellation (`crowd = 0.007692`).

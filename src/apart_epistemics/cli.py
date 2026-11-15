@@ -619,7 +619,7 @@ def _cmd_analyze(args: argparse.Namespace) -> int:
     suite_res, num_analysis, num_recs = _load_saved_artifacts(in_dir)
     if num_analysis:
         (in_dir / "numeric_analysis.json").write_text(
-            json.dumps(_serialize_numeric_analysis(num_analysis), indent=2),
+            json.dumps(_serialize_numeric_analysis(num_analysis), indent=2, allow_nan=False),
             encoding="utf-8",
         )
     out = {

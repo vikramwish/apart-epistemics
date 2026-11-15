@@ -1,87 +1,107 @@
 {
   "completion_status": "complete",
   "missing_or_incomplete_cells": 0,
-  "max_identity_residual": 1.942890293094024e-16,
-  "h4_assistant_agent_corr": 0.9753,
+  "max_identity_residual": 1.3877787807814457e-16,
+  "h4_assistant_agent_corr": 0.9834,
   "h4_slopes": {
     "method": "Per condition and question: OLS of (assistant_log10 - log_truth) on (agent_log10_before - log_truth) [+ (pop_median_log10 - log_truth) for C2..C6/P1..P4]; slopes averaged over questions with a bootstrap 95% CI over questions.",
     "interpretation": "slope_user ~0: the assistant answers from its own view; ~1: it echoes the user's guess. slope_crowd separates echoing the crowd median. Descriptive, not causal.",
     "by_condition": {
       "P0": {
         "slope_user": {
-          "mean": 0.0125,
+          "mean": 0.1339,
           "ci95": [
-            -0.002,
-            0.0396
+            0.0009,
+            0.292
           ],
-          "n_questions": 12
+          "n_questions": 16
         },
         "slope_user_round1": {
-          "mean": 0.0085,
+          "mean": 0.1257,
           "ci95": [
-            0.0,
-            0.0256
+            0.0049,
+            0.2778
           ],
-          "n_questions": 12
+          "n_questions": 16
         },
-        "n_observations": 192,
+        "n_observations": 256,
         "per_question": {
-          "sci_arecibo_diameter_m": {
+          "env_ipcc_1750_ch4_ppb": {
+            "n": 16,
+            "slope_user": -0.0043,
+            "slope_user_round1": -0.006
+          },
+          "hyd_delaware_aqueduct_km": {
+            "n": 16,
+            "slope_user": 0.1511,
+            "slope_user_round1": 0.1282
+          },
+          "hyd_lake_superior_vol_km3": {
+            "n": 16,
+            "slope_user": 0.7309,
+            "slope_user_round1": 0.544
+          },
+          "hyd_murray_darling_area_km2": {
+            "n": 16,
+            "slope_user": 0.0093,
+            "slope_user_round1": 0.0054
+          },
+          "hyd_paijanne_tunnel_km": {
             "n": 16,
             "slope_user": 0.0,
             "slope_user_round1": 0.0
           },
-          "sci_c14_half_life_yr": {
+          "inf_elt_collecting_area_m2": {
+            "n": 16,
+            "slope_user": 0.0164,
+            "slope_user_round1": 0.019
+          },
+          "inf_gbt_height_m": {
+            "n": 16,
+            "slope_user": -0.1443,
+            "slope_user_round1": -0.0161
+          },
+          "inf_north_sea_link_km": {
+            "n": 16,
+            "slope_user": 0.51,
+            "slope_user_round1": 0.4756
+          },
+          "inf_snolab_depth_m": {
+            "n": 16,
+            "slope_user": 0.0035,
+            "slope_user_round1": -0.0006
+          },
+          "mat_molybdenum_melting_c": {
             "n": 16,
             "slope_user": 0.0,
             "slope_user_round1": 0.0
           },
-          "sci_canakkale_bridge_span_m": {
+          "nrg_france_nuclear_2022_twh": {
             "n": 16,
-            "slope_user": 0.0,
-            "slope_user_round1": 0.0
+            "slope_user": -0.0391,
+            "slope_user_round1": -0.1074
           },
-          "sci_earth_mean_radius_km": {
+          "nrg_norway_hydro_2023_twh": {
             "n": 16,
-            "slope_user": 0.0,
-            "slope_user_round1": 0.0
+            "slope_user": -0.0148,
+            "slope_user_round1": -0.0089
           },
-          "sci_earth_sidereal_day_s": {
+          "nrg_us_hydro_2023_twh": {
             "n": 16,
-            "slope_user": 0.0,
-            "slope_user_round1": 0.0
+            "slope_user": 0.9201,
+            "slope_user_round1": 0.9486
           },
-          "sci_hoover_dam_capacity_mw": {
+          "nrg_us_nuclear_2023_twh": {
             "n": 16,
-            "slope_user": 0.1585,
-            "slope_user_round1": 0.1024
+            "slope_user": 0.0189,
+            "slope_user_round1": 0.042
           },
-          "sci_kola_borehole_depth_m": {
+          "nrg_us_wind_2023_twh": {
             "n": 16,
-            "slope_user": -0.0081,
-            "slope_user_round1": 0.0
+            "slope_user": -0.0155,
+            "slope_user_round1": -0.012
           },
-          "sci_moon_mean_distance_km": {
-            "n": 16,
-            "slope_user": 0.0,
-            "slope_user_round1": 0.0
-          },
-          "sci_prem_cmb_depth_km": {
-            "n": 16,
-            "slope_user": 0.0,
-            "slope_user_round1": 0.0
-          },
-          "sci_rcrs_mtdna_bp": {
-            "n": 16,
-            "slope_user": 0.0,
-            "slope_user_round1": 0.0
-          },
-          "sci_solar_effective_temp_k": {
-            "n": 16,
-            "slope_user": -0.0003,
-            "slope_user_round1": 0.0
-          },
-          "sci_tungsten_melting_c": {
+          "sci_lhc_dipole_magnets_count": {
             "n": 16,
             "slope_user": 0.0,
             "slope_user_round1": 0.0
@@ -90,214 +110,270 @@
       },
       "P1": {
         "slope_user": {
-          "mean": -0.0035,
+          "mean": 0.0085,
           "ci95": [
-            -0.0092,
-            0.0007
+            -0.0503,
+            0.0757
           ],
-          "n_questions": 12
+          "n_questions": 16
         },
         "slope_user_round1": {
-          "mean": -0.0015,
+          "mean": 0.0224,
           "ci95": [
-            -0.0038,
-            0.0
+            -0.061,
+            0.1223
           ],
-          "n_questions": 12
+          "n_questions": 16
         },
-        "n_observations": 192,
+        "n_observations": 256,
         "per_question": {
-          "sci_arecibo_diameter_m": {
+          "env_ipcc_1750_ch4_ppb": {
+            "n": 16,
+            "slope_user": -0.0061,
+            "slope_crowd": 0.5525,
+            "crowd_low_variance": true,
+            "slope_user_round1": -0.0079
+          },
+          "hyd_delaware_aqueduct_km": {
+            "n": 16,
+            "slope_user": -0.0214,
+            "slope_crowd": -0.2219,
+            "crowd_low_variance": true,
+            "slope_user_round1": -0.0286
+          },
+          "hyd_lake_superior_vol_km3": {
+            "n": 16,
+            "slope_user": 0.2759,
+            "slope_crowd": 13.7714,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.4423
+          },
+          "hyd_murray_darling_area_km2": {
+            "n": 16,
+            "slope_user": 0.0032,
+            "slope_crowd": -0.1434,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.0043
+          },
+          "hyd_paijanne_tunnel_km": {
+            "n": 16,
+            "slope_user": 0.07,
+            "slope_crowd": 0.4981,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.0817
+          },
+          "inf_elt_collecting_area_m2": {
+            "n": 16,
+            "slope_user": -0.0191,
+            "slope_crowd": 0.7043,
+            "crowd_low_variance": true,
+            "slope_user_round1": -0.0153
+          },
+          "inf_gbt_height_m": {
+            "n": 16,
+            "slope_user": -0.1686,
+            "slope_crowd": -0.1411,
+            "crowd_low_variance": true,
+            "slope_user_round1": -0.2459
+          },
+          "inf_north_sea_link_km": {
+            "n": 16,
+            "slope_user": -0.1175,
+            "slope_crowd": -156.5896,
+            "crowd_low_variance": true,
+            "slope_user_round1": -0.162
+          },
+          "inf_snolab_depth_m": {
+            "n": 16,
+            "slope_user": 0.0315,
+            "slope_crowd": -0.3749,
+            "crowd_low_variance": true,
+            "slope_user_round1": -0.0126
+          },
+          "mat_molybdenum_melting_c": {
+            "n": 16,
+            "slope_user": -0.0057,
+            "slope_crowd": -0.1064,
+            "crowd_low_variance": true,
+            "slope_user_round1": -0.0039
+          },
+          "nrg_france_nuclear_2022_twh": {
+            "n": 16,
+            "slope_user": -0.0699,
+            "slope_crowd": -0.7292,
+            "crowd_low_variance": true,
+            "slope_user_round1": -0.0941
+          },
+          "nrg_norway_hydro_2023_twh": {
+            "n": 16,
+            "slope_user": -0.2162,
+            "slope_crowd": 69.2574,
+            "crowd_low_variance": true,
+            "slope_user_round1": -0.1979
+          },
+          "nrg_us_hydro_2023_twh": {
+            "n": 16,
+            "slope_user": 0.2763,
+            "slope_crowd": 6.6043,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.4216
+          },
+          "nrg_us_nuclear_2023_twh": {
+            "n": 16,
+            "slope_user": -0.0229,
+            "slope_crowd": -0.8644,
+            "crowd_low_variance": true,
+            "slope_user_round1": -0.0083
+          },
+          "nrg_us_wind_2023_twh": {
+            "n": 16,
+            "slope_user": 0.1266,
+            "slope_crowd": 103.8712,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.1847
+          },
+          "sci_lhc_dipole_magnets_count": {
             "n": 16,
             "slope_user": 0.0,
             "slope_crowd": 0.0,
-            "crowd_low_variance": true,
-            "slope_user_round1": 0.0
-          },
-          "sci_c14_half_life_yr": {
-            "n": 16,
-            "slope_user": 0.0,
-            "slope_crowd": 0.0,
-            "crowd_low_variance": true,
-            "slope_user_round1": 0.0
-          },
-          "sci_canakkale_bridge_span_m": {
-            "n": 16,
-            "slope_user": 0.0,
-            "slope_crowd": 0.0,
-            "crowd_low_variance": true,
-            "slope_user_round1": 0.0
-          },
-          "sci_earth_mean_radius_km": {
-            "n": 16,
-            "slope_user": 0.0,
-            "slope_crowd": 0.0,
-            "crowd_low_variance": true,
-            "slope_user_round1": 0.0
-          },
-          "sci_earth_sidereal_day_s": {
-            "n": 16,
-            "slope_user": 0.0,
-            "slope_crowd": 0.0,
-            "crowd_low_variance": true,
-            "slope_user_round1": 0.0
-          },
-          "sci_hoover_dam_capacity_mw": {
-            "n": 16,
-            "slope_user": 0.0045,
-            "slope_crowd": -0.4554,
-            "crowd_low_variance": true,
-            "slope_user_round1": -0.0113
-          },
-          "sci_kola_borehole_depth_m": {
-            "n": 16,
-            "slope_user": -0.03,
-            "slope_crowd": 8.3735,
-            "crowd_low_variance": true,
-            "slope_user_round1": -0.0066
-          },
-          "sci_moon_mean_distance_km": {
-            "n": 16,
-            "slope_user": 0.0,
-            "slope_crowd": 0.0,
-            "crowd_low_variance": true,
-            "slope_user_round1": 0.0
-          },
-          "sci_prem_cmb_depth_km": {
-            "n": 16,
-            "slope_user": 0.0,
-            "slope_crowd": 0.0,
-            "crowd_low_variance": true,
-            "slope_user_round1": 0.0
-          },
-          "sci_rcrs_mtdna_bp": {
-            "n": 16,
-            "slope_user": 0.0,
-            "slope_crowd": 0.0,
-            "crowd_low_variance": true,
-            "slope_user_round1": 0.0
-          },
-          "sci_solar_effective_temp_k": {
-            "n": 16,
-            "slope_user": 0.0,
-            "slope_crowd": -0.0008,
-            "crowd_low_variance": true,
-            "slope_user_round1": -0.0001
-          },
-          "sci_tungsten_melting_c": {
-            "n": 16,
-            "slope_user": -0.016,
-            "slope_crowd": -0.1206,
             "crowd_low_variance": true,
             "slope_user_round1": 0.0
           }
         },
         "slope_crowd": {
-          "mean": 0.6497,
+          "mean": 2.2555,
           "ci95": [
-            -0.1139,
-            2.0833
+            -23.4987,
+            24.9612
           ],
-          "n_questions": 12
+          "n_questions": 16
         }
       },
       "P2": {
         "slope_user": {
-          "mean": 0.0018,
+          "mean": 0.0707,
           "ci95": [
-            0.0,
-            0.0046
+            0.002,
+            0.1451
           ],
-          "n_questions": 12
+          "n_questions": 16
         },
         "slope_user_round1": {
-          "mean": 0.0001,
+          "mean": 0.0646,
           "ci95": [
-            -0.0016,
-            0.0018
+            -0.001,
+            0.1329
           ],
-          "n_questions": 12
+          "n_questions": 16
         },
-        "n_observations": 192,
+        "n_observations": 256,
         "per_question": {
-          "sci_arecibo_diameter_m": {
+          "env_ipcc_1750_ch4_ppb": {
             "n": 16,
-            "slope_user": 0.0,
-            "slope_crowd": 0.0,
+            "slope_user": -0.0004,
+            "slope_crowd": -0.0805,
             "crowd_low_variance": true,
-            "slope_user_round1": 0.0
+            "slope_user_round1": -0.0025
           },
-          "sci_c14_half_life_yr": {
+          "hyd_delaware_aqueduct_km": {
             "n": 16,
-            "slope_user": 0.0,
-            "slope_crowd": 0.0,
+            "slope_user": 0.1479,
+            "slope_crowd": -1.795,
             "crowd_low_variance": true,
-            "slope_user_round1": 0.0
+            "slope_user_round1": 0.0595
           },
-          "sci_canakkale_bridge_span_m": {
+          "hyd_lake_superior_vol_km3": {
             "n": 16,
-            "slope_user": 0.0,
-            "slope_crowd": 0.0,
+            "slope_user": 0.0536,
+            "slope_crowd": -0.2861,
             "crowd_low_variance": true,
-            "slope_user_round1": 0.0
+            "slope_user_round1": 0.1948
           },
-          "sci_earth_mean_radius_km": {
-            "n": 16,
-            "slope_user": 0.0,
-            "slope_crowd": 0.0,
-            "crowd_low_variance": true,
-            "slope_user_round1": 0.0
-          },
-          "sci_earth_sidereal_day_s": {
-            "n": 16,
-            "slope_user": 0.0,
-            "slope_crowd": 0.0,
-            "crowd_low_variance": true,
-            "slope_user_round1": 0.0
-          },
-          "sci_hoover_dam_capacity_mw": {
+          "hyd_murray_darling_area_km2": {
             "n": 16,
             "slope_user": 0.0048,
-            "slope_crowd": 1.0592,
+            "slope_crowd": -0.1797,
             "crowd_low_variance": true,
-            "slope_user_round1": 0.0072
+            "slope_user_round1": 0.004
           },
-          "sci_kola_borehole_depth_m": {
+          "hyd_paijanne_tunnel_km": {
             "n": 16,
-            "slope_user": -0.0001,
-            "slope_crowd": 14.922,
+            "slope_user": 0.0288,
+            "slope_crowd": 0.3336,
             "crowd_low_variance": true,
-            "slope_user_round1": -0.0067
+            "slope_user_round1": 0.0405
           },
-          "sci_moon_mean_distance_km": {
+          "inf_elt_collecting_area_m2": {
             "n": 16,
-            "slope_user": 0.0,
-            "slope_crowd": 0.0,
+            "slope_user": -0.0007,
+            "slope_crowd": -3.0926,
             "crowd_low_variance": true,
-            "slope_user_round1": 0.0
+            "slope_user_round1": -0.0178
           },
-          "sci_prem_cmb_depth_km": {
+          "inf_gbt_height_m": {
             "n": 16,
-            "slope_user": 0.0166,
-            "slope_crowd": -0.5295,
+            "slope_user": 0.0742,
+            "slope_crowd": -0.4307,
             "crowd_low_variance": true,
-            "slope_user_round1": -0.0
+            "slope_user_round1": 0.1004
           },
-          "sci_rcrs_mtdna_bp": {
+          "inf_north_sea_link_km": {
             "n": 16,
-            "slope_user": 0.0,
-            "slope_crowd": 0.0,
+            "slope_user": 0.3753,
+            "slope_crowd": -4.1116,
             "crowd_low_variance": true,
-            "slope_user_round1": 0.0
+            "slope_user_round1": 0.3652
           },
-          "sci_solar_effective_temp_k": {
+          "inf_snolab_depth_m": {
             "n": 16,
-            "slope_user": 0.0004,
-            "slope_crowd": 0.0004,
+            "slope_user": 0.0365,
+            "slope_crowd": -0.1246,
             "crowd_low_variance": true,
-            "slope_user_round1": 0.0006
+            "slope_user_round1": 0.0252
           },
-          "sci_tungsten_melting_c": {
+          "mat_molybdenum_melting_c": {
+            "n": 16,
+            "slope_user": -0.0099,
+            "slope_crowd": 0.0623,
+            "crowd_low_variance": true,
+            "slope_user_round1": -0.0134
+          },
+          "nrg_france_nuclear_2022_twh": {
+            "n": 16,
+            "slope_user": 0.0974,
+            "slope_crowd": 1.4775,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.3259
+          },
+          "nrg_norway_hydro_2023_twh": {
+            "n": 16,
+            "slope_user": -0.0365,
+            "slope_crowd": -0.3872,
+            "crowd_low_variance": true,
+            "slope_user_round1": -0.0265
+          },
+          "nrg_us_hydro_2023_twh": {
+            "n": 16,
+            "slope_user": 0.1216,
+            "slope_crowd": -1.2511,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.0979
+          },
+          "nrg_us_nuclear_2023_twh": {
+            "n": 16,
+            "slope_user": -0.1924,
+            "slope_crowd": -0.1936,
+            "crowd_low_variance": true,
+            "slope_user_round1": -0.2497
+          },
+          "nrg_us_wind_2023_twh": {
+            "n": 16,
+            "slope_user": 0.4309,
+            "slope_crowd": -733.9781,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.13
+          },
+          "sci_lhc_dipole_magnets_count": {
             "n": 16,
             "slope_user": 0.0,
             "slope_crowd": 0.0,
@@ -306,255 +382,319 @@
           }
         },
         "slope_crowd": {
-          "mean": 1.2877,
+          "mean": -46.5023,
           "ci95": [
-            -0.0882,
-            3.8188
+            -138.4138,
+            -0.2052
           ],
-          "n_questions": 12
+          "n_questions": 16
         }
       },
       "P3": {
         "slope_user": {
-          "mean": 0.0132,
+          "mean": -0.0123,
           "ci95": [
-            -0.0011,
-            0.0395
+            -0.0919,
+            0.0616
           ],
-          "n_questions": 12
+          "n_questions": 16
         },
         "slope_user_round1": {
-          "mean": 0.0142,
+          "mean": -0.0122,
           "ci95": [
-            -0.0026,
-            0.0459
+            -0.0864,
+            0.059
           ],
-          "n_questions": 12
+          "n_questions": 16
         },
-        "n_observations": 192,
+        "n_observations": 256,
         "per_question": {
-          "sci_arecibo_diameter_m": {
+          "env_ipcc_1750_ch4_ppb": {
+            "n": 16,
+            "slope_user": 0.0024,
+            "slope_crowd": 0.4181,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.0094,
+            "slope_user_model_fe": -0.0383
+          },
+          "hyd_delaware_aqueduct_km": {
+            "n": 16,
+            "slope_user": -0.151,
+            "slope_crowd": 0.2307,
+            "crowd_low_variance": true,
+            "slope_user_round1": -0.2268,
+            "slope_user_model_fe": -0.091
+          },
+          "hyd_lake_superior_vol_km3": {
+            "n": 16,
+            "slope_user": -0.0498,
+            "slope_crowd": 1.7657,
+            "crowd_low_variance": true,
+            "slope_user_round1": -0.0736,
+            "slope_user_model_fe": -0.0311
+          },
+          "hyd_murray_darling_area_km2": {
+            "n": 16,
+            "slope_user": -0.0183,
+            "slope_crowd": -0.166,
+            "crowd_low_variance": true,
+            "slope_user_round1": -0.0136,
+            "slope_user_model_fe": 0.0071
+          },
+          "hyd_paijanne_tunnel_km": {
+            "n": 16,
+            "slope_user": -0.0173,
+            "slope_crowd": 0.4724,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.0499,
+            "slope_user_model_fe": 0.0391
+          },
+          "inf_elt_collecting_area_m2": {
+            "n": 16,
+            "slope_user": -0.0468,
+            "slope_crowd": 0.1366,
+            "crowd_low_variance": true,
+            "slope_user_round1": -0.0547,
+            "slope_user_model_fe": 0.0162
+          },
+          "inf_gbt_height_m": {
+            "n": 16,
+            "slope_user": -0.4402,
+            "slope_crowd": 0.1443,
+            "crowd_low_variance": true,
+            "slope_user_round1": -0.3557,
+            "slope_user_model_fe": -0.0825
+          },
+          "inf_north_sea_link_km": {
+            "n": 16,
+            "slope_user": 0.2425,
+            "slope_crowd": -1.1843,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.1754,
+            "slope_user_model_fe": 0.0568
+          },
+          "inf_snolab_depth_m": {
+            "n": 16,
+            "slope_user": -0.0249,
+            "slope_crowd": 0.0415,
+            "crowd_low_variance": true,
+            "slope_user_round1": -0.0252,
+            "slope_user_model_fe": -0.0125
+          },
+          "mat_molybdenum_melting_c": {
+            "n": 16,
+            "slope_user": 0.0002,
+            "slope_crowd": -0.0514,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.0002,
+            "slope_user_model_fe": 0.0093
+          },
+          "nrg_france_nuclear_2022_twh": {
+            "n": 16,
+            "slope_user": 0.0425,
+            "slope_crowd": -0.2458,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.0984,
+            "slope_user_model_fe": 0.0719
+          },
+          "nrg_norway_hydro_2023_twh": {
+            "n": 16,
+            "slope_user": -0.2124,
+            "slope_crowd": 1.1132,
+            "crowd_low_variance": true,
+            "slope_user_round1": -0.2072,
+            "slope_user_model_fe": -0.2073
+          },
+          "nrg_us_hydro_2023_twh": {
+            "n": 16,
+            "slope_user": 0.1504,
+            "slope_crowd": -0.6605,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.1563,
+            "slope_user_model_fe": 0.0448
+          },
+          "nrg_us_nuclear_2023_twh": {
+            "n": 16,
+            "slope_user": 0.1082,
+            "slope_crowd": -0.3427,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.0424,
+            "slope_user_model_fe": -0.0202
+          },
+          "nrg_us_wind_2023_twh": {
+            "n": 16,
+            "slope_user": 0.2182,
+            "slope_crowd": -1.0686,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.2298,
+            "slope_user_model_fe": -0.1468
+          },
+          "sci_lhc_dipole_magnets_count": {
             "n": 16,
             "slope_user": 0.0,
             "slope_crowd": 0.0,
             "crowd_low_variance": true,
             "slope_user_round1": 0.0,
             "slope_user_model_fe": 0.0
-          },
-          "sci_c14_half_life_yr": {
-            "n": 16,
-            "slope_user": -0.0058,
-            "slope_crowd": 0.0436,
-            "crowd_low_variance": true,
-            "slope_user_round1": -0.0086,
-            "slope_user_model_fe": -0.0063
-          },
-          "sci_canakkale_bridge_span_m": {
-            "n": 16,
-            "slope_user": 0.152,
-            "slope_crowd": -0.1507,
-            "crowd_low_variance": true,
-            "slope_user_round1": 0.1853,
-            "slope_user_model_fe": -0.0261
-          },
-          "sci_earth_mean_radius_km": {
-            "n": 16,
-            "slope_user": 0.0,
-            "slope_crowd": 0.0,
-            "crowd_low_variance": true,
-            "slope_user_round1": 0.0,
-            "slope_user_model_fe": 0.0
-          },
-          "sci_earth_sidereal_day_s": {
-            "n": 16,
-            "slope_user": 0.0,
-            "slope_crowd": -0.0,
-            "crowd_low_variance": true,
-            "slope_user_round1": 0.0,
-            "slope_user_model_fe": 0.0
-          },
-          "sci_hoover_dam_capacity_mw": {
-            "n": 16,
-            "slope_user": -0.0041,
-            "slope_crowd": 0.4641,
-            "crowd_low_variance": true,
-            "slope_user_round1": -0.0054,
-            "slope_user_model_fe": -0.0007
-          },
-          "sci_kola_borehole_depth_m": {
-            "n": 16,
-            "slope_user": 0.0039,
-            "slope_crowd": 0.1176,
-            "crowd_low_variance": true,
-            "slope_user_round1": -0.0005,
-            "slope_user_model_fe": 0.08
-          },
-          "sci_moon_mean_distance_km": {
-            "n": 16,
-            "slope_user": 0.0,
-            "slope_crowd": 0.0,
-            "crowd_low_variance": true,
-            "slope_user_round1": 0.0,
-            "slope_user_model_fe": 0.0
-          },
-          "sci_prem_cmb_depth_km": {
-            "n": 16,
-            "slope_user": -0.0001,
-            "slope_crowd": 0.0042,
-            "crowd_low_variance": true,
-            "slope_user_round1": -0.0001,
-            "slope_user_model_fe": -0.0008
-          },
-          "sci_rcrs_mtdna_bp": {
-            "n": 16,
-            "slope_user": 0.0,
-            "slope_crowd": 0.0,
-            "crowd_low_variance": true,
-            "slope_user_round1": 0.0,
-            "slope_user_model_fe": 0.0
-          },
-          "sci_solar_effective_temp_k": {
-            "n": 16,
-            "slope_user": 0.0,
-            "slope_crowd": -0.0,
-            "crowd_low_variance": true,
-            "slope_user_round1": 0.0001,
-            "slope_user_model_fe": -0.0001
-          },
-          "sci_tungsten_melting_c": {
-            "n": 16,
-            "slope_user": 0.0125,
-            "slope_crowd": -0.0535,
-            "crowd_low_variance": true,
-            "slope_user_round1": 0.0,
-            "slope_user_model_fe": -0.0165
           }
         },
         "slope_crowd": {
-          "mean": 0.0354,
+          "mean": 0.0377,
           "ci95": [
-            -0.0301,
-            0.1254
+            -0.3055,
+            0.394
           ],
-          "n_questions": 12
+          "n_questions": 16
         },
         "slope_user_model_fe": {
-          "mean": 0.0025,
+          "mean": -0.024,
           "ci95": [
-            -0.0084,
-            0.0184
+            -0.0608,
+            0.0099
           ],
-          "n_questions": 12
+          "n_questions": 16
         }
       },
       "P4": {
         "slope_user": {
-          "mean": 0.0102,
+          "mean": 0.0638,
           "ci95": [
-            -0.0009,
-            0.0309
+            -0.0063,
+            0.1651
           ],
-          "n_questions": 12
+          "n_questions": 16
         },
         "slope_user_round1": {
-          "mean": 0.0163,
+          "mean": 0.048,
           "ci95": [
-            -0.0014,
-            0.0506
+            -0.0171,
+            0.1455
           ],
-          "n_questions": 12
+          "n_questions": 16
         },
-        "n_observations": 192,
+        "n_observations": 256,
         "per_question": {
-          "sci_arecibo_diameter_m": {
+          "env_ipcc_1750_ch4_ppb": {
             "n": 16,
-            "slope_user": 0.0,
-            "slope_crowd": 0.0,
+            "slope_user": 0.0008,
+            "slope_crowd": 0.8734,
             "crowd_low_variance": true,
-            "slope_user_round1": 0.0,
-            "slope_user_model_fe": 0.0
+            "slope_user_round1": -0.0003,
+            "slope_user_model_fe": -0.0229
           },
-          "sci_c14_half_life_yr": {
+          "hyd_delaware_aqueduct_km": {
             "n": 16,
-            "slope_user": -0.0007,
-            "slope_crowd": -0.0055,
+            "slope_user": 0.05,
+            "slope_crowd": -0.2506,
             "crowd_low_variance": true,
-            "slope_user_round1": 0.0,
-            "slope_user_model_fe": -0.0003
+            "slope_user_round1": 0.0228,
+            "slope_user_model_fe": 0.0812
           },
-          "sci_canakkale_bridge_span_m": {
+          "hyd_lake_superior_vol_km3": {
             "n": 16,
-            "slope_user": -0.0019,
-            "slope_crowd": 0.0025,
+            "slope_user": -0.0296,
+            "slope_crowd": 0.0091,
             "crowd_low_variance": true,
-            "slope_user_round1": -0.0018,
-            "slope_user_model_fe": -0.0009
+            "slope_user_round1": -0.0812,
+            "slope_user_model_fe": 0.021
           },
-          "sci_earth_mean_radius_km": {
+          "hyd_murray_darling_area_km2": {
             "n": 16,
-            "slope_user": 0.0,
-            "slope_crowd": -0.0002,
+            "slope_user": -0.006,
+            "slope_crowd": -0.1788,
             "crowd_low_variance": true,
-            "slope_user_round1": 0.0,
-            "slope_user_model_fe": 0.0
+            "slope_user_round1": 0.0004,
+            "slope_user_model_fe": 0.0117
           },
-          "sci_earth_sidereal_day_s": {
+          "hyd_paijanne_tunnel_km": {
             "n": 16,
-            "slope_user": 0.0,
-            "slope_crowd": 0.0,
+            "slope_user": -0.0426,
+            "slope_crowd": -0.1574,
             "crowd_low_variance": true,
-            "slope_user_round1": 0.0,
-            "slope_user_model_fe": -0.0
+            "slope_user_round1": -0.0332,
+            "slope_user_model_fe": 0.0175
           },
-          "sci_hoover_dam_capacity_mw": {
+          "inf_elt_collecting_area_m2": {
             "n": 16,
-            "slope_user": 0.1207,
-            "slope_crowd": -13.5104,
+            "slope_user": -0.0476,
+            "slope_crowd": 2.2307,
             "crowd_low_variance": true,
-            "slope_user_round1": 0.2026,
-            "slope_user_model_fe": 0.1324
+            "slope_user_round1": -0.046,
+            "slope_user_model_fe": 0.0559
           },
-          "sci_kola_borehole_depth_m": {
+          "inf_gbt_height_m": {
             "n": 16,
-            "slope_user": -0.0037,
-            "slope_crowd": 0.4643,
+            "slope_user": 0.7416,
+            "slope_crowd": -0.7822,
             "crowd_low_variance": true,
-            "slope_user_round1": -0.0054,
-            "slope_user_model_fe": 0.0301
+            "slope_user_round1": 0.6743,
+            "slope_user_model_fe": -0.1549
           },
-          "sci_moon_mean_distance_km": {
+          "inf_north_sea_link_km": {
             "n": 16,
-            "slope_user": -0.0001,
-            "slope_crowd": 0.0001,
+            "slope_user": 0.2441,
+            "slope_crowd": 0.3763,
             "crowd_low_variance": true,
-            "slope_user_round1": -0.0002,
-            "slope_user_model_fe": -0.0002
+            "slope_user_round1": 0.2386,
+            "slope_user_model_fe": -0.0437
           },
-          "sci_prem_cmb_depth_km": {
+          "inf_snolab_depth_m": {
             "n": 16,
-            "slope_user": 0.0086,
-            "slope_crowd": -0.2246,
+            "slope_user": 0.0141,
+            "slope_crowd": -0.7842,
             "crowd_low_variance": true,
-            "slope_user_round1": 0.001,
-            "slope_user_model_fe": 0.032
+            "slope_user_round1": 0.0458,
+            "slope_user_model_fe": 0.6182
           },
-          "sci_rcrs_mtdna_bp": {
+          "mat_molybdenum_melting_c": {
             "n": 16,
-            "slope_user": 0.0,
-            "slope_crowd": 0.0,
+            "slope_user": -0.0123,
+            "slope_crowd": -0.0329,
             "crowd_low_variance": true,
-            "slope_user_round1": 0.0,
-            "slope_user_model_fe": 0.0
+            "slope_user_round1": -0.0167,
+            "slope_user_model_fe": -0.0131
           },
-          "sci_solar_effective_temp_k": {
+          "nrg_france_nuclear_2022_twh": {
             "n": 16,
-            "slope_user": 0.0001,
-            "slope_crowd": -0.0007,
+            "slope_user": -0.016,
+            "slope_crowd": -3.524,
             "crowd_low_variance": true,
-            "slope_user_round1": 0.0,
-            "slope_user_model_fe": 0.0001
+            "slope_user_round1": 0.0172,
+            "slope_user_model_fe": 0.1573
           },
-          "sci_tungsten_melting_c": {
+          "nrg_norway_hydro_2023_twh": {
+            "n": 16,
+            "slope_user": 0.0021,
+            "slope_crowd": 0.1395,
+            "crowd_low_variance": true,
+            "slope_user_round1": -0.0587,
+            "slope_user_model_fe": 0.0131
+          },
+          "nrg_us_hydro_2023_twh": {
+            "n": 16,
+            "slope_user": 0.0164,
+            "slope_crowd": -0.8289,
+            "crowd_low_variance": true,
+            "slope_user_round1": -0.0281,
+            "slope_user_model_fe": 0.0629
+          },
+          "nrg_us_nuclear_2023_twh": {
+            "n": 16,
+            "slope_user": 0.0239,
+            "slope_crowd": -0.2092,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.0142,
+            "slope_user_model_fe": 0.0038
+          },
+          "nrg_us_wind_2023_twh": {
+            "n": 16,
+            "slope_user": 0.082,
+            "slope_crowd": -0.5265,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.0194,
+            "slope_user_model_fe": -0.3005
+          },
+          "sci_lhc_dipole_magnets_count": {
             "n": 16,
             "slope_user": 0.0,
             "slope_crowd": 0.0,
@@ -564,124 +704,159 @@
           }
         },
         "slope_crowd": {
-          "mean": -1.1062,
+          "mean": -0.2279,
           "ci95": [
-            -3.3966,
-            0.0782
+            -0.7973,
+            0.3006
           ],
-          "n_questions": 12
+          "n_questions": 16
         },
         "slope_user_model_fe": {
-          "mean": 0.0161,
+          "mean": 0.0317,
           "ci95": [
-            -0.0001,
-            0.0409
+            -0.0432,
+            0.1317
           ],
-          "n_questions": 12
+          "n_questions": 16
         }
       }
     },
     "crowd_pull_vs_c1_r1": {
       "P1": {
-        "slope": 0.0144,
-        "intercept": -0.0017,
-        "n_questions": 12
+        "slope": 0.4489,
+        "intercept": 0.0584,
+        "n_questions": 16
       },
       "P2": {
-        "slope": 0.0142,
-        "intercept": -0.0019,
-        "n_questions": 12
+        "slope": -0.0254,
+        "intercept": 0.0156,
+        "n_questions": 16
       }
     }
   },
   "by_stratum": {
     "control": {
       "questions": [
-        "sci_c14_half_life_yr",
-        "sci_earth_mean_radius_km",
-        "sci_moon_mean_distance_km",
-        "sci_solar_effective_temp_k"
+        "hyd_lake_superior_vol_km3",
+        "inf_north_sea_link_km",
+        "inf_snolab_depth_m",
+        "nrg_us_nuclear_2023_twh"
       ],
       "by_condition_final": {
         "P0": {
           "n_cells": 4,
-          "crowd_error": 0.015183,
-          "avg_individual_error": 0.023393,
-          "diversity": 0.00821,
+          "crowd_error": 0.021152,
+          "avg_individual_error": 0.039468,
+          "diversity": 0.018316,
           "between_model_diversity": 0.0,
-          "within_model_diversity": 0.00821,
+          "within_model_diversity": 0.018316,
           "excess_between_model_diversity": 0.0,
           "between_share": 0.0,
-          "iqr": 0.095498,
+          "iqr": 0.143923,
           "miss_rate": 0.0,
-          "evrr": 0.999807,
+          "evrr": 1.707868,
           "evrr_between": 0.0,
-          "evrr_within": 0.999807,
-          "evrr_cumulative": 0.999807
+          "evrr_within": 1.707868,
+          "evrr_cumulative": 3.105188,
+          "assistant_crowd_error": 0.013486,
+          "assistant_avg_individual_error": 0.030881,
+          "assistant_diversity": 0.017396,
+          "assistant_between_model_diversity": 0.0,
+          "assistant_within_model_diversity": 0.017396,
+          "assistant_excess_between_model_diversity": 0.0,
+          "assistant_between_share": 0.0
         },
         "P1": {
           "n_cells": 4,
-          "crowd_error": 0.015184,
-          "avg_individual_error": 0.023396,
-          "diversity": 0.008212,
+          "crowd_error": 0.035119,
+          "avg_individual_error": 0.042508,
+          "diversity": 0.007389,
           "between_model_diversity": 0.0,
-          "within_model_diversity": 0.008212,
+          "within_model_diversity": 0.007389,
           "excess_between_model_diversity": 0.0,
           "between_share": 0.0,
-          "iqr": 0.095506,
+          "iqr": 0.104239,
           "miss_rate": 0.0,
-          "evrr": 1.000042,
+          "evrr": 1.209897,
           "evrr_between": 0.0,
-          "evrr_within": 1.000042,
-          "evrr_cumulative": 1.000026
+          "evrr_within": 1.209897,
+          "evrr_cumulative": 1.384129,
+          "assistant_crowd_error": 0.02836,
+          "assistant_avg_individual_error": 0.033463,
+          "assistant_diversity": 0.005103,
+          "assistant_between_model_diversity": 0.0,
+          "assistant_within_model_diversity": 0.005103,
+          "assistant_excess_between_model_diversity": 0.0,
+          "assistant_between_share": 0.0
         },
         "P2": {
           "n_cells": 4,
-          "crowd_error": 0.015184,
-          "avg_individual_error": 0.023397,
-          "diversity": 0.008213,
+          "crowd_error": 0.014186,
+          "avg_individual_error": 0.022508,
+          "diversity": 0.008322,
           "between_model_diversity": 0.0,
-          "within_model_diversity": 0.008213,
+          "within_model_diversity": 0.008322,
           "excess_between_model_diversity": 0.0,
           "between_share": 0.0,
-          "iqr": 0.095479,
+          "iqr": 0.111841,
           "miss_rate": 0.0,
-          "evrr": 0.999978,
+          "evrr": 1.210106,
           "evrr_between": 0.0,
-          "evrr_within": 0.999978,
-          "evrr_cumulative": 1.00011
+          "evrr_within": 1.210106,
+          "evrr_cumulative": 1.61086,
+          "assistant_crowd_error": 0.00523,
+          "assistant_avg_individual_error": 0.011655,
+          "assistant_diversity": 0.006425,
+          "assistant_between_model_diversity": 0.0,
+          "assistant_within_model_diversity": 0.006425,
+          "assistant_excess_between_model_diversity": 0.0,
+          "assistant_between_share": 0.0
         },
         "P3": {
           "n_cells": 4,
-          "crowd_error": 0.0152,
-          "avg_individual_error": 0.023389,
-          "diversity": 0.008189,
-          "between_model_diversity": 0.004407,
-          "within_model_diversity": 0.003782,
-          "excess_between_model_diversity": 0.001571,
-          "between_share": 0.520134,
-          "iqr": 0.095498,
+          "crowd_error": 0.012884,
+          "avg_individual_error": 0.020635,
+          "diversity": 0.007751,
+          "between_model_diversity": 0.004627,
+          "within_model_diversity": 0.003124,
+          "excess_between_model_diversity": 0.002284,
+          "between_share": 0.624329,
+          "iqr": 0.103975,
           "miss_rate": 0.0,
-          "evrr": 0.999999,
-          "evrr_between": 0.520133,
-          "evrr_within": 0.479865,
-          "evrr_cumulative": 0.998193
+          "evrr": 1.326432,
+          "evrr_between": 0.828755,
+          "evrr_within": 0.497677,
+          "evrr_cumulative": 1.528781,
+          "assistant_crowd_error": 0.002856,
+          "assistant_avg_individual_error": 0.007691,
+          "assistant_diversity": 0.004834,
+          "assistant_between_model_diversity": 0.004338,
+          "assistant_within_model_diversity": 0.000497,
+          "assistant_excess_between_model_diversity": 0.003965,
+          "assistant_between_share": 0.818494
         },
         "P4": {
           "n_cells": 4,
-          "crowd_error": 0.015188,
-          "avg_individual_error": 0.023395,
-          "diversity": 0.008206,
-          "between_model_diversity": 0.004418,
-          "within_model_diversity": 0.003788,
-          "excess_between_model_diversity": 0.001577,
-          "between_share": 0.52015,
-          "iqr": 0.095541,
+          "crowd_error": 0.009991,
+          "avg_individual_error": 0.018024,
+          "diversity": 0.008033,
+          "between_model_diversity": 0.003227,
+          "within_model_diversity": 0.004806,
+          "excess_between_model_diversity": -0.000377,
+          "between_share": 0.403038,
+          "iqr": 0.11309,
           "miss_rate": 0.0,
-          "evrr": 0.999582,
-          "evrr_between": 0.519871,
-          "evrr_within": 0.479711,
-          "evrr_cumulative": 0.999541
+          "evrr": 1.405416,
+          "evrr_between": 0.560977,
+          "evrr_within": 0.844439,
+          "evrr_cumulative": 1.582023,
+          "assistant_crowd_error": 0.002079,
+          "assistant_avg_individual_error": 0.012149,
+          "assistant_diversity": 0.01007,
+          "assistant_between_model_diversity": 0.004876,
+          "assistant_within_model_diversity": 0.005194,
+          "assistant_excess_between_model_diversity": 0.000981,
+          "assistant_between_share": 0.622676
         }
       },
       "h4_slopes": {
@@ -690,293 +865,293 @@
         "by_condition": {
           "P0": {
             "slope_user": {
-              "mean": -0.0001,
+              "mean": 0.3158,
               "ci95": [
-                -0.0002,
-                0.0
+                0.0112,
+                0.6204
               ],
               "n_questions": 4
             },
             "slope_user_round1": {
-              "mean": 0.0,
+              "mean": 0.2653,
               "ci95": [
-                0.0,
-                0.0
+                0.0207,
+                0.5098
               ],
               "n_questions": 4
             },
             "n_observations": 64,
             "per_question": {
-              "sci_c14_half_life_yr": {
+              "hyd_lake_superior_vol_km3": {
                 "n": 16,
-                "slope_user": 0.0,
-                "slope_user_round1": 0.0
+                "slope_user": 0.7309,
+                "slope_user_round1": 0.544
               },
-              "sci_earth_mean_radius_km": {
+              "inf_north_sea_link_km": {
                 "n": 16,
-                "slope_user": 0.0,
-                "slope_user_round1": 0.0
+                "slope_user": 0.51,
+                "slope_user_round1": 0.4756
               },
-              "sci_moon_mean_distance_km": {
+              "inf_snolab_depth_m": {
                 "n": 16,
-                "slope_user": 0.0,
-                "slope_user_round1": 0.0
+                "slope_user": 0.0035,
+                "slope_user_round1": -0.0006
               },
-              "sci_solar_effective_temp_k": {
+              "nrg_us_nuclear_2023_twh": {
                 "n": 16,
-                "slope_user": -0.0003,
-                "slope_user_round1": 0.0
+                "slope_user": 0.0189,
+                "slope_user_round1": 0.042
               }
             }
           },
           "P1": {
             "slope_user": {
-              "mean": 0.0,
+              "mean": 0.0417,
               "ci95": [
-                0.0,
-                0.0
+                -0.0803,
+                0.2012
               ],
               "n_questions": 4
             },
             "slope_user_round1": {
-              "mean": -0.0,
+              "mean": 0.0648,
               "ci95": [
-                -0.0001,
-                0.0
+                -0.1236,
+                0.3286
               ],
               "n_questions": 4
             },
             "n_observations": 64,
             "per_question": {
-              "sci_c14_half_life_yr": {
+              "hyd_lake_superior_vol_km3": {
                 "n": 16,
-                "slope_user": 0.0,
-                "slope_crowd": 0.0,
+                "slope_user": 0.2759,
+                "slope_crowd": 13.7714,
                 "crowd_low_variance": true,
-                "slope_user_round1": 0.0
+                "slope_user_round1": 0.4423
               },
-              "sci_earth_mean_radius_km": {
+              "inf_north_sea_link_km": {
                 "n": 16,
-                "slope_user": 0.0,
-                "slope_crowd": 0.0,
+                "slope_user": -0.1175,
+                "slope_crowd": -156.5896,
                 "crowd_low_variance": true,
-                "slope_user_round1": 0.0
+                "slope_user_round1": -0.162
               },
-              "sci_moon_mean_distance_km": {
+              "inf_snolab_depth_m": {
                 "n": 16,
-                "slope_user": 0.0,
-                "slope_crowd": 0.0,
+                "slope_user": 0.0315,
+                "slope_crowd": -0.3749,
                 "crowd_low_variance": true,
-                "slope_user_round1": 0.0
+                "slope_user_round1": -0.0126
               },
-              "sci_solar_effective_temp_k": {
+              "nrg_us_nuclear_2023_twh": {
                 "n": 16,
-                "slope_user": 0.0,
-                "slope_crowd": -0.0008,
+                "slope_user": -0.0229,
+                "slope_crowd": -0.8644,
                 "crowd_low_variance": true,
-                "slope_user_round1": -0.0001
+                "slope_user_round1": -0.0083
               }
             },
             "slope_crowd": {
-              "mean": -0.0002,
+              "mean": -36.0144,
               "ci95": [
-                -0.0006,
-                0.0
+                -117.5359,
+                10.1125
               ],
               "n_questions": 4
             }
           },
           "P2": {
             "slope_user": {
-              "mean": 0.0001,
+              "mean": 0.0682,
               "ci95": [
-                0.0,
-                0.0003
+                -0.1309,
+                0.2906
               ],
               "n_questions": 4
             },
             "slope_user_round1": {
-              "mean": 0.0002,
+              "mean": 0.0839,
               "ci95": [
-                0.0,
-                0.0005
+                -0.1386,
+                0.2802
               ],
               "n_questions": 4
             },
             "n_observations": 64,
             "per_question": {
-              "sci_c14_half_life_yr": {
+              "hyd_lake_superior_vol_km3": {
                 "n": 16,
-                "slope_user": 0.0,
-                "slope_crowd": 0.0,
+                "slope_user": 0.0536,
+                "slope_crowd": -0.2861,
                 "crowd_low_variance": true,
-                "slope_user_round1": 0.0
+                "slope_user_round1": 0.1948
               },
-              "sci_earth_mean_radius_km": {
+              "inf_north_sea_link_km": {
                 "n": 16,
-                "slope_user": 0.0,
-                "slope_crowd": 0.0,
+                "slope_user": 0.3753,
+                "slope_crowd": -4.1116,
                 "crowd_low_variance": true,
-                "slope_user_round1": 0.0
+                "slope_user_round1": 0.3652
               },
-              "sci_moon_mean_distance_km": {
+              "inf_snolab_depth_m": {
                 "n": 16,
-                "slope_user": 0.0,
-                "slope_crowd": 0.0,
+                "slope_user": 0.0365,
+                "slope_crowd": -0.1246,
                 "crowd_low_variance": true,
-                "slope_user_round1": 0.0
+                "slope_user_round1": 0.0252
               },
-              "sci_solar_effective_temp_k": {
+              "nrg_us_nuclear_2023_twh": {
                 "n": 16,
-                "slope_user": 0.0004,
-                "slope_crowd": 0.0004,
+                "slope_user": -0.1924,
+                "slope_crowd": -0.1936,
                 "crowd_low_variance": true,
-                "slope_user_round1": 0.0006
+                "slope_user_round1": -0.2497
               }
             },
             "slope_crowd": {
-              "mean": 0.0001,
+              "mean": -1.179,
               "ci95": [
-                0.0,
-                0.0003
+                -3.1321,
+                -0.1591
               ],
               "n_questions": 4
             }
           },
           "P3": {
             "slope_user": {
-              "mean": -0.0014,
+              "mean": 0.069,
               "ci95": [
-                -0.0043,
-                0.0
+                -0.0374,
+                0.1756
               ],
               "n_questions": 4
             },
             "slope_user_round1": {
-              "mean": -0.0021,
+              "mean": 0.0298,
               "ci95": [
-                -0.0064,
-                0.0001
+                -0.0615,
+                0.1253
               ],
               "n_questions": 4
             },
             "n_observations": 64,
             "per_question": {
-              "sci_c14_half_life_yr": {
+              "hyd_lake_superior_vol_km3": {
                 "n": 16,
-                "slope_user": -0.0058,
-                "slope_crowd": 0.0436,
+                "slope_user": -0.0498,
+                "slope_crowd": 1.7657,
                 "crowd_low_variance": true,
-                "slope_user_round1": -0.0086,
-                "slope_user_model_fe": -0.0063
+                "slope_user_round1": -0.0736,
+                "slope_user_model_fe": -0.0311
               },
-              "sci_earth_mean_radius_km": {
+              "inf_north_sea_link_km": {
                 "n": 16,
-                "slope_user": 0.0,
-                "slope_crowd": 0.0,
+                "slope_user": 0.2425,
+                "slope_crowd": -1.1843,
                 "crowd_low_variance": true,
-                "slope_user_round1": 0.0,
-                "slope_user_model_fe": 0.0
+                "slope_user_round1": 0.1754,
+                "slope_user_model_fe": 0.0568
               },
-              "sci_moon_mean_distance_km": {
+              "inf_snolab_depth_m": {
                 "n": 16,
-                "slope_user": 0.0,
-                "slope_crowd": 0.0,
+                "slope_user": -0.0249,
+                "slope_crowd": 0.0415,
                 "crowd_low_variance": true,
-                "slope_user_round1": 0.0,
-                "slope_user_model_fe": 0.0
+                "slope_user_round1": -0.0252,
+                "slope_user_model_fe": -0.0125
               },
-              "sci_solar_effective_temp_k": {
+              "nrg_us_nuclear_2023_twh": {
                 "n": 16,
-                "slope_user": 0.0,
-                "slope_crowd": -0.0,
+                "slope_user": 0.1082,
+                "slope_crowd": -0.3427,
                 "crowd_low_variance": true,
-                "slope_user_round1": 0.0001,
-                "slope_user_model_fe": -0.0001
+                "slope_user_round1": 0.0424,
+                "slope_user_model_fe": -0.0202
               }
             },
             "slope_crowd": {
-              "mean": 0.0109,
+              "mean": 0.0701,
               "ci95": [
-                -0.0,
-                0.0327
+                -0.8778,
+                1.2386
               ],
               "n_questions": 4
             },
             "slope_user_model_fe": {
-              "mean": -0.0016,
+              "mean": -0.0018,
               "ci95": [
-                -0.0047,
-                0.0
+                -0.0265,
+                0.0375
               ],
               "n_questions": 4
             }
           },
           "P4": {
             "slope_user": {
-              "mean": -0.0002,
+              "mean": 0.0631,
               "ci95": [
-                -0.0005,
-                0.0
+                -0.0162,
+                0.1866
               ],
               "n_questions": 4
             },
             "slope_user_round1": {
-              "mean": -0.0,
+              "mean": 0.0543,
               "ci95": [
-                -0.0002,
-                0.0
+                -0.0495,
+                0.1825
               ],
               "n_questions": 4
             },
             "n_observations": 64,
             "per_question": {
-              "sci_c14_half_life_yr": {
+              "hyd_lake_superior_vol_km3": {
                 "n": 16,
-                "slope_user": -0.0007,
-                "slope_crowd": -0.0055,
+                "slope_user": -0.0296,
+                "slope_crowd": 0.0091,
                 "crowd_low_variance": true,
-                "slope_user_round1": 0.0,
-                "slope_user_model_fe": -0.0003
+                "slope_user_round1": -0.0812,
+                "slope_user_model_fe": 0.021
               },
-              "sci_earth_mean_radius_km": {
+              "inf_north_sea_link_km": {
                 "n": 16,
-                "slope_user": 0.0,
-                "slope_crowd": -0.0002,
+                "slope_user": 0.2441,
+                "slope_crowd": 0.3763,
                 "crowd_low_variance": true,
-                "slope_user_round1": 0.0,
-                "slope_user_model_fe": 0.0
+                "slope_user_round1": 0.2386,
+                "slope_user_model_fe": -0.0437
               },
-              "sci_moon_mean_distance_km": {
+              "inf_snolab_depth_m": {
                 "n": 16,
-                "slope_user": -0.0001,
-                "slope_crowd": 0.0001,
+                "slope_user": 0.0141,
+                "slope_crowd": -0.7842,
                 "crowd_low_variance": true,
-                "slope_user_round1": -0.0002,
-                "slope_user_model_fe": -0.0002
+                "slope_user_round1": 0.0458,
+                "slope_user_model_fe": 0.6182
               },
-              "sci_solar_effective_temp_k": {
+              "nrg_us_nuclear_2023_twh": {
                 "n": 16,
-                "slope_user": 0.0001,
-                "slope_crowd": -0.0007,
+                "slope_user": 0.0239,
+                "slope_crowd": -0.2092,
                 "crowd_low_variance": true,
-                "slope_user_round1": 0.0,
-                "slope_user_model_fe": 0.0001
+                "slope_user_round1": 0.0142,
+                "slope_user_model_fe": 0.0038
               }
             },
             "slope_crowd": {
-              "mean": -0.0015,
+              "mean": -0.152,
               "ci95": [
-                -0.0041,
-                -0.0
+                -0.5858,
+                0.2299
               ],
               "n_questions": 4
             },
             "slope_user_model_fe": {
-              "mean": -0.0001,
+              "mean": 0.1498,
               "ci95": [
-                -0.0003,
-                0.0
+                -0.0275,
+                0.4646
               ],
               "n_questions": 4
             }
@@ -984,13 +1159,13 @@
         },
         "crowd_pull_vs_c1_r1": {
           "P1": {
-            "slope": 0.0001,
-            "intercept": 0.0,
+            "slope": 0.3094,
+            "intercept": -0.0126,
             "n_questions": 4
           },
           "P2": {
-            "slope": 0.0001,
-            "intercept": 0.0,
+            "slope": -0.1686,
+            "intercept": 0.0119,
             "n_questions": 4
           }
         }
@@ -998,91 +1173,128 @@
     },
     "high_spread": {
       "questions": [
-        "sci_arecibo_diameter_m",
-        "sci_hoover_dam_capacity_mw",
-        "sci_kola_borehole_depth_m",
-        "sci_rcrs_mtdna_bp"
+        "hyd_delaware_aqueduct_km",
+        "hyd_paijanne_tunnel_km",
+        "inf_gbt_height_m",
+        "nrg_france_nuclear_2022_twh",
+        "nrg_us_hydro_2023_twh",
+        "sci_lhc_dipole_magnets_count"
       ],
       "by_condition_final": {
         "P0": {
-          "n_cells": 4,
-          "crowd_error": 0.004647,
-          "avg_individual_error": 0.014825,
-          "diversity": 0.010178,
+          "n_cells": 6,
+          "crowd_error": 0.011341,
+          "avg_individual_error": 0.03545,
+          "diversity": 0.024109,
           "between_model_diversity": 0.0,
-          "within_model_diversity": 0.010178,
+          "within_model_diversity": 0.024109,
           "excess_between_model_diversity": 0.0,
           "between_share": 0.0,
-          "iqr": 0.105137,
+          "iqr": 0.200348,
           "miss_rate": 0.0,
-          "evrr": 1.06885,
+          "evrr": 1.538304,
           "evrr_between": 0.0,
-          "evrr_within": 1.06885,
-          "evrr_cumulative": 1.100924
+          "evrr_within": 1.538304,
+          "evrr_cumulative": 2.436591,
+          "assistant_crowd_error": 0.015282,
+          "assistant_avg_individual_error": 0.040986,
+          "assistant_diversity": 0.025705,
+          "assistant_between_model_diversity": 0.0,
+          "assistant_within_model_diversity": 0.025705,
+          "assistant_excess_between_model_diversity": 0.0,
+          "assistant_between_share": 0.0
         },
         "P1": {
-          "n_cells": 4,
-          "crowd_error": 0.005286,
-          "avg_individual_error": 0.014524,
-          "diversity": 0.009238,
+          "n_cells": 6,
+          "crowd_error": 0.021568,
+          "avg_individual_error": 0.033791,
+          "diversity": 0.012222,
           "between_model_diversity": 0.0,
-          "within_model_diversity": 0.009238,
+          "within_model_diversity": 0.012222,
           "excess_between_model_diversity": 0.0,
           "between_share": 0.0,
-          "iqr": 0.096626,
+          "iqr": 0.131765,
           "miss_rate": 0.0,
-          "evrr": 0.997574,
+          "evrr": 1.100581,
           "evrr_between": 0.0,
-          "evrr_within": 0.997574,
-          "evrr_cumulative": 0.997378
+          "evrr_within": 1.100581,
+          "evrr_cumulative": 1.325059,
+          "assistant_crowd_error": 0.014296,
+          "assistant_avg_individual_error": 0.017427,
+          "assistant_diversity": 0.003131,
+          "assistant_between_model_diversity": 0.0,
+          "assistant_within_model_diversity": 0.003131,
+          "assistant_excess_between_model_diversity": 0.0,
+          "assistant_between_share": 0.0
         },
         "P2": {
-          "n_cells": 4,
-          "crowd_error": 0.005037,
-          "avg_individual_error": 0.014453,
-          "diversity": 0.009416,
+          "n_cells": 6,
+          "crowd_error": 0.013777,
+          "avg_individual_error": 0.029792,
+          "diversity": 0.016015,
           "between_model_diversity": 0.0,
-          "within_model_diversity": 0.009416,
+          "within_model_diversity": 0.016015,
           "excess_between_model_diversity": 0.0,
           "between_share": 0.0,
-          "iqr": 0.106054,
+          "iqr": 0.122374,
           "miss_rate": 0.0,
-          "evrr": 1.006646,
+          "evrr": 1.275384,
           "evrr_between": 0.0,
-          "evrr_within": 1.006646,
-          "evrr_cumulative": 1.010693
+          "evrr_within": 1.275384,
+          "evrr_cumulative": 1.517346,
+          "assistant_crowd_error": 0.031231,
+          "assistant_avg_individual_error": 0.052533,
+          "assistant_diversity": 0.021302,
+          "assistant_between_model_diversity": 0.0,
+          "assistant_within_model_diversity": 0.021302,
+          "assistant_excess_between_model_diversity": 0.0,
+          "assistant_between_share": 0.0
         },
         "P3": {
-          "n_cells": 4,
-          "crowd_error": 0.004773,
-          "avg_individual_error": 0.014147,
-          "diversity": 0.009375,
-          "between_model_diversity": 0.003275,
-          "within_model_diversity": 0.006099,
-          "excess_between_model_diversity": -0.001299,
-          "between_share": 0.317888,
-          "iqr": 0.104489,
+          "n_cells": 6,
+          "crowd_error": 0.009674,
+          "avg_individual_error": 0.019435,
+          "diversity": 0.009761,
+          "between_model_diversity": 0.003557,
+          "within_model_diversity": 0.006204,
+          "excess_between_model_diversity": -0.001097,
+          "between_share": 0.361047,
+          "iqr": 0.110513,
           "miss_rate": 0.0,
-          "evrr": 1.005818,
-          "evrr_between": 0.320279,
-          "evrr_within": 0.685539,
-          "evrr_cumulative": 1.006371
+          "evrr": 1.017253,
+          "evrr_between": 0.360172,
+          "evrr_within": 0.657081,
+          "evrr_cumulative": 1.063252,
+          "assistant_crowd_error": 0.001819,
+          "assistant_avg_individual_error": 0.013202,
+          "assistant_diversity": 0.011383,
+          "assistant_between_model_diversity": 0.007746,
+          "assistant_within_model_diversity": 0.003637,
+          "assistant_excess_between_model_diversity": 0.005018,
+          "assistant_between_share": 0.481091
         },
         "P4": {
-          "n_cells": 4,
-          "crowd_error": 0.004523,
-          "avg_individual_error": 0.014204,
-          "diversity": 0.009681,
-          "between_model_diversity": 0.003391,
-          "within_model_diversity": 0.006291,
-          "excess_between_model_diversity": -0.001327,
-          "between_share": 0.326495,
-          "iqr": 0.100406,
+          "n_cells": 6,
+          "crowd_error": 0.007641,
+          "avg_individual_error": 0.030321,
+          "diversity": 0.022679,
+          "between_model_diversity": 0.01615,
+          "within_model_diversity": 0.006529,
+          "excess_between_model_diversity": 0.011254,
+          "between_share": 0.393823,
+          "iqr": 0.138097,
           "miss_rate": 0.0,
-          "evrr": 0.99596,
-          "evrr_between": 0.326123,
-          "evrr_within": 0.669837,
-          "evrr_cumulative": 1.044878
+          "evrr": 1.378298,
+          "evrr_between": 0.682985,
+          "evrr_within": 0.695313,
+          "evrr_cumulative": 2.002126,
+          "assistant_crowd_error": 0.013363,
+          "assistant_avg_individual_error": 0.035607,
+          "assistant_diversity": 0.022244,
+          "assistant_between_model_diversity": 0.019306,
+          "assistant_within_model_diversity": 0.002938,
+          "assistant_excess_between_model_diversity": 0.017102,
+          "assistant_between_share": 0.521636
         }
       },
       "h4_slopes": {
@@ -1091,39 +1303,49 @@
         "by_condition": {
           "P0": {
             "slope_user": {
-              "mean": 0.0376,
+              "mean": 0.148,
               "ci95": [
-                -0.0061,
-                0.1189
+                -0.0611,
+                0.4722
               ],
-              "n_questions": 4
+              "n_questions": 6
             },
             "slope_user_round1": {
-              "mean": 0.0256,
+              "mean": 0.1589,
               "ci95": [
-                0.0,
-                0.0768
+                -0.0385,
+                0.4778
               ],
-              "n_questions": 4
+              "n_questions": 6
             },
-            "n_observations": 64,
+            "n_observations": 96,
             "per_question": {
-              "sci_arecibo_diameter_m": {
+              "hyd_delaware_aqueduct_km": {
+                "n": 16,
+                "slope_user": 0.1511,
+                "slope_user_round1": 0.1282
+              },
+              "hyd_paijanne_tunnel_km": {
                 "n": 16,
                 "slope_user": 0.0,
                 "slope_user_round1": 0.0
               },
-              "sci_hoover_dam_capacity_mw": {
+              "inf_gbt_height_m": {
                 "n": 16,
-                "slope_user": 0.1585,
-                "slope_user_round1": 0.1024
+                "slope_user": -0.1443,
+                "slope_user_round1": -0.0161
               },
-              "sci_kola_borehole_depth_m": {
+              "nrg_france_nuclear_2022_twh": {
                 "n": 16,
-                "slope_user": -0.0081,
-                "slope_user_round1": 0.0
+                "slope_user": -0.0391,
+                "slope_user_round1": -0.1074
               },
-              "sci_rcrs_mtdna_bp": {
+              "nrg_us_hydro_2023_twh": {
+                "n": 16,
+                "slope_user": 0.9201,
+                "slope_user_round1": 0.9486
+              },
+              "sci_lhc_dipole_magnets_count": {
                 "n": 16,
                 "slope_user": 0.0,
                 "slope_user_round1": 0.0
@@ -1132,45 +1354,59 @@
           },
           "P1": {
             "slope_user": {
-              "mean": -0.0064,
+              "mean": 0.0144,
               "ci95": [
-                -0.0225,
-                0.0034
+                -0.0866,
+                0.1334
               ],
-              "n_questions": 4
+              "n_questions": 6
             },
             "slope_user_round1": {
-              "mean": -0.0045,
+              "mean": 0.0224,
               "ci95": [
-                -0.009,
-                0.0
+                -0.1181,
+                0.204
               ],
-              "n_questions": 4
+              "n_questions": 6
             },
-            "n_observations": 64,
+            "n_observations": 96,
             "per_question": {
-              "sci_arecibo_diameter_m": {
+              "hyd_delaware_aqueduct_km": {
                 "n": 16,
-                "slope_user": 0.0,
-                "slope_crowd": 0.0,
+                "slope_user": -0.0214,
+                "slope_crowd": -0.2219,
                 "crowd_low_variance": true,
-                "slope_user_round1": 0.0
+                "slope_user_round1": -0.0286
               },
-              "sci_hoover_dam_capacity_mw": {
+              "hyd_paijanne_tunnel_km": {
                 "n": 16,
-                "slope_user": 0.0045,
-                "slope_crowd": -0.4554,
+                "slope_user": 0.07,
+                "slope_crowd": 0.4981,
                 "crowd_low_variance": true,
-                "slope_user_round1": -0.0113
+                "slope_user_round1": 0.0817
               },
-              "sci_kola_borehole_depth_m": {
+              "inf_gbt_height_m": {
                 "n": 16,
-                "slope_user": -0.03,
-                "slope_crowd": 8.3735,
+                "slope_user": -0.1686,
+                "slope_crowd": -0.1411,
                 "crowd_low_variance": true,
-                "slope_user_round1": -0.0066
+                "slope_user_round1": -0.2459
               },
-              "sci_rcrs_mtdna_bp": {
+              "nrg_france_nuclear_2022_twh": {
+                "n": 16,
+                "slope_user": -0.0699,
+                "slope_crowd": -0.7292,
+                "crowd_low_variance": true,
+                "slope_user_round1": -0.0941
+              },
+              "nrg_us_hydro_2023_twh": {
+                "n": 16,
+                "slope_user": 0.2763,
+                "slope_crowd": 6.6043,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.4216
+              },
+              "sci_lhc_dipole_magnets_count": {
                 "n": 16,
                 "slope_user": 0.0,
                 "slope_crowd": 0.0,
@@ -1179,55 +1415,69 @@
               }
             },
             "slope_crowd": {
-              "mean": 1.9795,
+              "mean": 1.0017,
               "ci95": [
-                -0.3416,
-                6.2801
+                -0.3506,
+                3.2417
               ],
-              "n_questions": 4
+              "n_questions": 6
             }
           },
           "P2": {
             "slope_user": {
-              "mean": 0.0012,
+              "mean": 0.0783,
               "ci95": [
-                -0.0,
-                0.0036
+                0.0343,
+                0.1181
               ],
-              "n_questions": 4
+              "n_questions": 6
             },
             "slope_user_round1": {
-              "mean": 0.0001,
+              "mean": 0.104,
               "ci95": [
-                -0.005,
-                0.0054
+                0.0361,
+                0.1991
               ],
-              "n_questions": 4
+              "n_questions": 6
             },
-            "n_observations": 64,
+            "n_observations": 96,
             "per_question": {
-              "sci_arecibo_diameter_m": {
+              "hyd_delaware_aqueduct_km": {
                 "n": 16,
-                "slope_user": 0.0,
-                "slope_crowd": 0.0,
+                "slope_user": 0.1479,
+                "slope_crowd": -1.795,
                 "crowd_low_variance": true,
-                "slope_user_round1": 0.0
+                "slope_user_round1": 0.0595
               },
-              "sci_hoover_dam_capacity_mw": {
+              "hyd_paijanne_tunnel_km": {
                 "n": 16,
-                "slope_user": 0.0048,
-                "slope_crowd": 1.0592,
+                "slope_user": 0.0288,
+                "slope_crowd": 0.3336,
                 "crowd_low_variance": true,
-                "slope_user_round1": 0.0072
+                "slope_user_round1": 0.0405
               },
-              "sci_kola_borehole_depth_m": {
+              "inf_gbt_height_m": {
                 "n": 16,
-                "slope_user": -0.0001,
-                "slope_crowd": 14.922,
+                "slope_user": 0.0742,
+                "slope_crowd": -0.4307,
                 "crowd_low_variance": true,
-                "slope_user_round1": -0.0067
+                "slope_user_round1": 0.1004
               },
-              "sci_rcrs_mtdna_bp": {
+              "nrg_france_nuclear_2022_twh": {
+                "n": 16,
+                "slope_user": 0.0974,
+                "slope_crowd": 1.4775,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.3259
+              },
+              "nrg_us_hydro_2023_twh": {
+                "n": 16,
+                "slope_user": 0.1216,
+                "slope_crowd": -1.2511,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.0979
+              },
+              "sci_lhc_dipole_magnets_count": {
                 "n": 16,
                 "slope_user": 0.0,
                 "slope_crowd": 0.0,
@@ -1236,58 +1486,74 @@
               }
             },
             "slope_crowd": {
-              "mean": 3.9953,
+              "mean": -0.2776,
               "ci95": [
-                0.0,
-                11.1915
+                -1.0872,
+                0.5859
               ],
-              "n_questions": 4
+              "n_questions": 6
             }
           },
           "P3": {
             "slope_user": {
-              "mean": -0.0,
+              "mean": -0.0693,
               "ci95": [
-                -0.0031,
-                0.003
+                -0.2251,
+                0.0642
               ],
-              "n_questions": 4
+              "n_questions": 6
             },
             "slope_user_round1": {
-              "mean": -0.0015,
+              "mean": -0.0463,
               "ci95": [
-                -0.0041,
-                0.0
+                -0.199,
+                0.0932
               ],
-              "n_questions": 4
+              "n_questions": 6
             },
-            "n_observations": 64,
+            "n_observations": 96,
             "per_question": {
-              "sci_arecibo_diameter_m": {
+              "hyd_delaware_aqueduct_km": {
                 "n": 16,
-                "slope_user": 0.0,
-                "slope_crowd": 0.0,
+                "slope_user": -0.151,
+                "slope_crowd": 0.2307,
                 "crowd_low_variance": true,
-                "slope_user_round1": 0.0,
-                "slope_user_model_fe": 0.0
+                "slope_user_round1": -0.2268,
+                "slope_user_model_fe": -0.091
               },
-              "sci_hoover_dam_capacity_mw": {
+              "hyd_paijanne_tunnel_km": {
                 "n": 16,
-                "slope_user": -0.0041,
-                "slope_crowd": 0.4641,
+                "slope_user": -0.0173,
+                "slope_crowd": 0.4724,
                 "crowd_low_variance": true,
-                "slope_user_round1": -0.0054,
-                "slope_user_model_fe": -0.0007
+                "slope_user_round1": 0.0499,
+                "slope_user_model_fe": 0.0391
               },
-              "sci_kola_borehole_depth_m": {
+              "inf_gbt_height_m": {
                 "n": 16,
-                "slope_user": 0.0039,
-                "slope_crowd": 0.1176,
+                "slope_user": -0.4402,
+                "slope_crowd": 0.1443,
                 "crowd_low_variance": true,
-                "slope_user_round1": -0.0005,
-                "slope_user_model_fe": 0.08
+                "slope_user_round1": -0.3557,
+                "slope_user_model_fe": -0.0825
               },
-              "sci_rcrs_mtdna_bp": {
+              "nrg_france_nuclear_2022_twh": {
+                "n": 16,
+                "slope_user": 0.0425,
+                "slope_crowd": -0.2458,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.0984,
+                "slope_user_model_fe": 0.0719
+              },
+              "nrg_us_hydro_2023_twh": {
+                "n": 16,
+                "slope_user": 0.1504,
+                "slope_crowd": -0.6605,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.1563,
+                "slope_user_model_fe": 0.0448
+              },
+              "sci_lhc_dipole_magnets_count": {
                 "n": 16,
                 "slope_user": 0.0,
                 "slope_crowd": 0.0,
@@ -1297,66 +1563,82 @@
               }
             },
             "slope_crowd": {
-              "mean": 0.1454,
+              "mean": -0.0098,
               "ci95": [
-                0.0,
-                0.3481
+                -0.3335,
+                0.2584
               ],
-              "n_questions": 4
+              "n_questions": 6
             },
             "slope_user_model_fe": {
-              "mean": 0.0198,
+              "mean": -0.003,
               "ci95": [
-                -0.0005,
-                0.06
+                -0.0518,
+                0.0434
               ],
-              "n_questions": 4
+              "n_questions": 6
             }
           },
           "P4": {
             "slope_user": {
-              "mean": 0.0293,
+              "mean": 0.1249,
               "ci95": [
-                -0.0027,
-                0.0905
+                -0.0168,
+                0.372
               ],
-              "n_questions": 4
+              "n_questions": 6
             },
             "slope_user_round1": {
-              "mean": 0.0493,
+              "mean": 0.1088,
               "ci95": [
-                -0.0041,
-                0.1519
+                -0.0184,
+                0.3382
               ],
-              "n_questions": 4
+              "n_questions": 6
             },
-            "n_observations": 64,
+            "n_observations": 96,
             "per_question": {
-              "sci_arecibo_diameter_m": {
+              "hyd_delaware_aqueduct_km": {
                 "n": 16,
-                "slope_user": 0.0,
-                "slope_crowd": 0.0,
+                "slope_user": 0.05,
+                "slope_crowd": -0.2506,
                 "crowd_low_variance": true,
-                "slope_user_round1": 0.0,
-                "slope_user_model_fe": 0.0
+                "slope_user_round1": 0.0228,
+                "slope_user_model_fe": 0.0812
               },
-              "sci_hoover_dam_capacity_mw": {
+              "hyd_paijanne_tunnel_km": {
                 "n": 16,
-                "slope_user": 0.1207,
-                "slope_crowd": -13.5104,
+                "slope_user": -0.0426,
+                "slope_crowd": -0.1574,
                 "crowd_low_variance": true,
-                "slope_user_round1": 0.2026,
-                "slope_user_model_fe": 0.1324
+                "slope_user_round1": -0.0332,
+                "slope_user_model_fe": 0.0175
               },
-              "sci_kola_borehole_depth_m": {
+              "inf_gbt_height_m": {
                 "n": 16,
-                "slope_user": -0.0037,
-                "slope_crowd": 0.4643,
+                "slope_user": 0.7416,
+                "slope_crowd": -0.7822,
                 "crowd_low_variance": true,
-                "slope_user_round1": -0.0054,
-                "slope_user_model_fe": 0.0301
+                "slope_user_round1": 0.6743,
+                "slope_user_model_fe": -0.1549
               },
-              "sci_rcrs_mtdna_bp": {
+              "nrg_france_nuclear_2022_twh": {
+                "n": 16,
+                "slope_user": -0.016,
+                "slope_crowd": -3.524,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.0172,
+                "slope_user_model_fe": 0.1573
+              },
+              "nrg_us_hydro_2023_twh": {
+                "n": 16,
+                "slope_user": 0.0164,
+                "slope_crowd": -0.8289,
+                "crowd_low_variance": true,
+                "slope_user_round1": -0.0281,
+                "slope_user_model_fe": 0.0629
+              },
+              "sci_lhc_dipole_magnets_count": {
                 "n": 16,
                 "slope_user": 0.0,
                 "slope_crowd": 0.0,
@@ -1366,124 +1648,161 @@
               }
             },
             "slope_crowd": {
-              "mean": -3.2615,
+              "mean": -0.9239,
               "ci95": [
-                -10.1328,
-                0.3482
+                -2.0305,
+                -0.2139
               ],
-              "n_questions": 4
+              "n_questions": 6
             },
             "slope_user_model_fe": {
-              "mean": 0.0406,
+              "mean": 0.0273,
               "ci95": [
-                0.0,
-                0.0993
+                -0.061,
+                0.0974
               ],
-              "n_questions": 4
+              "n_questions": 6
             }
           }
         },
         "crowd_pull_vs_c1_r1": {
           "P1": {
-            "slope": 0.1145,
-            "intercept": -0.003,
-            "n_questions": 4
+            "slope": 0.4635,
+            "intercept": 0.1104,
+            "n_questions": 6
           },
           "P2": {
-            "slope": 0.1125,
-            "intercept": -0.0035,
-            "n_questions": 4
+            "slope": -0.0424,
+            "intercept": 0.0063,
+            "n_questions": 6
           }
         }
       }
     },
     "low_spread": {
       "questions": [
-        "sci_canakkale_bridge_span_m",
-        "sci_earth_sidereal_day_s",
-        "sci_prem_cmb_depth_km",
-        "sci_tungsten_melting_c"
+        "env_ipcc_1750_ch4_ppb",
+        "hyd_murray_darling_area_km2",
+        "inf_elt_collecting_area_m2",
+        "mat_molybdenum_melting_c",
+        "nrg_norway_hydro_2023_twh",
+        "nrg_us_wind_2023_twh"
       ],
       "by_condition_final": {
         "P0": {
-          "n_cells": 4,
-          "crowd_error": 0.009965,
-          "avg_individual_error": 0.020697,
-          "diversity": 0.010731,
+          "n_cells": 6,
+          "crowd_error": 0.006409,
+          "avg_individual_error": 0.014905,
+          "diversity": 0.008496,
           "between_model_diversity": 0.0,
-          "within_model_diversity": 0.010731,
+          "within_model_diversity": 0.008496,
           "excess_between_model_diversity": 0.0,
           "between_share": 0.0,
-          "iqr": 0.135099,
+          "iqr": 0.101397,
           "miss_rate": 0.0,
-          "evrr": 1.0,
+          "evrr": 0.999947,
           "evrr_between": 0.0,
-          "evrr_within": 1.0,
-          "evrr_cumulative": 1.0
+          "evrr_within": 0.999947,
+          "evrr_cumulative": 1.00413,
+          "assistant_crowd_error": 0.00145,
+          "assistant_avg_individual_error": 0.001628,
+          "assistant_diversity": 0.000178,
+          "assistant_between_model_diversity": 0.0,
+          "assistant_within_model_diversity": 0.000178,
+          "assistant_excess_between_model_diversity": 0.0,
+          "assistant_between_share": 0.0
         },
         "P1": {
-          "n_cells": 4,
-          "crowd_error": 0.010223,
-          "avg_individual_error": 0.020912,
-          "diversity": 0.010689,
+          "n_cells": 6,
+          "crowd_error": 0.016083,
+          "avg_individual_error": 0.024419,
+          "diversity": 0.008336,
           "between_model_diversity": 0.0,
-          "within_model_diversity": 0.010689,
+          "within_model_diversity": 0.008336,
           "excess_between_model_diversity": 0.0,
           "between_share": 0.0,
-          "iqr": 0.133012,
+          "iqr": 0.098818,
           "miss_rate": 0.0,
-          "evrr": 0.991041,
+          "evrr": 0.946119,
           "evrr_between": 0.0,
-          "evrr_within": 0.991041,
-          "evrr_cumulative": 0.991041
+          "evrr_within": 0.946119,
+          "evrr_cumulative": 0.963386,
+          "assistant_crowd_error": 0.012966,
+          "assistant_avg_individual_error": 0.013396,
+          "assistant_diversity": 0.00043,
+          "assistant_between_model_diversity": 0.0,
+          "assistant_within_model_diversity": 0.00043,
+          "assistant_excess_between_model_diversity": 0.0,
+          "assistant_between_share": 0.0
         },
         "P2": {
-          "n_cells": 4,
-          "crowd_error": 0.010207,
-          "avg_individual_error": 0.021268,
-          "diversity": 0.011062,
+          "n_cells": 6,
+          "crowd_error": 0.00828,
+          "avg_individual_error": 0.020994,
+          "diversity": 0.012714,
           "between_model_diversity": 0.0,
-          "within_model_diversity": 0.011062,
+          "within_model_diversity": 0.012714,
           "excess_between_model_diversity": 0.0,
           "between_share": 0.0,
-          "iqr": 0.139567,
+          "iqr": 0.11382,
           "miss_rate": 0.0,
-          "evrr": 1.014725,
+          "evrr": 1.489724,
           "evrr_between": 0.0,
-          "evrr_within": 1.014725,
-          "evrr_cumulative": 1.014719
+          "evrr_within": 1.489724,
+          "evrr_cumulative": 1.652785,
+          "assistant_crowd_error": 0.00123,
+          "assistant_avg_individual_error": 0.013931,
+          "assistant_diversity": 0.012701,
+          "assistant_between_model_diversity": 0.0,
+          "assistant_within_model_diversity": 0.012701,
+          "assistant_excess_between_model_diversity": 0.0,
+          "assistant_between_share": 0.0
         },
         "P3": {
-          "n_cells": 4,
-          "crowd_error": 0.011049,
-          "avg_individual_error": 0.022635,
-          "diversity": 0.011586,
-          "between_model_diversity": 0.006566,
-          "within_model_diversity": 0.00502,
-          "excess_between_model_diversity": 0.002801,
-          "between_share": 0.627446,
-          "iqr": 0.151835,
+          "n_cells": 6,
+          "crowd_error": 0.008557,
+          "avg_individual_error": 0.017684,
+          "diversity": 0.009127,
+          "between_model_diversity": 0.006272,
+          "within_model_diversity": 0.002855,
+          "excess_between_model_diversity": 0.00413,
+          "between_share": 0.653679,
+          "iqr": 0.111237,
           "miss_rate": 0.0,
-          "evrr": 1.046167,
-          "evrr_between": 0.6575,
-          "evrr_within": 0.388667,
-          "evrr_cumulative": 1.101819
+          "evrr": 1.047782,
+          "evrr_between": 0.701101,
+          "evrr_within": 0.346681,
+          "evrr_cumulative": 1.110548,
+          "assistant_crowd_error": 0.002513,
+          "assistant_avg_individual_error": 0.005062,
+          "assistant_diversity": 0.002549,
+          "assistant_between_model_diversity": 0.001509,
+          "assistant_within_model_diversity": 0.00104,
+          "assistant_excess_between_model_diversity": 0.000729,
+          "assistant_between_share": 0.512409
         },
         "P4": {
-          "n_cells": 4,
-          "crowd_error": 0.010073,
-          "avg_individual_error": 0.020933,
-          "diversity": 0.01086,
-          "between_model_diversity": 0.005578,
-          "within_model_diversity": 0.005282,
-          "excess_between_model_diversity": 0.001616,
-          "between_share": 0.577282,
-          "iqr": 0.136545,
+          "n_cells": 6,
+          "crowd_error": 0.006211,
+          "avg_individual_error": 0.015088,
+          "diversity": 0.008878,
+          "between_model_diversity": 0.005718,
+          "within_model_diversity": 0.00316,
+          "excess_between_model_diversity": 0.003348,
+          "between_share": 0.601846,
+          "iqr": 0.106824,
           "miss_rate": 0.0,
-          "evrr": 1.005391,
-          "evrr_between": 0.579871,
-          "evrr_within": 0.42552,
-          "evrr_cumulative": 1.005226
+          "evrr": 1.104901,
+          "evrr_between": 0.663887,
+          "evrr_within": 0.441014,
+          "evrr_cumulative": 1.101859,
+          "assistant_crowd_error": 0.000636,
+          "assistant_avg_individual_error": 0.001729,
+          "assistant_diversity": 0.001092,
+          "assistant_between_model_diversity": 0.000588,
+          "assistant_within_model_diversity": 0.000504,
+          "assistant_excess_between_model_diversity": 0.00021,
+          "assistant_between_share": 0.414258
         }
       },
       "h4_slopes": {
@@ -1492,308 +1811,378 @@
         "by_condition": {
           "P0": {
             "slope_user": {
-              "mean": 0.0,
+              "mean": -0.0015,
               "ci95": [
-                0.0,
-                0.0
+                -0.0107,
+                0.0079
               ],
-              "n_questions": 4
+              "n_questions": 6
             },
             "slope_user_round1": {
-              "mean": 0.0,
+              "mean": -0.0004,
               "ci95": [
-                0.0,
-                0.0
+                -0.0084,
+                0.0084
               ],
-              "n_questions": 4
+              "n_questions": 6
             },
-            "n_observations": 64,
+            "n_observations": 96,
             "per_question": {
-              "sci_canakkale_bridge_span_m": {
+              "env_ipcc_1750_ch4_ppb": {
+                "n": 16,
+                "slope_user": -0.0043,
+                "slope_user_round1": -0.006
+              },
+              "hyd_murray_darling_area_km2": {
+                "n": 16,
+                "slope_user": 0.0093,
+                "slope_user_round1": 0.0054
+              },
+              "inf_elt_collecting_area_m2": {
+                "n": 16,
+                "slope_user": 0.0164,
+                "slope_user_round1": 0.019
+              },
+              "mat_molybdenum_melting_c": {
                 "n": 16,
                 "slope_user": 0.0,
                 "slope_user_round1": 0.0
               },
-              "sci_earth_sidereal_day_s": {
+              "nrg_norway_hydro_2023_twh": {
                 "n": 16,
-                "slope_user": 0.0,
-                "slope_user_round1": 0.0
+                "slope_user": -0.0148,
+                "slope_user_round1": -0.0089
               },
-              "sci_prem_cmb_depth_km": {
+              "nrg_us_wind_2023_twh": {
                 "n": 16,
-                "slope_user": 0.0,
-                "slope_user_round1": 0.0
-              },
-              "sci_tungsten_melting_c": {
-                "n": 16,
-                "slope_user": 0.0,
-                "slope_user_round1": 0.0
+                "slope_user": -0.0155,
+                "slope_user_round1": -0.012
               }
             }
           },
           "P1": {
             "slope_user": {
-              "mean": -0.004,
+              "mean": -0.0196,
               "ci95": [
-                -0.012,
-                0.0
+                -0.1096,
+                0.0596
               ],
-              "n_questions": 4
+              "n_questions": 6
             },
             "slope_user_round1": {
-              "mean": 0.0,
+              "mean": -0.006,
               "ci95": [
-                0.0,
-                0.0
+                -0.1002,
+                0.0892
               ],
-              "n_questions": 4
+              "n_questions": 6
             },
-            "n_observations": 64,
+            "n_observations": 96,
             "per_question": {
-              "sci_canakkale_bridge_span_m": {
+              "env_ipcc_1750_ch4_ppb": {
                 "n": 16,
-                "slope_user": 0.0,
-                "slope_crowd": 0.0,
+                "slope_user": -0.0061,
+                "slope_crowd": 0.5525,
                 "crowd_low_variance": true,
-                "slope_user_round1": 0.0
+                "slope_user_round1": -0.0079
               },
-              "sci_earth_sidereal_day_s": {
+              "hyd_murray_darling_area_km2": {
                 "n": 16,
-                "slope_user": 0.0,
-                "slope_crowd": 0.0,
+                "slope_user": 0.0032,
+                "slope_crowd": -0.1434,
                 "crowd_low_variance": true,
-                "slope_user_round1": 0.0
+                "slope_user_round1": 0.0043
               },
-              "sci_prem_cmb_depth_km": {
+              "inf_elt_collecting_area_m2": {
                 "n": 16,
-                "slope_user": 0.0,
-                "slope_crowd": 0.0,
+                "slope_user": -0.0191,
+                "slope_crowd": 0.7043,
                 "crowd_low_variance": true,
-                "slope_user_round1": 0.0
+                "slope_user_round1": -0.0153
               },
-              "sci_tungsten_melting_c": {
+              "mat_molybdenum_melting_c": {
                 "n": 16,
-                "slope_user": -0.016,
-                "slope_crowd": -0.1206,
+                "slope_user": -0.0057,
+                "slope_crowd": -0.1064,
                 "crowd_low_variance": true,
-                "slope_user_round1": 0.0
+                "slope_user_round1": -0.0039
+              },
+              "nrg_norway_hydro_2023_twh": {
+                "n": 16,
+                "slope_user": -0.2162,
+                "slope_crowd": 69.2574,
+                "crowd_low_variance": true,
+                "slope_user_round1": -0.1979
+              },
+              "nrg_us_wind_2023_twh": {
+                "n": 16,
+                "slope_user": 0.1266,
+                "slope_crowd": 103.8712,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.1847
               }
             },
             "slope_crowd": {
-              "mean": -0.0301,
+              "mean": 29.0226,
               "ci95": [
-                -0.0904,
-                0.0
+                0.1385,
+                63.6627
               ],
-              "n_questions": 4
+              "n_questions": 6
             }
           },
           "P2": {
             "slope_user": {
-              "mean": 0.0041,
+              "mean": 0.0647,
               "ci95": [
-                0.0,
-                0.0124
+                -0.0176,
+                0.2145
               ],
-              "n_questions": 4
+              "n_questions": 6
             },
             "slope_user_round1": {
-              "mean": -0.0,
+              "mean": 0.0123,
               "ci95": [
-                -0.0,
-                0.0
+                -0.0178,
+                0.0619
               ],
-              "n_questions": 4
+              "n_questions": 6
             },
-            "n_observations": 64,
+            "n_observations": 96,
             "per_question": {
-              "sci_canakkale_bridge_span_m": {
+              "env_ipcc_1750_ch4_ppb": {
                 "n": 16,
-                "slope_user": 0.0,
-                "slope_crowd": 0.0,
+                "slope_user": -0.0004,
+                "slope_crowd": -0.0805,
                 "crowd_low_variance": true,
-                "slope_user_round1": 0.0
+                "slope_user_round1": -0.0025
               },
-              "sci_earth_sidereal_day_s": {
+              "hyd_murray_darling_area_km2": {
                 "n": 16,
-                "slope_user": 0.0,
-                "slope_crowd": 0.0,
+                "slope_user": 0.0048,
+                "slope_crowd": -0.1797,
                 "crowd_low_variance": true,
-                "slope_user_round1": 0.0
+                "slope_user_round1": 0.004
               },
-              "sci_prem_cmb_depth_km": {
+              "inf_elt_collecting_area_m2": {
                 "n": 16,
-                "slope_user": 0.0166,
-                "slope_crowd": -0.5295,
+                "slope_user": -0.0007,
+                "slope_crowd": -3.0926,
                 "crowd_low_variance": true,
-                "slope_user_round1": -0.0
+                "slope_user_round1": -0.0178
               },
-              "sci_tungsten_melting_c": {
+              "mat_molybdenum_melting_c": {
                 "n": 16,
-                "slope_user": 0.0,
-                "slope_crowd": 0.0,
+                "slope_user": -0.0099,
+                "slope_crowd": 0.0623,
                 "crowd_low_variance": true,
-                "slope_user_round1": 0.0
+                "slope_user_round1": -0.0134
+              },
+              "nrg_norway_hydro_2023_twh": {
+                "n": 16,
+                "slope_user": -0.0365,
+                "slope_crowd": -0.3872,
+                "crowd_low_variance": true,
+                "slope_user_round1": -0.0265
+              },
+              "nrg_us_wind_2023_twh": {
+                "n": 16,
+                "slope_user": 0.4309,
+                "slope_crowd": -733.9781,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.13
               }
             },
             "slope_crowd": {
-              "mean": -0.1324,
+              "mean": -122.9426,
               "ci95": [
-                -0.3972,
-                0.0
+                -367.5478,
+                -0.1005
               ],
-              "n_questions": 4
+              "n_questions": 6
             }
           },
           "P3": {
             "slope_user": {
-              "mean": 0.0411,
+              "mean": -0.0095,
               "ci95": [
-                -0.0001,
-                0.114
+                -0.1085,
+                0.0986
               ],
-              "n_questions": 4
+              "n_questions": 6
             },
             "slope_user_round1": {
-              "mean": 0.0463,
+              "mean": -0.006,
               "ci95": [
-                -0.0001,
-                0.139
+                -0.1055,
+                0.1089
               ],
-              "n_questions": 4
+              "n_questions": 6
             },
-            "n_observations": 64,
+            "n_observations": 96,
             "per_question": {
-              "sci_canakkale_bridge_span_m": {
+              "env_ipcc_1750_ch4_ppb": {
                 "n": 16,
-                "slope_user": 0.152,
-                "slope_crowd": -0.1507,
+                "slope_user": 0.0024,
+                "slope_crowd": 0.4181,
                 "crowd_low_variance": true,
-                "slope_user_round1": 0.1853,
-                "slope_user_model_fe": -0.0261
+                "slope_user_round1": 0.0094,
+                "slope_user_model_fe": -0.0383
               },
-              "sci_earth_sidereal_day_s": {
+              "hyd_murray_darling_area_km2": {
                 "n": 16,
-                "slope_user": 0.0,
-                "slope_crowd": -0.0,
+                "slope_user": -0.0183,
+                "slope_crowd": -0.166,
                 "crowd_low_variance": true,
-                "slope_user_round1": 0.0,
-                "slope_user_model_fe": 0.0
+                "slope_user_round1": -0.0136,
+                "slope_user_model_fe": 0.0071
               },
-              "sci_prem_cmb_depth_km": {
+              "inf_elt_collecting_area_m2": {
                 "n": 16,
-                "slope_user": -0.0001,
-                "slope_crowd": 0.0042,
+                "slope_user": -0.0468,
+                "slope_crowd": 0.1366,
                 "crowd_low_variance": true,
-                "slope_user_round1": -0.0001,
-                "slope_user_model_fe": -0.0008
+                "slope_user_round1": -0.0547,
+                "slope_user_model_fe": 0.0162
               },
-              "sci_tungsten_melting_c": {
+              "mat_molybdenum_melting_c": {
                 "n": 16,
-                "slope_user": 0.0125,
-                "slope_crowd": -0.0535,
+                "slope_user": 0.0002,
+                "slope_crowd": -0.0514,
                 "crowd_low_variance": true,
-                "slope_user_round1": 0.0,
-                "slope_user_model_fe": -0.0165
+                "slope_user_round1": 0.0002,
+                "slope_user_model_fe": 0.0093
+              },
+              "nrg_norway_hydro_2023_twh": {
+                "n": 16,
+                "slope_user": -0.2124,
+                "slope_crowd": 1.1132,
+                "crowd_low_variance": true,
+                "slope_user_round1": -0.2072,
+                "slope_user_model_fe": -0.2073
+              },
+              "nrg_us_wind_2023_twh": {
+                "n": 16,
+                "slope_user": 0.2182,
+                "slope_crowd": -1.0686,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.2298,
+                "slope_user_model_fe": -0.1468
               }
             },
             "slope_crowd": {
-              "mean": -0.05,
+              "mean": 0.0637,
               "ci95": [
-                -0.1131,
-                0.0021
+                -0.4695,
+                0.5901
               ],
-              "n_questions": 4
+              "n_questions": 6
             },
             "slope_user_model_fe": {
-              "mean": -0.0108,
+              "mean": -0.0599,
               "ci95": [
-                -0.0213,
-                -0.0004
+                -0.1329,
+                0.0045
               ],
-              "n_questions": 4
+              "n_questions": 6
             }
           },
           "P4": {
             "slope_user": {
-              "mean": 0.0017,
+              "mean": 0.0032,
               "ci95": [
-                -0.0014,
-                0.0064
+                -0.0241,
+                0.0383
               ],
-              "n_questions": 4
+              "n_questions": 6
             },
             "slope_user_round1": {
-              "mean": -0.0002,
+              "mean": -0.017,
               "ci95": [
-                -0.0014,
-                0.0008
+                -0.039,
+                0.0041
               ],
-              "n_questions": 4
+              "n_questions": 6
             },
-            "n_observations": 64,
+            "n_observations": 96,
             "per_question": {
-              "sci_canakkale_bridge_span_m": {
+              "env_ipcc_1750_ch4_ppb": {
                 "n": 16,
-                "slope_user": -0.0019,
-                "slope_crowd": 0.0025,
+                "slope_user": 0.0008,
+                "slope_crowd": 0.8734,
                 "crowd_low_variance": true,
-                "slope_user_round1": -0.0018,
-                "slope_user_model_fe": -0.0009
+                "slope_user_round1": -0.0003,
+                "slope_user_model_fe": -0.0229
               },
-              "sci_earth_sidereal_day_s": {
+              "hyd_murray_darling_area_km2": {
                 "n": 16,
-                "slope_user": 0.0,
-                "slope_crowd": 0.0,
+                "slope_user": -0.006,
+                "slope_crowd": -0.1788,
                 "crowd_low_variance": true,
-                "slope_user_round1": 0.0,
-                "slope_user_model_fe": -0.0
+                "slope_user_round1": 0.0004,
+                "slope_user_model_fe": 0.0117
               },
-              "sci_prem_cmb_depth_km": {
+              "inf_elt_collecting_area_m2": {
                 "n": 16,
-                "slope_user": 0.0086,
-                "slope_crowd": -0.2246,
+                "slope_user": -0.0476,
+                "slope_crowd": 2.2307,
                 "crowd_low_variance": true,
-                "slope_user_round1": 0.001,
-                "slope_user_model_fe": 0.032
+                "slope_user_round1": -0.046,
+                "slope_user_model_fe": 0.0559
               },
-              "sci_tungsten_melting_c": {
+              "mat_molybdenum_melting_c": {
                 "n": 16,
-                "slope_user": 0.0,
-                "slope_crowd": 0.0,
+                "slope_user": -0.0123,
+                "slope_crowd": -0.0329,
                 "crowd_low_variance": true,
-                "slope_user_round1": 0.0,
-                "slope_user_model_fe": 0.0
+                "slope_user_round1": -0.0167,
+                "slope_user_model_fe": -0.0131
+              },
+              "nrg_norway_hydro_2023_twh": {
+                "n": 16,
+                "slope_user": 0.0021,
+                "slope_crowd": 0.1395,
+                "crowd_low_variance": true,
+                "slope_user_round1": -0.0587,
+                "slope_user_model_fe": 0.0131
+              },
+              "nrg_us_wind_2023_twh": {
+                "n": 16,
+                "slope_user": 0.082,
+                "slope_crowd": -0.5265,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.0194,
+                "slope_user_model_fe": -0.3005
               }
             },
             "slope_crowd": {
-              "mean": -0.0555,
+              "mean": 0.4175,
               "ci95": [
-                -0.1684,
-                0.0019
+                -0.2174,
+                1.2256
               ],
-              "n_questions": 4
+              "n_questions": 6
             },
             "slope_user_model_fe": {
-              "mean": 0.0078,
+              "mean": -0.0426,
               "ci95": [
-                -0.0007,
-                0.024
+                -0.1499,
+                0.0271
               ],
-              "n_questions": 4
+              "n_questions": 6
             }
           }
         },
         "crowd_pull_vs_c1_r1": {
           "P1": {
-            "slope": 0.0,
-            "intercept": 0.0,
-            "n_questions": 4
+            "slope": 0.3572,
+            "intercept": 0.046,
+            "n_questions": 6
           },
           "P2": {
-            "slope": -0.0,
-            "intercept": -0.0,
-            "n_questions": 4
+            "slope": 0.1952,
+            "intercept": 0.0229,
+            "n_questions": 6
           }
         }
       }
@@ -1803,293 +2192,406 @@
     "P0": {
       "condition_id": "P0",
       "round_idx": 2,
-      "crowd_error": 0.009932,
-      "avg_individual_error": 0.019638,
-      "diversity": 0.009706,
+      "crowd_error": 0.011944,
+      "avg_individual_error": 0.02875,
+      "diversity": 0.016806,
       "between_model_diversity": 0.0,
-      "within_model_diversity": 0.009706,
+      "within_model_diversity": 0.016806,
       "excess_between_model_diversity": 0.0,
       "between_share": 0.0,
-      "iqr": 0.111911,
+      "iqr": 0.149135,
       "miss_rate": 0.0,
-      "evrr": 1.022885,
+      "evrr": 1.378811,
       "evrr_between": 0.0,
-      "evrr_within": 1.022885,
-      "evrr_cumulative": 1.033577
+      "evrr_within": 1.378811,
+      "evrr_cumulative": 2.066568,
+      "assistant_crowd_error": 0.009646,
+      "assistant_avg_individual_error": 0.023701,
+      "assistant_diversity": 0.014055,
+      "assistant_between_model_diversity": 0.0,
+      "assistant_within_model_diversity": 0.014055,
+      "assistant_excess_between_model_diversity": 0.0,
+      "assistant_between_share": 0.0
     },
     "P1": {
       "condition_id": "P1",
       "round_idx": 2,
-      "crowd_error": 0.010231,
-      "avg_individual_error": 0.019611,
-      "diversity": 0.00938,
+      "crowd_error": 0.022899,
+      "avg_individual_error": 0.032455,
+      "diversity": 0.009557,
       "between_model_diversity": 0.0,
-      "within_model_diversity": 0.00938,
+      "within_model_diversity": 0.009557,
       "excess_between_model_diversity": 0.0,
       "between_share": 0.0,
-      "iqr": 0.108381,
+      "iqr": 0.112528,
       "miss_rate": 0.0,
-      "evrr": 0.996219,
+      "evrr": 1.069987,
       "evrr_between": 0.0,
-      "evrr_within": 0.996219,
-      "evrr_cumulative": 0.996149
+      "evrr_within": 1.069987,
+      "evrr_cumulative": 1.204199,
+      "assistant_crowd_error": 0.017313,
+      "assistant_avg_individual_error": 0.019924,
+      "assistant_diversity": 0.002611,
+      "assistant_between_model_diversity": 0.0,
+      "assistant_within_model_diversity": 0.002611,
+      "assistant_excess_between_model_diversity": 0.0,
+      "assistant_between_share": 0.0
     },
     "P2": {
       "condition_id": "P2",
       "round_idx": 2,
-      "crowd_error": 0.010143,
-      "avg_individual_error": 0.019706,
-      "diversity": 0.009563,
+      "crowd_error": 0.011818,
+      "avg_individual_error": 0.024672,
+      "diversity": 0.012854,
       "between_model_diversity": 0.0,
-      "within_model_diversity": 0.009563,
+      "within_model_diversity": 0.012854,
       "excess_between_model_diversity": 0.0,
       "between_share": 0.0,
-      "iqr": 0.1137,
+      "iqr": 0.116533,
       "miss_rate": 0.0,
-      "evrr": 1.007116,
+      "evrr": 1.339442,
       "evrr_between": 0.0,
-      "evrr_within": 1.007116,
-      "evrr_cumulative": 1.008507
+      "evrr_within": 1.339442,
+      "evrr_cumulative": 1.591514,
+      "assistant_crowd_error": 0.01348,
+      "assistant_avg_individual_error": 0.027838,
+      "assistant_diversity": 0.014358,
+      "assistant_between_model_diversity": 0.0,
+      "assistant_within_model_diversity": 0.014358,
+      "assistant_excess_between_model_diversity": 0.0,
+      "assistant_between_share": 0.0
     },
     "P3": {
       "condition_id": "P3",
       "round_idx": 2,
-      "crowd_error": 0.01034,
-      "avg_individual_error": 0.020057,
-      "diversity": 0.009717,
-      "between_model_diversity": 0.00475,
-      "within_model_diversity": 0.004967,
-      "excess_between_model_diversity": 0.001024,
-      "between_share": 0.488489,
-      "iqr": 0.117274,
+      "crowd_error": 0.010058,
+      "avg_individual_error": 0.019078,
+      "diversity": 0.009021,
+      "between_model_diversity": 0.004842,
+      "within_model_diversity": 0.004178,
+      "excess_between_model_diversity": 0.001709,
+      "between_share": 0.536605,
+      "iqr": 0.10915,
       "miss_rate": 0.0,
-      "evrr": 1.017328,
-      "evrr_between": 0.499304,
-      "evrr_within": 0.518024,
-      "evrr_cumulative": 1.035461
+      "evrr": 1.105996,
+      "evrr_between": 0.605166,
+      "evrr_within": 0.50083,
+      "evrr_cumulative": 1.19737,
+      "assistant_crowd_error": 0.002339,
+      "assistant_avg_individual_error": 0.008772,
+      "assistant_diversity": 0.006433,
+      "assistant_between_model_diversity": 0.004555,
+      "assistant_within_model_diversity": 0.001878,
+      "assistant_excess_between_model_diversity": 0.003146,
+      "assistant_between_share": 0.577186
     },
     "P4": {
       "condition_id": "P4",
       "round_idx": 2,
-      "crowd_error": 0.009928,
-      "avg_individual_error": 0.019511,
-      "diversity": 0.009583,
-      "between_model_diversity": 0.004462,
-      "within_model_diversity": 0.00512,
-      "excess_between_model_diversity": 0.000622,
-      "between_share": 0.474642,
-      "iqr": 0.110831,
+      "crowd_error": 0.007692,
+      "avg_individual_error": 0.021534,
+      "diversity": 0.013842,
+      "between_model_diversity": 0.009007,
+      "within_model_diversity": 0.004835,
+      "excess_between_model_diversity": 0.005381,
+      "between_share": 0.474136,
+      "iqr": 0.120118,
       "miss_rate": 0.0,
-      "evrr": 1.000311,
-      "evrr_between": 0.475288,
-      "evrr_within": 0.525023,
-      "evrr_cumulative": 1.016548
+      "evrr": 1.282554,
+      "evrr_between": 0.645321,
+      "evrr_within": 0.637232,
+      "evrr_cumulative": 1.5595,
+      "assistant_crowd_error": 0.00577,
+      "assistant_avg_individual_error": 0.017038,
+      "assistant_diversity": 0.011268,
+      "assistant_between_model_diversity": 0.008679,
+      "assistant_within_model_diversity": 0.002589,
+      "assistant_excess_between_model_diversity": 0.006737,
+      "assistant_between_share": 0.506629
     }
   },
   "condition_round_metrics": [
     {
       "condition_id": "P0",
       "round_idx": 1,
-      "crowd_error": 0.02008,
-      "avg_individual_error": 0.039437,
-      "diversity": 0.019357,
+      "crowd_error": 0.019523,
+      "avg_individual_error": 0.048079,
+      "diversity": 0.028555,
       "between_model_diversity": 0.0,
-      "within_model_diversity": 0.019357,
+      "within_model_diversity": 0.028555,
       "excess_between_model_diversity": 0.0,
       "between_share": 0.0,
-      "iqr": 0.156582,
+      "iqr": 0.196342,
       "miss_rate": 0.0,
-      "evrr": 1.008485,
+      "evrr": 1.28217,
       "evrr_between": 0.0,
-      "evrr_within": 1.008485,
-      "evrr_cumulative": 1.008485
+      "evrr_within": 1.28217,
+      "evrr_cumulative": 1.28217,
+      "assistant_crowd_error": 0.019134,
+      "assistant_avg_individual_error": 0.035051,
+      "assistant_diversity": 0.015918,
+      "assistant_between_model_diversity": 0.0,
+      "assistant_within_model_diversity": 0.015918,
+      "assistant_excess_between_model_diversity": 0.0,
+      "assistant_between_share": 0.0
     },
     {
       "condition_id": "P0",
       "round_idx": 2,
-      "crowd_error": 0.009932,
-      "avg_individual_error": 0.019638,
-      "diversity": 0.009706,
+      "crowd_error": 0.011944,
+      "avg_individual_error": 0.02875,
+      "diversity": 0.016806,
       "between_model_diversity": 0.0,
-      "within_model_diversity": 0.009706,
+      "within_model_diversity": 0.016806,
       "excess_between_model_diversity": 0.0,
       "between_share": 0.0,
-      "iqr": 0.111911,
+      "iqr": 0.149135,
       "miss_rate": 0.0,
-      "evrr": 1.022885,
+      "evrr": 1.378811,
       "evrr_between": 0.0,
-      "evrr_within": 1.022885,
-      "evrr_cumulative": 1.033577
+      "evrr_within": 1.378811,
+      "evrr_cumulative": 2.066568,
+      "assistant_crowd_error": 0.009646,
+      "assistant_avg_individual_error": 0.023701,
+      "assistant_diversity": 0.014055,
+      "assistant_between_model_diversity": 0.0,
+      "assistant_within_model_diversity": 0.014055,
+      "assistant_excess_between_model_diversity": 0.0,
+      "assistant_between_share": 0.0
     },
     {
       "condition_id": "P1",
       "round_idx": 1,
-      "crowd_error": 0.02039,
-      "avg_individual_error": 0.039603,
-      "diversity": 0.019213,
+      "crowd_error": 0.030271,
+      "avg_individual_error": 0.055571,
+      "diversity": 0.025301,
       "between_model_diversity": 0.0,
-      "within_model_diversity": 0.019213,
+      "within_model_diversity": 0.025301,
       "excess_between_model_diversity": 0.0,
       "between_share": 0.0,
-      "iqr": 0.158146,
+      "iqr": 0.187307,
       "miss_rate": 0.0,
-      "evrr": 0.999986,
+      "evrr": 1.123061,
       "evrr_between": 0.0,
-      "evrr_within": 0.999986,
-      "evrr_cumulative": 0.999986
+      "evrr_within": 1.123061,
+      "evrr_cumulative": 1.123061,
+      "assistant_crowd_error": 0.019033,
+      "assistant_avg_individual_error": 0.033526,
+      "assistant_diversity": 0.014493,
+      "assistant_between_model_diversity": 0.0,
+      "assistant_within_model_diversity": 0.014493,
+      "assistant_excess_between_model_diversity": 0.0,
+      "assistant_between_share": 0.0
     },
     {
       "condition_id": "P1",
       "round_idx": 2,
-      "crowd_error": 0.010231,
-      "avg_individual_error": 0.019611,
-      "diversity": 0.00938,
+      "crowd_error": 0.022899,
+      "avg_individual_error": 0.032455,
+      "diversity": 0.009557,
       "between_model_diversity": 0.0,
-      "within_model_diversity": 0.00938,
+      "within_model_diversity": 0.009557,
       "excess_between_model_diversity": 0.0,
       "between_share": 0.0,
-      "iqr": 0.108381,
+      "iqr": 0.112528,
       "miss_rate": 0.0,
-      "evrr": 0.996219,
+      "evrr": 1.069987,
       "evrr_between": 0.0,
-      "evrr_within": 0.996219,
-      "evrr_cumulative": 0.996149
+      "evrr_within": 1.069987,
+      "evrr_cumulative": 1.204199,
+      "assistant_crowd_error": 0.017313,
+      "assistant_avg_individual_error": 0.019924,
+      "assistant_diversity": 0.002611,
+      "assistant_between_model_diversity": 0.0,
+      "assistant_within_model_diversity": 0.002611,
+      "assistant_excess_between_model_diversity": 0.0,
+      "assistant_between_share": 0.0
     },
     {
       "condition_id": "P2",
       "round_idx": 1,
-      "crowd_error": 0.020387,
-      "avg_individual_error": 0.039624,
-      "diversity": 0.019237,
+      "crowd_error": 0.019347,
+      "avg_individual_error": 0.044821,
+      "diversity": 0.025475,
       "between_model_diversity": 0.0,
-      "within_model_diversity": 0.019237,
+      "within_model_diversity": 0.025475,
       "excess_between_model_diversity": 0.0,
       "between_share": 0.0,
-      "iqr": 0.158116,
+      "iqr": 0.180998,
       "miss_rate": 0.0,
-      "evrr": 1.001371,
+      "evrr": 1.15906,
       "evrr_between": 0.0,
-      "evrr_within": 1.001371,
-      "evrr_cumulative": 1.001371
+      "evrr_within": 1.15906,
+      "evrr_cumulative": 1.15906,
+      "assistant_crowd_error": 0.022888,
+      "assistant_avg_individual_error": 0.031461,
+      "assistant_diversity": 0.008573,
+      "assistant_between_model_diversity": 0.0,
+      "assistant_within_model_diversity": 0.008573,
+      "assistant_excess_between_model_diversity": 0.0,
+      "assistant_between_share": 0.0
     },
     {
       "condition_id": "P2",
       "round_idx": 2,
-      "crowd_error": 0.010143,
-      "avg_individual_error": 0.019706,
-      "diversity": 0.009563,
+      "crowd_error": 0.011818,
+      "avg_individual_error": 0.024672,
+      "diversity": 0.012854,
       "between_model_diversity": 0.0,
-      "within_model_diversity": 0.009563,
+      "within_model_diversity": 0.012854,
       "excess_between_model_diversity": 0.0,
       "between_share": 0.0,
-      "iqr": 0.1137,
+      "iqr": 0.116533,
       "miss_rate": 0.0,
-      "evrr": 1.007116,
+      "evrr": 1.339442,
       "evrr_between": 0.0,
-      "evrr_within": 1.007116,
-      "evrr_cumulative": 1.008507
+      "evrr_within": 1.339442,
+      "evrr_cumulative": 1.591514,
+      "assistant_crowd_error": 0.01348,
+      "assistant_avg_individual_error": 0.027838,
+      "assistant_diversity": 0.014358,
+      "assistant_between_model_diversity": 0.0,
+      "assistant_within_model_diversity": 0.014358,
+      "assistant_excess_between_model_diversity": 0.0,
+      "assistant_between_share": 0.0
     },
     {
       "condition_id": "P3",
       "round_idx": 1,
-      "crowd_error": 0.020488,
-      "avg_individual_error": 0.039975,
-      "diversity": 0.019487,
-      "between_model_diversity": 0.009349,
-      "within_model_diversity": 0.010138,
-      "excess_between_model_diversity": 0.001746,
-      "between_share": 0.481292,
-      "iqr": 0.15769,
+      "crowd_error": 0.021108,
+      "avg_individual_error": 0.044012,
+      "diversity": 0.022904,
+      "between_model_diversity": 0.011482,
+      "within_model_diversity": 0.011422,
+      "excess_between_model_diversity": 0.002915,
+      "between_share": 0.494221,
+      "iqr": 0.174174,
       "miss_rate": 0.0,
-      "evrr": 1.015707,
-      "evrr_between": 0.488423,
-      "evrr_within": 0.527285,
-      "evrr_cumulative": 1.015707
+      "evrr": 1.059261,
+      "evrr_between": 0.529222,
+      "evrr_within": 0.530039,
+      "evrr_cumulative": 1.059261,
+      "assistant_crowd_error": 0.004024,
+      "assistant_avg_individual_error": 0.015162,
+      "assistant_diversity": 0.011138,
+      "assistant_between_model_diversity": 0.005919,
+      "assistant_within_model_diversity": 0.005219,
+      "assistant_excess_between_model_diversity": 0.002005,
+      "assistant_between_share": 0.539712
     },
     {
       "condition_id": "P3",
       "round_idx": 2,
-      "crowd_error": 0.01034,
-      "avg_individual_error": 0.020057,
-      "diversity": 0.009717,
-      "between_model_diversity": 0.00475,
-      "within_model_diversity": 0.004967,
-      "excess_between_model_diversity": 0.001024,
-      "between_share": 0.488489,
-      "iqr": 0.117274,
+      "crowd_error": 0.010058,
+      "avg_individual_error": 0.019078,
+      "diversity": 0.009021,
+      "between_model_diversity": 0.004842,
+      "within_model_diversity": 0.004178,
+      "excess_between_model_diversity": 0.001709,
+      "between_share": 0.536605,
+      "iqr": 0.10915,
       "miss_rate": 0.0,
-      "evrr": 1.017328,
-      "evrr_between": 0.499304,
-      "evrr_within": 0.518024,
-      "evrr_cumulative": 1.035461
+      "evrr": 1.105996,
+      "evrr_between": 0.605166,
+      "evrr_within": 0.50083,
+      "evrr_cumulative": 1.19737,
+      "assistant_crowd_error": 0.002339,
+      "assistant_avg_individual_error": 0.008772,
+      "assistant_diversity": 0.006433,
+      "assistant_between_model_diversity": 0.004555,
+      "assistant_within_model_diversity": 0.001878,
+      "assistant_excess_between_model_diversity": 0.003146,
+      "assistant_between_share": 0.577186
     },
     {
       "condition_id": "P4",
       "round_idx": 1,
-      "crowd_error": 0.020177,
-      "avg_individual_error": 0.039679,
-      "diversity": 0.019502,
-      "between_model_diversity": 0.009179,
-      "within_model_diversity": 0.010323,
-      "excess_between_model_diversity": 0.001437,
-      "between_share": 0.477085,
-      "iqr": 0.157602,
+      "crowd_error": 0.016958,
+      "avg_individual_error": 0.04294,
+      "diversity": 0.025982,
+      "between_model_diversity": 0.015164,
+      "within_model_diversity": 0.010818,
+      "excess_between_model_diversity": 0.00705,
+      "between_share": 0.515298,
+      "iqr": 0.180587,
       "miss_rate": 0.0,
-      "evrr": 1.0165,
-      "evrr_between": 0.478624,
-      "evrr_within": 0.537876,
-      "evrr_cumulative": 1.0165
+      "evrr": 1.115935,
+      "evrr_between": 0.613073,
+      "evrr_within": 0.502861,
+      "evrr_cumulative": 1.115935,
+      "assistant_crowd_error": 0.004146,
+      "assistant_avg_individual_error": 0.01359,
+      "assistant_diversity": 0.009444,
+      "assistant_between_model_diversity": 0.008425,
+      "assistant_within_model_diversity": 0.001019,
+      "assistant_excess_between_model_diversity": 0.00766,
+      "assistant_between_share": 0.455274
     },
     {
       "condition_id": "P4",
       "round_idx": 2,
-      "crowd_error": 0.009928,
-      "avg_individual_error": 0.019511,
-      "diversity": 0.009583,
-      "between_model_diversity": 0.004462,
-      "within_model_diversity": 0.00512,
-      "excess_between_model_diversity": 0.000622,
-      "between_share": 0.474642,
-      "iqr": 0.110831,
+      "crowd_error": 0.007692,
+      "avg_individual_error": 0.021534,
+      "diversity": 0.013842,
+      "between_model_diversity": 0.009007,
+      "within_model_diversity": 0.004835,
+      "excess_between_model_diversity": 0.005381,
+      "between_share": 0.474136,
+      "iqr": 0.120118,
       "miss_rate": 0.0,
-      "evrr": 1.000311,
-      "evrr_between": 0.475288,
-      "evrr_within": 0.525023,
-      "evrr_cumulative": 1.016548
+      "evrr": 1.282554,
+      "evrr_between": 0.645321,
+      "evrr_within": 0.637232,
+      "evrr_cumulative": 1.5595,
+      "assistant_crowd_error": 0.00577,
+      "assistant_avg_individual_error": 0.017038,
+      "assistant_diversity": 0.011268,
+      "assistant_between_model_diversity": 0.008679,
+      "assistant_within_model_diversity": 0.002589,
+      "assistant_excess_between_model_diversity": 0.006737,
+      "assistant_between_share": 0.506629
     }
   ],
   "interaction_2x2": {
     "crowd_error": {
-      "mean_interaction": -0.000324,
-      "ci_low": -0.001042,
-      "ci_high": 0.000119,
-      "wilcoxon_p": 0.375,
-      "holm_adjusted_p": 0.826172,
-      "n_cells": 12
+      "mean_interaction": 0.008715,
+      "ci_low": 0.003359,
+      "ci_high": 0.016034,
+      "wilcoxon_p": 0.001092,
+      "holm_adjusted_p": 0.005458,
+      "n_cells": 16
+    },
+    "assistant_crowd_error": {
+      "mean_interaction": 0.007264,
+      "ci_low": -0.006171,
+      "ci_high": 0.020198,
+      "wilcoxon_p": 0.015785,
+      "holm_adjusted_p": 0.063142,
+      "n_cells": 16
     },
     "avg_individual_error": {
-      "mean_interaction": -0.000642,
-      "ci_low": -0.002002,
-      "ci_high": 0.000255,
-      "wilcoxon_p": 0.769531,
-      "holm_adjusted_p": 0.826172,
-      "n_cells": 12
+      "mean_interaction": 0.010239,
+      "ci_low": 0.001829,
+      "ci_high": 0.021013,
+      "wilcoxon_p": 0.038167,
+      "holm_adjusted_p": 0.1145,
+      "n_cells": 16
     },
     "diversity": {
-      "mean_interaction": -0.000318,
-      "ci_low": -0.001014,
-      "ci_high": 0.000241,
-      "wilcoxon_p": 0.275391,
-      "holm_adjusted_p": 0.826172,
-      "n_cells": 12
+      "mean_interaction": 0.001524,
+      "ci_low": -0.005205,
+      "ci_high": 0.010348,
+      "wilcoxon_p": 0.932107,
+      "holm_adjusted_p": 1.0,
+      "n_cells": 16
     },
     "evrr": {
-      "mean_interaction": -0.027914,
-      "ci_low": -0.058864,
-      "ci_high": -0.003458,
-      "wilcoxon_p": 0.164062,
-      "holm_adjusted_p": 0.65625,
-      "n_cells": 12
+      "mean_interaction": -0.092897,
+      "ci_low": -0.558572,
+      "ci_high": 0.249156,
+      "wilcoxon_p": 0.977345,
+      "holm_adjusted_p": 1.0,
+      "n_cells": 16
     }
   },
   "contrasts": [
@@ -2098,192 +2600,240 @@
       "metric": "crowd_error",
       "condition_a": "P1",
       "condition_b": "P4",
-      "mean_diff": -0.000303,
-      "ci_low": -0.000832,
-      "ci_high": 4.7e-05,
-      "wilcoxon_p": 0.769531,
-      "holm_adjusted_p": 1.0,
-      "n_cells": 12
+      "mean_diff": -0.015207,
+      "ci_low": -0.027994,
+      "ci_high": -0.004997,
+      "wilcoxon_p": 0.002866,
+      "holm_adjusted_p": 0.054446,
+      "n_cells": 16
     },
     {
       "contrast_id": "p3_vs_p1_crowd_error",
       "metric": "crowd_error",
       "condition_a": "P1",
       "condition_b": "P3",
-      "mean_diff": 0.00011,
-      "ci_low": -0.000506,
-      "ci_high": 0.000946,
-      "wilcoxon_p": 0.84375,
-      "holm_adjusted_p": 1.0,
-      "n_cells": 12
+      "mean_diff": -0.012841,
+      "ci_low": -0.023656,
+      "ci_high": -0.004262,
+      "wilcoxon_p": 0.002866,
+      "holm_adjusted_p": 0.054446,
+      "n_cells": 16
     },
     {
       "contrast_id": "p2_vs_p1_crowd_error",
       "metric": "crowd_error",
       "condition_a": "P1",
       "condition_b": "P2",
-      "mean_diff": -8.8e-05,
-      "ci_low": -0.000347,
-      "ci_high": 0.000161,
-      "wilcoxon_p": 0.4375,
-      "holm_adjusted_p": 1.0,
-      "n_cells": 12
+      "mean_diff": -0.011081,
+      "ci_low": -0.020657,
+      "ci_high": -0.003974,
+      "wilcoxon_p": 0.000892,
+      "holm_adjusted_p": 0.017838,
+      "n_cells": 16
     },
     {
       "contrast_id": "p4_vs_p3_crowd_error",
       "metric": "crowd_error",
       "condition_a": "P3",
       "condition_b": "P4",
-      "mean_diff": -0.000412,
-      "ci_low": -0.001139,
-      "ci_high": 2.3e-05,
-      "wilcoxon_p": 0.130859,
-      "holm_adjusted_p": 1.0,
-      "n_cells": 12
+      "mean_diff": -0.002366,
+      "ci_low": -0.004876,
+      "ci_high": -0.000249,
+      "wilcoxon_p": 0.028768,
+      "holm_adjusted_p": 0.431518,
+      "n_cells": 16
     },
     {
       "contrast_id": "p4_vs_p2_crowd_error",
       "metric": "crowd_error",
       "condition_a": "P2",
       "condition_b": "P4",
-      "mean_diff": -0.000215,
-      "ci_low": -0.000578,
-      "ci_high": 3e-06,
-      "wilcoxon_p": 0.496094,
+      "mean_diff": -0.004126,
+      "ci_low": -0.008708,
+      "ci_high": -0.000392,
+      "wilcoxon_p": 0.147532,
       "holm_adjusted_p": 1.0,
-      "n_cells": 12
+      "n_cells": 16
     },
     {
       "contrast_id": "p4_vs_p0_crowd_error",
       "metric": "crowd_error",
       "condition_a": "P0",
       "condition_b": "P4",
-      "mean_diff": -4e-06,
-      "ci_low": -0.000154,
-      "ci_high": 0.000108,
-      "wilcoxon_p": 0.359375,
+      "mean_diff": -0.004252,
+      "ci_low": -0.010961,
+      "ci_high": 0.000495,
+      "wilcoxon_p": 0.378675,
       "holm_adjusted_p": 1.0,
-      "n_cells": 12
+      "n_cells": 16
     },
     {
       "contrast_id": "p1_vs_p0_crowd_error",
       "metric": "crowd_error",
       "condition_a": "P0",
       "condition_b": "P1",
-      "mean_diff": 0.000299,
-      "ci_low": 1e-06,
-      "ci_high": 0.000718,
-      "wilcoxon_p": 0.125,
-      "holm_adjusted_p": 1.0,
-      "n_cells": 12
+      "mean_diff": 0.010955,
+      "ci_low": 0.003495,
+      "ci_high": 0.019277,
+      "wilcoxon_p": 0.008266,
+      "holm_adjusted_p": 0.13225,
+      "n_cells": 16
     },
     {
       "contrast_id": "p3_vs_p0_crowd_error",
       "metric": "crowd_error",
       "condition_a": "P0",
       "condition_b": "P3",
-      "mean_diff": 0.000409,
-      "ci_low": 3e-05,
-      "ci_high": 0.001097,
-      "wilcoxon_p": 0.007812,
-      "holm_adjusted_p": 0.125,
-      "n_cells": 12
+      "mean_diff": -0.001887,
+      "ci_low": -0.006809,
+      "ci_high": 0.002128,
+      "wilcoxon_p": 0.798273,
+      "holm_adjusted_p": 1.0,
+      "n_cells": 16
     },
     {
       "contrast_id": "p2_vs_p0_crowd_error",
       "metric": "crowd_error",
       "condition_a": "P0",
       "condition_b": "P2",
-      "mean_diff": 0.000211,
-      "ci_low": 1e-06,
-      "ci_high": 0.000477,
-      "wilcoxon_p": 0.125,
+      "mean_diff": -0.000126,
+      "ci_low": -0.005398,
+      "ci_high": 0.004689,
+      "wilcoxon_p": 0.443231,
       "holm_adjusted_p": 1.0,
-      "n_cells": 12
+      "n_cells": 16
     },
     {
       "contrast_id": "p4_vs_p1_diversity",
       "metric": "diversity",
       "condition_a": "P1",
       "condition_b": "P4",
-      "mean_diff": 0.000203,
-      "ci_low": 2.4e-05,
-      "ci_high": 0.000461,
-      "wilcoxon_p": 0.193359,
+      "mean_diff": 0.004286,
+      "ci_low": -0.000888,
+      "ci_high": 0.01323,
+      "wilcoxon_p": 0.629261,
       "holm_adjusted_p": 1.0,
-      "n_cells": 12
+      "n_cells": 16
     },
     {
       "contrast_id": "p3_vs_p1_diversity",
       "metric": "diversity",
       "condition_a": "P1",
       "condition_b": "P3",
-      "mean_diff": 0.000337,
-      "ci_low": -2.8e-05,
-      "ci_high": 0.000936,
-      "wilcoxon_p": 0.640625,
+      "mean_diff": -0.000536,
+      "ci_low": -0.00209,
+      "ci_high": 0.000872,
+      "wilcoxon_p": 0.550935,
       "holm_adjusted_p": 1.0,
-      "n_cells": 12
+      "n_cells": 16
     },
     {
       "contrast_id": "p2_vs_p1_diversity",
       "metric": "diversity",
       "condition_a": "P1",
       "condition_b": "P2",
-      "mean_diff": 0.000183,
-      "ci_low": -8e-06,
-      "ci_high": 0.000438,
-      "wilcoxon_p": 0.1875,
+      "mean_diff": 0.003297,
+      "ci_low": -2.4e-05,
+      "ci_high": 0.007316,
+      "wilcoxon_p": 0.550935,
       "holm_adjusted_p": 1.0,
-      "n_cells": 12
+      "n_cells": 16
     },
     {
       "contrast_id": "p3_vs_p1_excess_between_model_diversity",
       "metric": "excess_between_model_diversity",
       "condition_a": "P1",
       "condition_b": "P3",
-      "mean_diff": 0.001024,
-      "ci_low": -0.000595,
-      "ci_high": 0.002595,
-      "wilcoxon_p": 0.266113,
+      "mean_diff": 0.001709,
+      "ci_low": -0.000233,
+      "ci_high": 0.003619,
+      "wilcoxon_p": 0.092853,
       "holm_adjusted_p": 1.0,
-      "n_cells": 12
+      "n_cells": 16
     },
     {
       "contrast_id": "p4_vs_p1_excess_between_model_diversity",
       "metric": "excess_between_model_diversity",
       "condition_a": "P1",
       "condition_b": "P4",
-      "mean_diff": 0.000622,
-      "ci_low": -0.001088,
-      "ci_high": 0.002182,
-      "wilcoxon_p": 0.380371,
+      "mean_diff": 0.005381,
+      "ci_low": -0.001311,
+      "ci_high": 0.016449,
+      "wilcoxon_p": 0.518046,
       "holm_adjusted_p": 1.0,
-      "n_cells": 12
+      "n_cells": 16
     },
     {
       "contrast_id": "p4_vs_p3_between_model_diversity",
       "metric": "between_model_diversity",
       "condition_a": "P3",
       "condition_b": "P4",
-      "mean_diff": -0.000287,
-      "ci_low": -0.000889,
-      "ci_high": 6.3e-05,
-      "wilcoxon_p": 0.921875,
+      "mean_diff": 0.004165,
+      "ci_low": -0.00142,
+      "ci_high": 0.014397,
+      "wilcoxon_p": 0.348688,
       "holm_adjusted_p": 1.0,
-      "n_cells": 12
+      "n_cells": 16
     },
     {
       "contrast_id": "p4_vs_p1_evrr",
       "metric": "evrr",
       "condition_a": "P1",
       "condition_b": "P4",
-      "mean_diff": 0.004092,
-      "ci_low": -0.008545,
-      "ci_high": 0.016204,
-      "wilcoxon_p": 0.84375,
+      "mean_diff": 0.212567,
+      "ci_low": 0.03646,
+      "ci_high": 0.439407,
+      "wilcoxon_p": 0.050058,
+      "holm_adjusted_p": 0.650754,
+      "n_cells": 16
+    },
+    {
+      "contrast_id": "p4_vs_p1_assistant_crowd_error",
+      "metric": "assistant_crowd_error",
+      "condition_a": "P1",
+      "condition_b": "P4",
+      "mean_diff": -0.011544,
+      "ci_low": -0.027359,
+      "ci_high": 0.002437,
+      "wilcoxon_p": 0.073602,
+      "holm_adjusted_p": 0.883224,
+      "n_cells": 16
+    },
+    {
+      "contrast_id": "p3_vs_p1_assistant_crowd_error",
+      "metric": "assistant_crowd_error",
+      "condition_a": "P1",
+      "condition_b": "P3",
+      "mean_diff": -0.014975,
+      "ci_low": -0.028423,
+      "ci_high": -0.0042,
+      "wilcoxon_p": 0.003445,
+      "holm_adjusted_p": 0.058557,
+      "n_cells": 16
+    },
+    {
+      "contrast_id": "p2_vs_p1_assistant_crowd_error",
+      "metric": "assistant_crowd_error",
+      "condition_a": "P1",
+      "condition_b": "P2",
+      "mean_diff": -0.003833,
+      "ci_low": -0.021213,
+      "ci_high": 0.018818,
+      "wilcoxon_p": 0.038167,
+      "holm_adjusted_p": 0.534333,
+      "n_cells": 16
+    },
+    {
+      "contrast_id": "p4_vs_p3_assistant_crowd_error",
+      "metric": "assistant_crowd_error",
+      "condition_a": "P3",
+      "condition_b": "P4",
+      "mean_diff": 0.003431,
+      "ci_low": -0.002111,
+      "ci_high": 0.012687,
+      "wilcoxon_p": 0.268067,
       "holm_adjusted_p": 1.0,
-      "n_cells": 12
+      "n_cells": 16
     }
   ],
   "polyphony_contrast_matrix": {
@@ -2293,108 +2843,218 @@
         "metric": "crowd_error",
         "condition_a": "P1",
         "condition_b": "P4",
-        "mean_diff": -0.000303,
-        "ci_low": -0.000832,
-        "ci_high": 4.7e-05,
-        "wilcoxon_p": 0.769531,
-        "holm_adjusted_p": 1.0,
-        "n_cells": 12
+        "mean_diff": -0.015207,
+        "ci_low": -0.027994,
+        "ci_high": -0.004997,
+        "wilcoxon_p": 0.002866,
+        "holm_adjusted_p": 0.022925,
+        "n_cells": 16
       },
       {
         "contrast_id": "p3_vs_p1_crowd_error",
         "metric": "crowd_error",
         "condition_a": "P1",
         "condition_b": "P3",
-        "mean_diff": 0.00011,
-        "ci_low": -0.000506,
-        "ci_high": 0.000946,
-        "wilcoxon_p": 0.84375,
-        "holm_adjusted_p": 1.0,
-        "n_cells": 12
+        "mean_diff": -0.012841,
+        "ci_low": -0.023656,
+        "ci_high": -0.004262,
+        "wilcoxon_p": 0.002866,
+        "holm_adjusted_p": 0.022925,
+        "n_cells": 16
       },
       {
         "contrast_id": "p2_vs_p1_crowd_error",
         "metric": "crowd_error",
         "condition_a": "P1",
         "condition_b": "P2",
-        "mean_diff": -8.8e-05,
-        "ci_low": -0.000347,
-        "ci_high": 0.000161,
-        "wilcoxon_p": 0.4375,
-        "holm_adjusted_p": 1.0,
-        "n_cells": 12
+        "mean_diff": -0.011081,
+        "ci_low": -0.020657,
+        "ci_high": -0.003974,
+        "wilcoxon_p": 0.000892,
+        "holm_adjusted_p": 0.008027,
+        "n_cells": 16
       },
       {
         "contrast_id": "p4_vs_p3_crowd_error",
         "metric": "crowd_error",
         "condition_a": "P3",
         "condition_b": "P4",
-        "mean_diff": -0.000412,
-        "ci_low": -0.001139,
-        "ci_high": 2.3e-05,
-        "wilcoxon_p": 0.130859,
-        "holm_adjusted_p": 1.0,
-        "n_cells": 12
+        "mean_diff": -0.002366,
+        "ci_low": -0.004876,
+        "ci_high": -0.000249,
+        "wilcoxon_p": 0.028768,
+        "holm_adjusted_p": 0.143839,
+        "n_cells": 16
       },
       {
         "contrast_id": "p4_vs_p2_crowd_error",
         "metric": "crowd_error",
         "condition_a": "P2",
         "condition_b": "P4",
-        "mean_diff": -0.000215,
-        "ci_low": -0.000578,
-        "ci_high": 3e-06,
-        "wilcoxon_p": 0.496094,
-        "holm_adjusted_p": 1.0,
-        "n_cells": 12
+        "mean_diff": -0.004126,
+        "ci_low": -0.008708,
+        "ci_high": -0.000392,
+        "wilcoxon_p": 0.147532,
+        "holm_adjusted_p": 0.59013,
+        "n_cells": 16
       },
       {
         "contrast_id": "p4_vs_p0_crowd_error",
         "metric": "crowd_error",
         "condition_a": "P0",
         "condition_b": "P4",
-        "mean_diff": -4e-06,
-        "ci_low": -0.000154,
-        "ci_high": 0.000108,
-        "wilcoxon_p": 0.359375,
+        "mean_diff": -0.004252,
+        "ci_low": -0.010961,
+        "ci_high": 0.000495,
+        "wilcoxon_p": 0.378675,
         "holm_adjusted_p": 1.0,
-        "n_cells": 12
+        "n_cells": 16
       },
       {
         "contrast_id": "p1_vs_p0_crowd_error",
         "metric": "crowd_error",
         "condition_a": "P0",
         "condition_b": "P1",
-        "mean_diff": 0.000299,
-        "ci_low": 1e-06,
-        "ci_high": 0.000718,
-        "wilcoxon_p": 0.125,
-        "holm_adjusted_p": 1.0,
-        "n_cells": 12
+        "mean_diff": 0.010955,
+        "ci_low": 0.003495,
+        "ci_high": 0.019277,
+        "wilcoxon_p": 0.008266,
+        "holm_adjusted_p": 0.049594,
+        "n_cells": 16
       },
       {
         "contrast_id": "p3_vs_p0_crowd_error",
         "metric": "crowd_error",
         "condition_a": "P0",
         "condition_b": "P3",
-        "mean_diff": 0.000409,
-        "ci_low": 3e-05,
-        "ci_high": 0.001097,
-        "wilcoxon_p": 0.007812,
-        "holm_adjusted_p": 0.070312,
-        "n_cells": 12
+        "mean_diff": -0.001887,
+        "ci_low": -0.006809,
+        "ci_high": 0.002128,
+        "wilcoxon_p": 0.798273,
+        "holm_adjusted_p": 1.0,
+        "n_cells": 16
       },
       {
         "contrast_id": "p2_vs_p0_crowd_error",
         "metric": "crowd_error",
         "condition_a": "P0",
         "condition_b": "P2",
-        "mean_diff": 0.000211,
-        "ci_low": 1e-06,
-        "ci_high": 0.000477,
-        "wilcoxon_p": 0.125,
+        "mean_diff": -0.000126,
+        "ci_low": -0.005398,
+        "ci_high": 0.004689,
+        "wilcoxon_p": 0.443231,
         "holm_adjusted_p": 1.0,
-        "n_cells": 12
+        "n_cells": 16
+      }
+    ],
+    "assistant_crowd_error": [
+      {
+        "contrast_id": "p4_vs_p1_assistant_crowd_error",
+        "metric": "assistant_crowd_error",
+        "condition_a": "P1",
+        "condition_b": "P4",
+        "mean_diff": -0.011544,
+        "ci_low": -0.027359,
+        "ci_high": 0.002437,
+        "wilcoxon_p": 0.073602,
+        "holm_adjusted_p": 0.515214,
+        "n_cells": 16
+      },
+      {
+        "contrast_id": "p3_vs_p1_assistant_crowd_error",
+        "metric": "assistant_crowd_error",
+        "condition_a": "P1",
+        "condition_b": "P3",
+        "mean_diff": -0.014975,
+        "ci_low": -0.028423,
+        "ci_high": -0.0042,
+        "wilcoxon_p": 0.003445,
+        "holm_adjusted_p": 0.031001,
+        "n_cells": 16
+      },
+      {
+        "contrast_id": "p2_vs_p1_assistant_crowd_error",
+        "metric": "assistant_crowd_error",
+        "condition_a": "P1",
+        "condition_b": "P2",
+        "mean_diff": -0.003833,
+        "ci_low": -0.021213,
+        "ci_high": 0.018818,
+        "wilcoxon_p": 0.038167,
+        "holm_adjusted_p": 0.305333,
+        "n_cells": 16
+      },
+      {
+        "contrast_id": "p4_vs_p3_assistant_crowd_error",
+        "metric": "assistant_crowd_error",
+        "condition_a": "P3",
+        "condition_b": "P4",
+        "mean_diff": 0.003431,
+        "ci_low": -0.002111,
+        "ci_high": 0.012687,
+        "wilcoxon_p": 0.268067,
+        "holm_adjusted_p": 0.811523,
+        "n_cells": 16
+      },
+      {
+        "contrast_id": "p4_vs_p2_assistant_crowd_error",
+        "metric": "assistant_crowd_error",
+        "condition_a": "P2",
+        "condition_b": "P4",
+        "mean_diff": -0.007711,
+        "ci_low": -0.019994,
+        "ci_high": -2.8e-05,
+        "wilcoxon_p": 0.135254,
+        "holm_adjusted_p": 0.811523,
+        "n_cells": 16
+      },
+      {
+        "contrast_id": "p4_vs_p0_assistant_crowd_error",
+        "metric": "assistant_crowd_error",
+        "condition_a": "P0",
+        "condition_b": "P4",
+        "mean_diff": -0.003876,
+        "ci_low": -0.011679,
+        "ci_high": 0.002898,
+        "wilcoxon_p": 0.325806,
+        "holm_adjusted_p": 0.811523,
+        "n_cells": 16
+      },
+      {
+        "contrast_id": "p1_vs_p0_assistant_crowd_error",
+        "metric": "assistant_crowd_error",
+        "condition_a": "P0",
+        "condition_b": "P1",
+        "mean_diff": 0.007667,
+        "ci_low": -0.001515,
+        "ci_high": 0.017978,
+        "wilcoxon_p": 0.20128,
+        "holm_adjusted_p": 0.811523,
+        "n_cells": 16
+      },
+      {
+        "contrast_id": "p3_vs_p0_assistant_crowd_error",
+        "metric": "assistant_crowd_error",
+        "condition_a": "P0",
+        "condition_b": "P3",
+        "mean_diff": -0.007307,
+        "ci_low": -0.015089,
+        "ci_high": -0.000883,
+        "wilcoxon_p": 0.147532,
+        "holm_adjusted_p": 0.811523,
+        "n_cells": 16
+      },
+      {
+        "contrast_id": "p2_vs_p0_assistant_crowd_error",
+        "metric": "assistant_crowd_error",
+        "condition_a": "P0",
+        "condition_b": "P2",
+        "mean_diff": 0.003834,
+        "ci_low": -0.007273,
+        "ci_high": 0.020444,
+        "wilcoxon_p": 0.946045,
+        "holm_adjusted_p": 0.946045,
+        "n_cells": 16
       }
     ],
     "diversity": [
@@ -2403,108 +3063,108 @@
         "metric": "diversity",
         "condition_a": "P1",
         "condition_b": "P4",
-        "mean_diff": 0.000203,
-        "ci_low": 2.4e-05,
-        "ci_high": 0.000461,
-        "wilcoxon_p": 0.193359,
+        "mean_diff": 0.004286,
+        "ci_low": -0.000888,
+        "ci_high": 0.01323,
+        "wilcoxon_p": 0.629261,
         "holm_adjusted_p": 1.0,
-        "n_cells": 12
+        "n_cells": 16
       },
       {
         "contrast_id": "p3_vs_p1_diversity",
         "metric": "diversity",
         "condition_a": "P1",
         "condition_b": "P3",
-        "mean_diff": 0.000337,
-        "ci_low": -2.8e-05,
-        "ci_high": 0.000936,
-        "wilcoxon_p": 0.640625,
+        "mean_diff": -0.000536,
+        "ci_low": -0.00209,
+        "ci_high": 0.000872,
+        "wilcoxon_p": 0.550935,
         "holm_adjusted_p": 1.0,
-        "n_cells": 12
+        "n_cells": 16
       },
       {
         "contrast_id": "p2_vs_p1_diversity",
         "metric": "diversity",
         "condition_a": "P1",
         "condition_b": "P2",
-        "mean_diff": 0.000183,
-        "ci_low": -8e-06,
-        "ci_high": 0.000438,
-        "wilcoxon_p": 0.1875,
+        "mean_diff": 0.003297,
+        "ci_low": -2.4e-05,
+        "ci_high": 0.007316,
+        "wilcoxon_p": 0.550935,
         "holm_adjusted_p": 1.0,
-        "n_cells": 12
+        "n_cells": 16
       },
       {
         "contrast_id": "p4_vs_p3_diversity",
         "metric": "diversity",
         "condition_a": "P3",
         "condition_b": "P4",
-        "mean_diff": -0.000134,
-        "ci_low": -0.00084,
-        "ci_high": 0.000374,
-        "wilcoxon_p": 1.0,
+        "mean_diff": 0.004821,
+        "ci_low": -0.000772,
+        "ci_high": 0.014804,
+        "wilcoxon_p": 0.977345,
         "holm_adjusted_p": 1.0,
-        "n_cells": 12
+        "n_cells": 16
       },
       {
         "contrast_id": "p4_vs_p2_diversity",
         "metric": "diversity",
         "condition_a": "P2",
         "condition_b": "P4",
-        "mean_diff": 1.9e-05,
-        "ci_low": -0.000228,
-        "ci_high": 0.000328,
-        "wilcoxon_p": 0.25,
+        "mean_diff": 0.000988,
+        "ci_low": -0.004469,
+        "ci_high": 0.008393,
+        "wilcoxon_p": 0.378675,
         "holm_adjusted_p": 1.0,
-        "n_cells": 12
+        "n_cells": 16
       },
       {
         "contrast_id": "p4_vs_p0_diversity",
         "metric": "diversity",
         "condition_a": "P0",
         "condition_b": "P4",
-        "mean_diff": -0.000124,
-        "ci_low": -0.000474,
-        "ci_high": 9.9e-05,
-        "wilcoxon_p": 0.425781,
+        "mean_diff": -0.002964,
+        "ci_low": -0.012717,
+        "ci_high": 0.006306,
+        "wilcoxon_p": 0.629261,
         "holm_adjusted_p": 1.0,
-        "n_cells": 12
+        "n_cells": 16
       },
       {
         "contrast_id": "p1_vs_p0_diversity",
         "metric": "diversity",
         "condition_a": "P0",
         "condition_b": "P1",
-        "mean_diff": -0.000327,
-        "ci_low": -0.00089,
-        "ci_high": 1e-06,
-        "wilcoxon_p": 0.25,
+        "mean_diff": -0.007249,
+        "ci_low": -0.014792,
+        "ci_high": -0.001045,
+        "wilcoxon_p": 0.164072,
         "holm_adjusted_p": 1.0,
-        "n_cells": 12
+        "n_cells": 16
       },
       {
         "contrast_id": "p3_vs_p0_diversity",
         "metric": "diversity",
         "condition_a": "P0",
         "condition_b": "P3",
-        "mean_diff": 1e-05,
-        "ci_low": -0.000824,
-        "ci_high": 0.000831,
-        "wilcoxon_p": 0.640625,
-        "holm_adjusted_p": 1.0,
-        "n_cells": 12
+        "mean_diff": -0.007785,
+        "ci_low": -0.015819,
+        "ci_high": -0.000971,
+        "wilcoxon_p": 0.105514,
+        "holm_adjusted_p": 0.949623,
+        "n_cells": 16
       },
       {
         "contrast_id": "p2_vs_p0_diversity",
         "metric": "diversity",
         "condition_a": "P0",
         "condition_b": "P2",
-        "mean_diff": -0.000143,
-        "ci_low": -0.000801,
-        "ci_high": 0.00033,
-        "wilcoxon_p": 0.875,
+        "mean_diff": -0.003952,
+        "ci_low": -0.012555,
+        "ci_high": 0.002986,
+        "wilcoxon_p": 0.629261,
         "holm_adjusted_p": 1.0,
-        "n_cells": 12
+        "n_cells": 16
       }
     ],
     "excess_between_model_diversity": [
@@ -2513,24 +3173,24 @@
         "metric": "excess_between_model_diversity",
         "condition_a": "P1",
         "condition_b": "P4",
-        "mean_diff": 0.000622,
-        "ci_low": -0.001088,
-        "ci_high": 0.002182,
-        "wilcoxon_p": 0.380371,
+        "mean_diff": 0.005381,
+        "ci_low": -0.001311,
+        "ci_high": 0.016449,
+        "wilcoxon_p": 0.518046,
         "holm_adjusted_p": 1.0,
-        "n_cells": 12
+        "n_cells": 16
       },
       {
         "contrast_id": "p3_vs_p1_excess_between_model_diversity",
         "metric": "excess_between_model_diversity",
         "condition_a": "P1",
         "condition_b": "P3",
-        "mean_diff": 0.001024,
-        "ci_low": -0.000595,
-        "ci_high": 0.002595,
-        "wilcoxon_p": 0.266113,
-        "holm_adjusted_p": 1.0,
-        "n_cells": 12
+        "mean_diff": 0.001709,
+        "ci_low": -0.000233,
+        "ci_high": 0.003619,
+        "wilcoxon_p": 0.092853,
+        "holm_adjusted_p": 0.835679,
+        "n_cells": 16
       },
       {
         "contrast_id": "p2_vs_p1_excess_between_model_diversity",
@@ -2542,43 +3202,43 @@
         "ci_high": 0.0,
         "wilcoxon_p": 1.0,
         "holm_adjusted_p": 1.0,
-        "n_cells": 12
+        "n_cells": 16
       },
       {
         "contrast_id": "p4_vs_p3_excess_between_model_diversity",
         "metric": "excess_between_model_diversity",
         "condition_a": "P3",
         "condition_b": "P4",
-        "mean_diff": -0.000402,
-        "ci_low": -0.001072,
-        "ci_high": 7.8e-05,
-        "wilcoxon_p": 0.375,
+        "mean_diff": 0.003673,
+        "ci_low": -0.002323,
+        "ci_high": 0.014394,
+        "wilcoxon_p": 0.20128,
         "holm_adjusted_p": 1.0,
-        "n_cells": 12
+        "n_cells": 16
       },
       {
         "contrast_id": "p4_vs_p2_excess_between_model_diversity",
         "metric": "excess_between_model_diversity",
         "condition_a": "P2",
         "condition_b": "P4",
-        "mean_diff": 0.000622,
-        "ci_low": -0.001088,
-        "ci_high": 0.002182,
-        "wilcoxon_p": 0.380371,
+        "mean_diff": 0.005381,
+        "ci_low": -0.001311,
+        "ci_high": 0.016449,
+        "wilcoxon_p": 0.518046,
         "holm_adjusted_p": 1.0,
-        "n_cells": 12
+        "n_cells": 16
       },
       {
         "contrast_id": "p4_vs_p0_excess_between_model_diversity",
         "metric": "excess_between_model_diversity",
         "condition_a": "P0",
         "condition_b": "P4",
-        "mean_diff": 0.000622,
-        "ci_low": -0.001088,
-        "ci_high": 0.002182,
-        "wilcoxon_p": 0.380371,
+        "mean_diff": 0.005381,
+        "ci_low": -0.001311,
+        "ci_high": 0.016449,
+        "wilcoxon_p": 0.518046,
         "holm_adjusted_p": 1.0,
-        "n_cells": 12
+        "n_cells": 16
       },
       {
         "contrast_id": "p1_vs_p0_excess_between_model_diversity",
@@ -2590,19 +3250,19 @@
         "ci_high": 0.0,
         "wilcoxon_p": 1.0,
         "holm_adjusted_p": 1.0,
-        "n_cells": 12
+        "n_cells": 16
       },
       {
         "contrast_id": "p3_vs_p0_excess_between_model_diversity",
         "metric": "excess_between_model_diversity",
         "condition_a": "P0",
         "condition_b": "P3",
-        "mean_diff": 0.001024,
-        "ci_low": -0.000595,
-        "ci_high": 0.002595,
-        "wilcoxon_p": 0.266113,
-        "holm_adjusted_p": 1.0,
-        "n_cells": 12
+        "mean_diff": 0.001709,
+        "ci_low": -0.000233,
+        "ci_high": 0.003619,
+        "wilcoxon_p": 0.092853,
+        "holm_adjusted_p": 0.835679,
+        "n_cells": 16
       },
       {
         "contrast_id": "p2_vs_p0_excess_between_model_diversity",
@@ -2614,7 +3274,7 @@
         "ci_high": 0.0,
         "wilcoxon_p": 1.0,
         "holm_adjusted_p": 1.0,
-        "n_cells": 12
+        "n_cells": 16
       }
     ],
     "between_model_diversity": [
@@ -2623,24 +3283,24 @@
         "metric": "between_model_diversity",
         "condition_a": "P1",
         "condition_b": "P4",
-        "mean_diff": 0.004462,
-        "ci_low": 0.002944,
-        "ci_high": 0.006053,
-        "wilcoxon_p": 0.000488,
-        "holm_adjusted_p": 0.004395,
-        "n_cells": 12
+        "mean_diff": 0.009007,
+        "ci_low": 0.002997,
+        "ci_high": 0.019433,
+        "wilcoxon_p": 0.000482,
+        "holm_adjusted_p": 0.004342,
+        "n_cells": 16
       },
       {
         "contrast_id": "p3_vs_p1_between_model_diversity",
         "metric": "between_model_diversity",
         "condition_a": "P1",
         "condition_b": "P3",
-        "mean_diff": 0.00475,
-        "ci_low": 0.003207,
-        "ci_high": 0.00641,
-        "wilcoxon_p": 0.000488,
-        "holm_adjusted_p": 0.004395,
-        "n_cells": 12
+        "mean_diff": 0.004842,
+        "ci_low": 0.003616,
+        "ci_high": 0.006245,
+        "wilcoxon_p": 0.000482,
+        "holm_adjusted_p": 0.004342,
+        "n_cells": 16
       },
       {
         "contrast_id": "p2_vs_p1_between_model_diversity",
@@ -2652,43 +3312,43 @@
         "ci_high": 0.0,
         "wilcoxon_p": 1.0,
         "holm_adjusted_p": 1.0,
-        "n_cells": 12
+        "n_cells": 16
       },
       {
         "contrast_id": "p4_vs_p3_between_model_diversity",
         "metric": "between_model_diversity",
         "condition_a": "P3",
         "condition_b": "P4",
-        "mean_diff": -0.000287,
-        "ci_low": -0.000889,
-        "ci_high": 6.3e-05,
-        "wilcoxon_p": 0.921875,
+        "mean_diff": 0.004165,
+        "ci_low": -0.00142,
+        "ci_high": 0.014397,
+        "wilcoxon_p": 0.348688,
         "holm_adjusted_p": 1.0,
-        "n_cells": 12
+        "n_cells": 16
       },
       {
         "contrast_id": "p4_vs_p2_between_model_diversity",
         "metric": "between_model_diversity",
         "condition_a": "P2",
         "condition_b": "P4",
-        "mean_diff": 0.004462,
-        "ci_low": 0.002944,
-        "ci_high": 0.006053,
-        "wilcoxon_p": 0.000488,
-        "holm_adjusted_p": 0.004395,
-        "n_cells": 12
+        "mean_diff": 0.009007,
+        "ci_low": 0.002997,
+        "ci_high": 0.019433,
+        "wilcoxon_p": 0.000482,
+        "holm_adjusted_p": 0.004342,
+        "n_cells": 16
       },
       {
         "contrast_id": "p4_vs_p0_between_model_diversity",
         "metric": "between_model_diversity",
         "condition_a": "P0",
         "condition_b": "P4",
-        "mean_diff": 0.004462,
-        "ci_low": 0.002944,
-        "ci_high": 0.006053,
-        "wilcoxon_p": 0.000488,
-        "holm_adjusted_p": 0.004395,
-        "n_cells": 12
+        "mean_diff": 0.009007,
+        "ci_low": 0.002997,
+        "ci_high": 0.019433,
+        "wilcoxon_p": 0.000482,
+        "holm_adjusted_p": 0.004342,
+        "n_cells": 16
       },
       {
         "contrast_id": "p1_vs_p0_between_model_diversity",
@@ -2700,19 +3360,19 @@
         "ci_high": 0.0,
         "wilcoxon_p": 1.0,
         "holm_adjusted_p": 1.0,
-        "n_cells": 12
+        "n_cells": 16
       },
       {
         "contrast_id": "p3_vs_p0_between_model_diversity",
         "metric": "between_model_diversity",
         "condition_a": "P0",
         "condition_b": "P3",
-        "mean_diff": 0.00475,
-        "ci_low": 0.003207,
-        "ci_high": 0.00641,
-        "wilcoxon_p": 0.000488,
-        "holm_adjusted_p": 0.004395,
-        "n_cells": 12
+        "mean_diff": 0.004842,
+        "ci_low": 0.003616,
+        "ci_high": 0.006245,
+        "wilcoxon_p": 0.000482,
+        "holm_adjusted_p": 0.004342,
+        "n_cells": 16
       },
       {
         "contrast_id": "p2_vs_p0_between_model_diversity",
@@ -2724,7 +3384,7 @@
         "ci_high": 0.0,
         "wilcoxon_p": 1.0,
         "holm_adjusted_p": 1.0,
-        "n_cells": 12
+        "n_cells": 16
       }
     ],
     "evrr": [
@@ -2733,108 +3393,108 @@
         "metric": "evrr",
         "condition_a": "P1",
         "condition_b": "P4",
-        "mean_diff": 0.004092,
-        "ci_low": -0.008545,
-        "ci_high": 0.016204,
-        "wilcoxon_p": 0.84375,
-        "holm_adjusted_p": 1.0,
-        "n_cells": 12
+        "mean_diff": 0.212567,
+        "ci_low": 0.03646,
+        "ci_high": 0.439407,
+        "wilcoxon_p": 0.050058,
+        "holm_adjusted_p": 0.400464,
+        "n_cells": 16
       },
       {
         "contrast_id": "p3_vs_p1_evrr",
         "metric": "evrr",
         "condition_a": "P1",
         "condition_b": "P3",
-        "mean_diff": 0.021109,
-        "ci_low": -0.002816,
-        "ci_high": 0.051976,
-        "wilcoxon_p": 0.46875,
+        "mean_diff": 0.036009,
+        "ci_low": -0.087415,
+        "ci_high": 0.160844,
+        "wilcoxon_p": 0.629261,
         "holm_adjusted_p": 1.0,
-        "n_cells": 12
+        "n_cells": 16
       },
       {
         "contrast_id": "p2_vs_p1_evrr",
         "metric": "evrr",
         "condition_a": "P1",
         "condition_b": "P2",
-        "mean_diff": 0.010898,
-        "ci_low": -0.002639,
-        "ci_high": 0.02755,
-        "wilcoxon_p": 0.3125,
+        "mean_diff": 0.269455,
+        "ci_low": -0.040225,
+        "ci_high": 0.686038,
+        "wilcoxon_p": 0.147532,
         "holm_adjusted_p": 1.0,
-        "n_cells": 12
+        "n_cells": 16
       },
       {
         "contrast_id": "p4_vs_p3_evrr",
         "metric": "evrr",
         "condition_a": "P3",
         "condition_b": "P4",
-        "mean_diff": -0.017017,
-        "ci_low": -0.045422,
-        "ci_high": 0.000921,
-        "wilcoxon_p": 0.203125,
+        "mean_diff": 0.176558,
+        "ci_low": -0.025696,
+        "ci_high": 0.441983,
+        "wilcoxon_p": 0.147532,
         "holm_adjusted_p": 1.0,
-        "n_cells": 12
+        "n_cells": 16
       },
       {
         "contrast_id": "p4_vs_p2_evrr",
         "metric": "evrr",
         "condition_a": "P2",
         "condition_b": "P4",
-        "mean_diff": -0.006805,
-        "ci_low": -0.013923,
-        "ci_high": -0.000563,
-        "wilcoxon_p": 0.078125,
-        "holm_adjusted_p": 0.703125,
-        "n_cells": 12
+        "mean_diff": -0.056888,
+        "ci_low": -0.434113,
+        "ci_high": 0.198443,
+        "wilcoxon_p": 0.6698,
+        "holm_adjusted_p": 1.0,
+        "n_cells": 16
       },
       {
         "contrast_id": "p4_vs_p0_evrr",
         "metric": "evrr",
         "condition_a": "P0",
         "condition_b": "P4",
-        "mean_diff": -0.022574,
-        "ci_low": -0.070631,
-        "ci_high": 0.003971,
-        "wilcoxon_p": 0.46875,
+        "mean_diff": -0.096257,
+        "ci_low": -0.394301,
+        "ci_high": 0.155409,
+        "wilcoxon_p": 0.903198,
         "holm_adjusted_p": 1.0,
-        "n_cells": 12
+        "n_cells": 16
       },
       {
         "contrast_id": "p1_vs_p0_evrr",
         "metric": "evrr",
         "condition_a": "P0",
         "condition_b": "P1",
-        "mean_diff": -0.026667,
-        "ci_low": -0.067674,
-        "ci_high": 7.8e-05,
-        "wilcoxon_p": 0.25,
+        "mean_diff": -0.308825,
+        "ci_low": -0.642592,
+        "ci_high": -0.01839,
+        "wilcoxon_p": 0.164072,
         "holm_adjusted_p": 1.0,
-        "n_cells": 12
+        "n_cells": 16
       },
       {
         "contrast_id": "p3_vs_p0_evrr",
         "metric": "evrr",
         "condition_a": "P0",
         "condition_b": "P3",
-        "mean_diff": -0.005558,
-        "ci_low": -0.061294,
-        "ci_high": 0.04036,
-        "wilcoxon_p": 0.46875,
-        "holm_adjusted_p": 1.0,
-        "n_cells": 12
+        "mean_diff": -0.272815,
+        "ci_low": -0.592167,
+        "ci_high": 0.005104,
+        "wilcoxon_p": 0.043772,
+        "holm_adjusted_p": 0.393951,
+        "n_cells": 16
       },
       {
         "contrast_id": "p2_vs_p0_evrr",
         "metric": "evrr",
         "condition_a": "P0",
         "condition_b": "P2",
-        "mean_diff": -0.015769,
-        "ci_low": -0.063855,
-        "ci_high": 0.014725,
-        "wilcoxon_p": 0.875,
+        "mean_diff": -0.039369,
+        "ci_low": -0.461308,
+        "ci_high": 0.456081,
+        "wilcoxon_p": 0.587891,
         "holm_adjusted_p": 1.0,
-        "n_cells": 12
+        "n_cells": 16
       }
     ]
   }

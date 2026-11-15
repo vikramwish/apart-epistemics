@@ -1004,7 +1004,9 @@ def test_p_series_prompts_prior_symmetry_and_model_routing(tmp_path: Path) -> No
     agent = generate_agent_population(num_agents=1, seed=42)[0]
     sys_nodate = p_series_system_prompt("")
     sys_dated = p_series_system_prompt("2026-11-15")
-    assert "rigorous quantitative scientific estimator" in sys_nodate
+    assert "quantitative scientific estimator" in sys_nodate
+    for leaked in ("independently", "physical principles", "reference scales"):
+        assert leaked not in sys_nodate.lower()
     assert sys_dated == f"{sys_nodate} Today's date is 2026-11-15."
 
     def prompts(cond: str) -> tuple[str, str]:
@@ -1031,10 +1033,15 @@ def test_p_series_prompts_prior_symmetry_and_model_routing(tmp_path: Path) -> No
     assert "Peer consensus telemetry from prior estimators reports a median of" not in u0
     assert "Peer consensus telemetry from prior estimators reports a median of 6,400" in u1
     assert "(interquartile range 6,100 to 6,700)." in u1
-    assert "Dialectical counter-anchoring protocol:" not in u1
+    for baseline_user in (u0, u1, u3):
+        assert "Dialectical counter-anchoring protocol:" not in baseline_user
+        for leaked in ("independently", "physical principles", "reference scales"):
+            assert leaked not in baseline_user.lower()
     assert "Dialectical counter-anchoring protocol:" in u2
     assert "prior estimate and peer median" in u2
+    assert "independent physical principles and reference scales" in u2
     assert u2.index("median of") < u2.index("Dialectical counter-anchoring protocol:")
+    assert "What is your best estimate of the true quantity?" in u0
     assert "End with 'Final estimate: <plain number in kilometers>'" in u0
     # C1..C6 prompt builders remain untouched.
     sys_c1, usr_c1 = build_numeric_prompts("C1", agent, "Q?", 100.0, None, [], "km", "2026-11-15")
@@ -1085,8 +1092,8 @@ def test_p_series_analysis_matrix_did_h4_and_benchmark_disjointness(tmp_path: Pa
     v3 = [TaskItem.model_validate(item) for item in json.loads(v3_path.read_text())]
     legacy = build_numeric_core_tasks()
 
-    assert len(bench) == 12
-    assert len({t.id for t in bench}) == 12
+    assert len(bench) == 16
+    assert len({t.id for t in bench}) == 16
     assert {t.id for t in bench}.isdisjoint({t.id for t in v3} | {t.id for t in legacy})
     assert {t.question.strip().lower() for t in bench}.isdisjoint(
         {t.question.strip().lower() for t in v3} | {t.question.strip().lower() for t in legacy}
@@ -1096,16 +1103,20 @@ def test_p_series_analysis_matrix_did_h4_and_benchmark_disjointness(tmp_path: Pa
         s: [t for t in bench if t.selection_stratum == s]
         for s in ("control", "low_spread", "high_spread")
     }
-    assert all(len(v) == 4 for v in by_stratum.values())
+    assert len(by_stratum["high_spread"]) == 6
+    assert len(by_stratum["low_spread"]) == 6
+    assert len(by_stratum["control"]) == 4
     for tasks_s in by_stratum.values():
-        assert sorted(t.popular_misconception_bias for t in tasks_s) == [-0.8, -0.8, 0.8, 0.8]
+        half = len(tasks_s) // 2
+        assert sorted(t.popular_misconception_bias for t in tasks_s) == [-0.8] * half + [0.8] * half
 
     loaded_cfg = _load_config(cfg_path)
     assert loaded_cfg.numeric_conditions == ["P0", "P1", "P2", "P3", "P4"]
+    assert loaded_cfg.numeric_tasks == 16
     assert len(loaded_cfg.numeric_models) == 4
-    assert loaded_cfg.alpha == 0.3
+    assert loaded_cfg.alpha == 0.4
 
-    # Full 4-task synthetic run checking 16 contrasts, 5x9 matrix, 2x2 DiD, H4, and serialization.
+    # Full 4-task synthetic run checking 20 contrasts, 6x9 matrix, 2x2 DiD, assistant_* & H4.
     models = loaded_cfg.numeric_models
     sub_cfg = ExperimentSuiteConfig(
         seed=42,
@@ -1114,7 +1125,7 @@ def test_p_series_analysis_matrix_did_h4_and_benchmark_disjointness(tmp_path: Pa
         tasks_per_track=4,
         numeric_tasks=4,
         numeric_replicates=1,
-        alpha=0.3,
+        alpha=0.4,
         numeric_conditions=["P0", "P1", "P2", "P3", "P4"],
         numeric_models=models,
         conditions=[],
@@ -1129,20 +1140,46 @@ def test_p_series_analysis_matrix_did_h4_and_benchmark_disjointness(tmp_path: Pa
     assert len(recs) == 4 * 5 * 8 * 2
     assert analysis["completion_status"] == "complete"
     assert analysis["max_identity_residual"] < 1e-12
-    assert len(analysis["contrasts"]) == 16
-    assert "p4_vs_p1_excess_between_model_diversity" in {
-        c.contrast_id for c in analysis["contrasts"]
-    }
+    assert len(analysis["contrasts"]) == 20
+    contrast_ids = {c.contrast_id for c in analysis["contrasts"]}
+    assert "p4_vs_p1_excess_between_model_diversity" in contrast_ids
+    assert "p4_vs_p1_assistant_crowd_error" in contrast_ids
     assert set(analysis["interaction_2x2"]) == {
         "crowd_error",
+        "assistant_crowd_error",
         "avg_individual_error",
         "diversity",
         "evrr",
     }
+    p4_final = analysis["by_condition_final"]["P4"]
+    for asst_key in (
+        "assistant_crowd_error",
+        "assistant_avg_individual_error",
+        "assistant_diversity",
+        "assistant_between_model_diversity",
+        "assistant_within_model_diversity",
+        "assistant_excess_between_model_diversity",
+        "assistant_between_share",
+    ):
+        assert p4_final[asst_key] is not None
+    asst_resid = abs(
+        p4_final["assistant_avg_individual_error"]
+        - (p4_final["assistant_crowd_error"] + p4_final["assistant_diversity"])
+    )
+    assert asst_resid < 2e-6
+    asst_hier_resid = abs(
+        p4_final["assistant_diversity"]
+        - (
+            p4_final["assistant_within_model_diversity"]
+            + p4_final["assistant_between_model_diversity"]
+        )
+    )
+    assert asst_hier_resid < 2e-6
 
     matrix = analysis["polyphony_contrast_matrix"]
     assert set(matrix) == {
         "crowd_error",
+        "assistant_crowd_error",
         "diversity",
         "excess_between_model_diversity",
         "between_model_diversity",
@@ -1151,6 +1188,14 @@ def test_p_series_analysis_matrix_did_h4_and_benchmark_disjointness(tmp_path: Pa
     for metric, items in matrix.items():
         assert len(items) == 9
         assert all(item.metric == metric for item in items)
+
+    # Confirm empty assistant estimates cleanly yield None (never NaN).
+    no_asst = [r.model_copy(update={"assistant_log10": None}) for r in recs]
+    no_asst_analysis = analyze_numeric_core(no_asst, legacy[:4])
+    assert no_asst_analysis["by_condition_final"]["P4"]["assistant_crowd_error"] is None
+    assert no_asst_analysis["polyphony_contrast_matrix"]["assistant_crowd_error"] == []
+    assert "assistant_crowd_error" not in no_asst_analysis["interaction_2x2"]
+    json.dumps(_serialize_numeric_analysis(no_asst_analysis), allow_nan=False)
 
     # Confirm H4 crowd pull anchors P1/P2 vs P0 (never P3/P4) and includes model FE on P3/P4.
     h4 = analysis["h4_slopes"]

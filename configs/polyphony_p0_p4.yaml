@@ -2,13 +2,13 @@ suite_name: "Cross-Architecture Polyphony & Dialectical Counter-Anchoring (P0-P4
 seed: 42
 num_agents: 8
 num_rounds: 2
-tasks_per_track: 12
-numeric_tasks: 12
+tasks_per_track: 16
+numeric_tasks: 16
 numeric_tasks_file: "configs/polyphony_benchmark_tasks.json"
 numeric_start_bias_weight: 0.22
 numeric_start_sd: 0.24
 numeric_replicates: 1
-alpha: 0.3
+alpha: 0.4
 numeric_conditions:
   - P0
   - P1

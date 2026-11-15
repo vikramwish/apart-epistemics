@@ -8,7 +8,7 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 from typing import Any
 
-from apart_epistemics.report import build_static_site, generate_figures
+from apart_epistemics.report import build_static_site, generate_figures, generate_polyphony_figures
 
 
 def test_generate_figures_produces_valid_svgs(
@@ -95,3 +95,68 @@ def test_build_static_site_self_contained_and_safe(
     assert "Synthetic runs demonstrate simulator assumptions" in html
     assert 'tabindex="0" role="region" aria-label="Condition scores' in html
     assert "prefers-reduced-motion" in html
+
+
+def test_generate_polyphony_figures_produces_valid_svgs(tmp_path: Path) -> None:
+    from apart_epistemics.backends import SyntheticEpistemicBackend
+    from apart_epistemics.cli import _serialize_numeric_analysis
+    from apart_epistemics.datasets import build_numeric_core_tasks
+    from apart_epistemics.engine import (
+        analyze_numeric_core,
+        run_numeric_core,
+    )
+
+    tasks = build_numeric_core_tasks()[:2]
+    models = ["gemma-4-26b-a4b-it", "deepseek-v4-flash", "qwen3.8-27b", "glm-5.2"]
+    recs = run_numeric_core(
+        tasks=tasks,
+        conditions=["P0", "P1", "P2", "P3", "P4"],
+        n_agents=4,
+        n_rounds=2,
+        replicates=1,
+        runs_path=tmp_path / "poly_runs.jsonl",
+        backend=SyntheticEpistemicBackend(seed=19),
+        alpha=0.4,
+        models=models,
+    )
+    analysis = analyze_numeric_core(recs, tasks)
+    serialized = json.loads(json.dumps(_serialize_numeric_analysis(analysis), allow_nan=False))
+
+    for sub_name, payload in (("raw", analysis), ("json", serialized)):
+        fig_dir = tmp_path / f"figs_{sub_name}"
+        paths = generate_polyphony_figures(payload, fig_dir)
+        assert {p.name for p in paths} == {
+            "polyphony_crowd_error.svg",
+            "polyphony_hierarchical_page.svg",
+            "polyphony_2x2_factorial.svg",
+        }
+        for svg_path in paths:
+            raw = svg_path.read_text(encoding="utf-8")
+            assert "NaN" not in raw
+            assert "undefined" not in raw
+            root = ET.fromstring(raw)
+            assert root.tag.endswith("svg")
+            assert root.attrib.get("viewBox")
+
+    # Zero-EVRR fallback (alpha=1.0) still generates clean valid XML without NaN.
+    z_recs = run_numeric_core(
+        tasks=tasks,
+        conditions=["P0", "P1", "P2", "P3", "P4"],
+        n_agents=4,
+        n_rounds=2,
+        replicates=1,
+        runs_path=tmp_path / "poly_zero.jsonl",
+        backend=SyntheticEpistemicBackend(seed=23),
+        alpha=1.0,
+        models=models,
+    )
+    z_analysis = analyze_numeric_core(z_recs, tasks)
+    z_paths = generate_polyphony_figures(z_analysis, tmp_path / "figs_zero")
+    for svg_path in z_paths:
+        raw = svg_path.read_text(encoding="utf-8")
+        assert "NaN" not in raw
+        assert "undefined" not in raw
+        ET.fromstring(raw)
+    assert "Metric unavailable" in (
+        tmp_path / "figs_zero" / "polyphony_2x2_factorial.svg"
+    ).read_text(encoding="utf-8")

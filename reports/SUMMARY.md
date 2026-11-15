@@ -1,24 +1,35 @@
-# Apart Epistemics / Epistemic Prism (`numeric-question-bank`) Summary
+# Experiment Summary — Standalone `P0`–`P4` Cross-Architecture Polyphony & Counter-Anchoring Benchmark
 
-- **Repository / Remote:** `https://github.com/vikramwish/apart-epistemics.git` (`origin`)
-- **Branch:** `numeric-question-bank`
-- **Standalone Research Report:** [`reports/POLYPHONY_EXPERIMENT_REPORT.md`](POLYPHONY_EXPERIMENT_REPORT.md)
+- **Deliverable Scope:** Self-contained 16-task scientific quantitative estimation study (`P0`–`P4`, `alpha = 0.4`, `8` agents, `2` rounds, `1,280` live inference rows) in [`results/polyphony-p0-p4/`](../results/polyphony-p0-p4/) accompanied by 3 generated SVG figures in [`reports/figures/`](figures/) and full methodology/results in [`POLYPHONY_EXPERIMENT_REPORT.md`](POLYPHONY_EXPERIMENT_REPORT.md).
+- **Task Bank & Integrity:** Zero-ceiling cold-probed 16-question benchmark ([`configs/polyphony_benchmark_tasks.json`](../configs/polyphony_benchmark_tasks.json): `6 high_spread`, `6 low_spread`, `4 control`, exact `+/-0.8` bias balance per stratum), isolated neutral baseline prompt (`p_series_system_prompt`), `1,280/1,280` rows completed, **`0/1,280` parse misses**, **`0/1,280` final truncations** (`6` total `finish_reason="length"` Gemma repetition loops causally re-sampled across `28 + 1` crash-resume cells), **`max_identity_residual = 1.3878e-16`**, and **`$0.4863 USD`** actual logged cost (`229,653` input / `531,150` output tokens; `0/1,280` `reasoning_tokens > 0`).
 
-## Shipped in Clean-Room Phase 2 (`P0`–`P4` Cross-Architecture Polyphony & Dialectical Counter-Anchoring)
-- **Protocol, Benchmark & Engine Upgrades:**
-  - Authored a zero-overlap 12-question Scientific, Engineering & Earth-Systems Fermi Benchmark ([`configs/polyphony_benchmark_tasks.json`](../configs/polyphony_benchmark_tasks.json); 4 `control`, 4 `low_spread`, 4 `high_spread`, balanced `+/-0.8` prior misconceptions, all `numeric_truth >= 305.0`) and suite config [`configs/polyphony_p0_p4.yaml`](../configs/polyphony_p0_p4.yaml) (`seed=42`, `num_agents=8`, `num_rounds=2`, `alpha=0.3`).
-  - Added clean-room `P0`–`P4` prompts (`p_series_system_prompt`, `_P_COUNTER_ANCHOR_TEXT`), generalized `2x2` DiD interaction logic (`(P4 - P3) - (P2 - P1)`), pre-registered `polyphony_contrast_matrix` serialization (9 pairs $\times$ 5 metrics with per-metric Holm adjustment + `allow_nan=False`), H4 `P0 -> P1/P2` `crowd_pull_vs_c1_r1` support, and synthetic parity across `P0`–`P4` while keeping `C1`–`C6` intact.
-  - Verified full suite: `ruff format --check src tests`, `ruff check src tests`, and `pytest` unit tests passing cleanly alongside machine-precision hierarchical Page residuals (`max_flat_res = 1.874e-16`, `max_hier_res = 1.943e-16` across all 120 cells).
-- **Live 960-Row Adaption Run (`results/polyphony-p0-p4/`):**
-  - Completed `960 / 960` rows across `P0`–`P4` (`192` homogeneous `gemma-4-26b-a4b-it` in each of `P0`, `P1`, `P2`; `48` each across `gemma-4-26b-a4b-it`, `deepseek-v4-flash`, `qwen3.8-27b`, and `glm-5.2` in `P3` and `P4` with `reasoning={"effort": "none"}` for non-Gemma prefixes), `0 / 960` misses, `0 / 960` final truncations (transparently re-sampling 3 initial Gemma `finish_reason="length"` repetition loops and their 2 downstream Round-2 trajectories = 19 rows via crash-resume), `$0.3840 USD` total provider cost (`2,352` HTTP requests reserved `$4.704`).
-  - **Primary Findings:**
-    - `between_model_diversity` increases from `0.0` (`P0`–`P2`) to `0.004750` (`48.85%` share, `excess = +0.001024`, Holm `p = 0.004395`) in `P3` and `0.004462` (`47.46%` share, `excess = +0.000622`, Holm `p = 0.004395`) in `P4`.
-    - Even on canonical physical constants, unanchored cross-architecture social telemetry (`P3`) raises `crowd_error` relative to `P0` (`0.010340` vs. `0.009932`, `+0.000409`, Wilcoxon `p = 0.007812`, `95% CI [+0.000030, +0.001097]`, matrix Holm `p = 0.070312`) and increases Round-2 assistant-only MSE (`0.000616 -> 0.000940`).
-    - Dialectical counter-anchoring (`P4`) cuts Round-2 assistant MSE by **92.4%** vs. `P3` (`0.000940 -> 0.000071`) and recovers the lowest final `crowd_error` of all five conditions (`0.009928`).
+---
 
-## Cross-Benchmark Replication (`C1`–`C6`, Phase 1)
-- **Live 1,056-Row V3 Adaption Run (`results/numeric-polyphony-c1-c6/`):** Completed on `11` unsettled/municipal V3 questions (`configs/numeric_polyphony_c1_c6.yaml`), `0 / 1,056` misses, `0` truncations, `$0.3479 USD` (`1,221` requests), `max_identity_residual = 3.123e-16`. Under high baseline uncertainty (`C1` Round-2 assistant MSE `0.055792`), homogeneous social consensus collapses accuracy (`C2 = 0.039766` vs. `C1 = 0.021548`, `crowd_pull = 0.9550`), whereas combined polyphony + counter-anchoring (`C6`) cuts `crowd_error` by **47.6%** vs. `C2` (`0.020837`, Wilcoxon `p = 0.041992`) while elevating `evrr` (`1.414287` vs. `1.194963`, `p = 0.032227`).
+## Final Round-2 Summary (`P0`–`P4`, `n = 16` questions / cell mean)
+
+| Condition | Setup | Agent `crowd_error` | Asst `crowd_error` | Agent `diversity` | `D_within` | `D_between` | `D_excess` | `EVRR` |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| **`P0`** | Mono Gemma, Alone | `0.011944` | `0.009646` | `0.016806` | `0.016806` | `0.000000` | `0.000000` | `1.3788` |
+| **`P1`** | Mono Gemma + Peer Telemetry | `0.022899` | `0.017313` | `0.009557` | `0.009557` | `0.000000` | `0.000000` | `1.0700` |
+| **`P2`** | Mono Gemma + Telemetry + CA | `0.011818` | `0.013480` | `0.012854` | `0.012854` | `0.000000` | `0.000000` | `1.3394` |
+| **`P3`** | Poly `K=4` + Telemetry | `0.010058` | **`0.002339`** | `0.009021` | `0.004178` | `0.004842` | `0.001709` | `1.1060` |
+| **`P4`** | Poly `K=4` + Telemetry + CA | **`0.007692`** | `0.005770` | `0.013842` | `0.004835` | `0.009007` | **`0.005381`** | `1.2826` |
+
+## Key Empirical Conclusions
+1. **Monoculture Peer Herding (`P1` vs. `P0`):** Exposing homogeneous agents to peer median/IQR nearly doubles blended crowd MSE (`0.011944 -> 0.022899`, `+0.010955`, Wilcoxon `p = 0.008266`, matrix Holm `p = 0.049594`), cuts direct assistant diversity by `81.4%` (`0.014055 -> 0.002611`), and induces a Round-1 crowd-pull slope of `+0.4489`.
+2. **Counter-Anchoring Alone (`P2` vs. `P1`):** Symmetrical tail-testing drops crowd error `-48.4%` (`0.022899 -> 0.011818`, Wilcoxon `p = 0.000892`, matrix Holm `p = 0.008027`, global 20-contrast Holm `p = 0.017838`) and eliminates crowd pull (`slope = -0.0254`).
+3. **Polyphony Alone (`P3` vs. `P1`):** Mixing `gemma-4-26b-a4b-it`, `deepseek-v4-flash`, `qwen3.8-27b`, and `glm-5.2` cuts blended crowd error `-56.1%` (`0.010058`, matrix Holm `p = 0.022925`) and slashes **direct assistant crowd MSE by `86.5%`** (`0.017313 -> 0.002339`, matrix Holm `p = 0.031001`), generating `53.7%` between-model diversity (`0.004842`, matrix Holm `p = 0.004342`).
+4. **Joint Polyphony + Counter-Anchoring (`P4`):** Delivers the lowest final blended crowd MSE (`0.007692`, `-66.4%` vs. `P1`, matrix Holm `p = 0.022925`; `P4 < P3` across all 3 strata, `p_W = 0.028768`), highest model-cluster variance (`between_model_diversity = 0.009007`, `excess = +0.005381`), and a statistically significant sub-additive `2x2` DiD (`+0.008715`, `95% CI [+0.003359, +0.016034]`, Holm `p = 0.005458`).
+
+---
+
+## Generated Figures & Code Verification
+
+- [`figures/polyphony_crowd_error.svg`](figures/polyphony_crowd_error.svg) — P0–P4 agent vs. direct-assistant crowd MSE, R1->R2 deltas, and confirmatory Holm contrasts.
+- [`figures/polyphony_hierarchical_page.svg`](figures/polyphony_hierarchical_page.svg) — Two-level Page identity decomposition (`E_ind = E_crowd + D_within + D_between`), `between_share`, `D_excess`, `EVRR`, and `1.39e-16` residual verification.
+- [`figures/polyphony_2x2_factorial.svg`](figures/polyphony_2x2_factorial.svg) — 3-panel `2x2` interaction plot (`crowd_error`, `assistant_crowd_error`, `evrr`) with `P0` / `1.0` reference lines and exact `DiD` Holm statistics.
+- **Verification Gates:** Strict JSON (`allow_nan=False` everywhere including `_cmd_analyze`), offline `ruff format --check` + `ruff check` + full `pytest` suite (`241 passed, 2 skipped` on live-key/external calibration skips), and secret-diff checks.
 
 ## Open Risks & Next Steps
-- **OpenRouter Credits (`reports/NEEDS_OWNER.md`):** OpenRouter account credits are exhausted (`HTTP 402`), halting full 17,820-row rounded sweeps on `openai/gpt-6-luna`; Adaption funded the completed 11-question V3 (`396` rows), 11-question `C1`–`C6` polyphony (`1,056` rows), clean-room 12-question `P0`–`P4` scientific polyphony (`960` rows), `deepseek-v4-flash` (`96` rows), `gemma-4-31b-it` (`24` numeric rows), and 4-model Track 4 (`80` rows) experiments.
-- **Statistical Power & Prior-Inertia Horizon:** `P0`–`P4` uses `n = 12` questions (`min exact Wilcoxon p = 0.000488`) and `alpha = 0.3` over `2` rounds (`0.49` initial-prior weight), compressing crowd-level differences on solved canonical constants despite the `92.4%` assistant-MSE improvement in `P4`. Next steps: expand the scientific polyphony bank to `n >= 24` uncertain pre-cutoff constants and evaluate `num_rounds >= 4` / higher `alpha`.
+- **Open Risks:** `n = 16` questions provides conservative power under the global `20`-contrast Holm family (`P4`/`P3` vs. `P1` reach `p_Holm = 0.0544` vs. `0.0229` within the `9`-contrast metric family); non-Gemma families ran with `reasoning={"effort": "none"}`.
+- **Next Steps:** Expand replicate depth or compare adaptive trust weighting (`alpha` schedules) alongside enabled reasoning budgets in `P3`/`P4` to test whether `P4`'s variance-cancellation advantage persists when raw model accuracy further improves.

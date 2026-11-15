@@ -71,6 +71,7 @@ _P_MATRIX_PAIRS = (
 )
 _P_MATRIX_METRICS = (
     "crowd_error",
+    "assistant_crowd_error",
     "diversity",
     "excess_between_model_diversity",
     "between_model_diversity",
@@ -90,6 +91,13 @@ _ROUND_METRIC_KEYS = (
     "evrr_between",
     "evrr_within",
     "evrr_cumulative",
+    "assistant_crowd_error",
+    "assistant_avg_individual_error",
+    "assistant_diversity",
+    "assistant_between_model_diversity",
+    "assistant_within_model_diversity",
+    "assistant_excess_between_model_diversity",
+    "assistant_between_share",
 )
 
 
@@ -129,11 +137,10 @@ def shared_system_prompt(current_date: str = "") -> str:
 
 
 def p_series_system_prompt(current_date: str = "") -> str:
-    """Return the shared P0..P4 scientific estimator system prompt."""
+    """Return the neutral P0..P4 scientific estimator system prompt."""
     prompt = (
-        "You are a rigorous quantitative scientific estimator. "
-        "Reason independently from physical principles and empirical reference scales without "
-        "web lookup, and end with 'Final estimate: <number>'."
+        "You are a quantitative scientific estimator. "
+        "Answer without web lookup and end with 'Final estimate: <number>'."
     )
     return f"{prompt} Today's date is {current_date}." if current_date else prompt
 
@@ -159,7 +166,7 @@ def _build_p_series_prompts(
     if cond in _COUNTER_ANCHOR_CONDITIONS:
         parts.append(_P_COUNTER_ANCHOR_TEXT)
     parts.append(
-        "What is your best independent estimate of the true quantity? "
+        "What is your best estimate of the true quantity? "
         f"End with 'Final estimate: <plain number{in_unit}>' and nothing after the number."
     )
     return (p_series_system_prompt(current_date), "\n".join(parts))
@@ -926,6 +933,42 @@ def _compute_cell_metrics(
             decomp["identity_residual"],
             decomp["hierarchical_identity_residual"],
         )
+        asst_pairs = [
+            (float(r.assistant_log10), r.model_slug)
+            for r in cell_recs
+            if not r.miss and r.assistant_log10 is not None
+        ]
+        if asst_pairs:
+            asst_decomp = compute_hierarchical_page_decomposition(
+                [v for v, _ in asst_pairs],
+                [m for _, m in asst_pairs],
+                log_truth=truth,
+            )
+            decomp["assistant_crowd_error"] = asst_decomp["crowd_error"]
+            decomp["assistant_avg_individual_error"] = asst_decomp["avg_individual_error"]
+            decomp["assistant_diversity"] = asst_decomp["diversity"]
+            decomp["assistant_between_model_diversity"] = asst_decomp["between_model_diversity"]
+            decomp["assistant_within_model_diversity"] = asst_decomp["within_model_diversity"]
+            decomp["assistant_excess_between_model_diversity"] = asst_decomp[
+                "excess_between_model_diversity"
+            ]
+            decomp["assistant_between_share"] = asst_decomp["between_share"]
+            max_resid = max(
+                max_resid,
+                asst_decomp["identity_residual"],
+                asst_decomp["hierarchical_identity_residual"],
+            )
+        else:
+            for key_name in (
+                "assistant_crowd_error",
+                "assistant_avg_individual_error",
+                "assistant_diversity",
+                "assistant_between_model_diversity",
+                "assistant_within_model_diversity",
+                "assistant_excess_between_model_diversity",
+                "assistant_between_share",
+            ):
+                decomp[key_name] = None
         cell_metrics[key] = decomp
     return cell_metrics, max_resid
 
@@ -945,7 +988,11 @@ def _compute_interaction_2x2(
     else:
         return {}
 
-    metrics = ("crowd_error", "avg_individual_error", "diversity", "evrr")
+    metrics: tuple[str, ...] = (
+        ("crowd_error", "assistant_crowd_error", "avg_individual_error", "diversity", "evrr")
+        if c00 == "P1"
+        else ("crowd_error", "avg_individual_error", "diversity", "evrr")
+    )
     raw: list[tuple[str, list[float], float, float, float]] = []
     for metric in metrics:
         per_cond = {
@@ -1137,6 +1184,10 @@ def analyze_numeric_core(
         ("p4_vs_p1_excess_between_model_diversity", "excess_between_model_diversity", "P1", "P4"),
         ("p4_vs_p3_between_model_diversity", "between_model_diversity", "P3", "P4"),
         ("p4_vs_p1_evrr", "evrr", "P1", "P4"),
+        ("p4_vs_p1_assistant_crowd_error", "assistant_crowd_error", "P1", "P4"),
+        ("p3_vs_p1_assistant_crowd_error", "assistant_crowd_error", "P1", "P3"),
+        ("p2_vs_p1_assistant_crowd_error", "assistant_crowd_error", "P1", "P2"),
+        ("p4_vs_p3_assistant_crowd_error", "assistant_crowd_error", "P3", "P4"),
     ]
 
     def _cell_metric(cond_id: str, metric: str) -> dict[tuple[str, int], float]:
