@@ -487,3 +487,93 @@ def test_adaption_live_roundtrip_when_key_present() -> None:
     assert not parsed.miss
     assert parsed.value is not None
     assert parsed.value > 0
+
+
+def test_adaption_disables_hidden_reasoning_for_qwen_glm_deepseek_only(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("ADAPTION_API_KEY", "dummy-adaption-key")
+    payloads: list[dict[str, Any]] = []
+
+    def tx(_url: str, _headers: dict[str, str], payload: dict[str, Any]) -> dict[str, Any]:
+        payloads.append(payload)
+        return {
+            "model": payload["model"],
+            "status": "completed",
+            "output_text": "Final estimate: 5",
+        }
+
+    base = create_backend("adaption", model="gemma-4-26b-a4b-it", transport=tx)
+    for model_name in ("deepseek-v4-flash", "qwen3.8-27b", "glm-5.2"):
+        base.for_model(model_name).generate_chat("sys", "usr")
+        assert payloads[-1]["model"] == model_name
+        assert payloads[-1]["reasoning"] == {"effort": "none"}
+
+    for gemma_name in ("gemma-4-26b-a4b-it", "gemma-4-31b-it"):
+        base.for_model(gemma_name).generate_chat("sys", "usr")
+        assert payloads[-1]["model"] == gemma_name
+        assert "reasoning" not in payloads[-1]
+
+
+def test_synthetic_for_model_preserves_unrouted_defaults_and_supports_c4_c5_c6() -> None:
+    from apart_epistemics.datasets import build_numeric_core_tasks, generate_agent_population
+    from apart_epistemics.models import ConditionConfig
+
+    del ConditionConfig
+    base = create_backend("synthetic", seed=42)
+    task = build_numeric_core_tasks()[0]
+    agent = generate_agent_population(num_agents=1, seed=42)[0]
+
+    # Unrouted C1..C3 stays clean without setting `model` on the base backend.
+    assert not hasattr(base, "model")
+    c2_reply = base.generate_numeric_reply(
+        system_prompt="s",
+        user_prompt="u",
+        condition_id="C2",
+        task=task,
+        round_idx=1,
+        current_x=100.0,
+        pop_stats=(150.0, 90.0, 200.0),
+        agent=agent,
+    )
+    assert c2_reply["model_slug"] == "openai/gpt-frontier"
+
+    routed_qwen = base.for_model("qwen3.8-27b")
+    routed_glm = base.for_model("glm-5.2")
+    assert not hasattr(base, "model")
+    c5_qwen = routed_qwen.generate_numeric_reply(
+        system_prompt="s",
+        user_prompt="u",
+        condition_id="C5",
+        task=task,
+        round_idx=1,
+        current_x=100.0,
+        pop_stats=(150.0, 90.0, 200.0),
+        agent=agent,
+    )
+    c5_glm = routed_glm.generate_numeric_reply(
+        system_prompt="s",
+        user_prompt="u",
+        condition_id="C5",
+        task=task,
+        round_idx=1,
+        current_x=100.0,
+        pop_stats=(150.0, 90.0, 200.0),
+        agent=agent,
+    )
+    assert c5_qwen["model_slug"] == "qwen3.8-27b"
+    assert c5_glm["model_slug"] == "glm-5.2"
+    assert c5_qwen["raw_reply"] != c5_glm["raw_reply"]
+
+    c4_reply = base.generate_numeric_reply(
+        system_prompt="s",
+        user_prompt="u",
+        condition_id="C4",
+        task=task,
+        round_idx=1,
+        current_x=100.0,
+        pop_stats=(150.0, 90.0, 200.0),
+        agent=agent,
+    )
+    assert c4_reply["model_slug"] == "openai/gpt-frontier"
+    assert "Final estimate:" in c4_reply["raw_reply"]

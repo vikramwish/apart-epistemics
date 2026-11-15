@@ -111,6 +111,8 @@ class ExperimentSuiteConfig(BaseModel):
     numeric_start_bias_weight: float = Field(default=0.22, ge=0.0, le=1.0)
     numeric_start_sd: float = Field(default=0.24, gt=0.0, le=2.0)
     numeric_replicates: int = Field(default=2, ge=1, le=10)
+    numeric_conditions: list[str] = Field(default_factory=lambda: ["C1", "C2", "C3"])
+    numeric_models: list[str] = Field(default_factory=list)
     alpha: float = Field(default=0.3, ge=0.0, le=1.0)
     conditions: list[ConditionConfig]
 

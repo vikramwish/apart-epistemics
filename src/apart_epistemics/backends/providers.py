@@ -372,7 +372,7 @@ class AdaptionBackend(_HTTPChatBackend):
             "input": user_prompt,
             "max_output_tokens": effective_max,
         }
-        if self.model.startswith("qwen"):
+        if self.model.startswith(("qwen", "glm", "deepseek")):
             payload["reasoning"] = {"effort": "none"}
         if temperature is not None:
             payload["temperature"] = float(temperature)

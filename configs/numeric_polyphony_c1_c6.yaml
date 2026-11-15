@@ -1,0 +1,35 @@
+suite_name: "Numeric core V3 C1..C6 cross-architecture polyphony and dialectical counter-anchoring"
+seed: 42
+num_agents: 8
+num_rounds: 2
+peer_degree: 3
+tasks_per_track: 6
+numeric_tasks: 11
+numeric_start_bias_weight: 0.22
+numeric_start_sd: 0.24
+numeric_replicates: 1
+alpha: 0.3
+numeric_tasks_file: configs/numeric_final_tasks.json
+numeric_conditions:
+  - C1
+  - C2
+  - C3
+  - C4
+  - C5
+  - C6
+numeric_models:
+  - gemma-4-26b-a4b-it
+  - deepseek-v4-flash
+  - qwen3.8-27b
+  - glm-5.2
+
+conditions:
+  - condition_id: no_ai
+    label: "No AI Baseline (Independent + Peers)"
+    heterogeneity_type: no_ai
+    nationality_type: none
+    num_models: 0
+    temperature: 0.8
+    top_p: 0.95
+    peer_exchange: true
+    group: baseline

@@ -195,12 +195,15 @@ def _load_config(config_path: Path | None) -> ExperimentSuiteConfig:
 
 def _serialize_numeric_analysis(analysis: dict[str, Any]) -> dict[str, Any]:
     return {
+        "completion_status": analysis.get("completion_status", "incomplete_or_unverified"),
+        "missing_or_incomplete_cells": analysis.get("missing_or_incomplete_cells", 0),
         "max_identity_residual": analysis["max_identity_residual"],
         "h4_assistant_agent_corr": analysis["h4_assistant_agent_corr"],
         "h4_slopes": analysis["h4_slopes"],
         "by_stratum": analysis.get("by_stratum", {}),
         "by_condition_final": analysis["by_condition_final"],
         "condition_round_metrics": analysis["condition_round_metrics"],
+        "interaction_2x2": analysis.get("interaction_2x2", {}),
         "contrasts": [
             c.model_dump() if hasattr(c, "model_dump") else c for c in analysis["contrasts"]
         ],
@@ -237,12 +240,13 @@ def _execute_numeric_track(
     print(
         f"Numeric track settings: {len(num_tasks)} of {len(bank)} questions, "
         f"{n_agents} agents, {cfg.num_rounds} rounds, {cfg.numeric_replicates} replicates, "
-        f"start bias weight {cfg.numeric_start_bias_weight}, start sd {cfg.numeric_start_sd}.",
+        f"start bias weight {cfg.numeric_start_bias_weight}, start sd {cfg.numeric_start_sd}, "
+        f"conditions {cfg.numeric_conditions}, models {cfg.numeric_models}.",
         flush=True,
     )
     num_recs = run_numeric_core(
         tasks=num_tasks,
-        conditions=["C1", "C2", "C3"],
+        conditions=cfg.numeric_conditions,
         n_agents=n_agents,
         n_rounds=cfg.num_rounds,
         replicates=cfg.numeric_replicates,
@@ -257,6 +261,7 @@ def _execute_numeric_track(
         start_bias_weight=cfg.numeric_start_bias_weight,
         start_sd=cfg.numeric_start_sd,
         current_date=current_date,
+        models=cfg.numeric_models,
     )
     num_analysis = analyze_numeric_core(num_recs, num_tasks)
     (out_dir / "numeric_analysis.json").write_text(

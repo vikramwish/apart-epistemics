@@ -1,0 +1,2583 @@
+{
+  "completion_status": "complete",
+  "missing_or_incomplete_cells": 0,
+  "max_identity_residual": 3.122502256758253e-16,
+  "h4_assistant_agent_corr": 0.998,
+  "h4_slopes": {
+    "method": "Per condition and question: OLS of (assistant_log10 - log_truth) on (agent_log10_before - log_truth) [+ (pop_median_log10 - log_truth) for C2..C6]; slopes averaged over questions with a bootstrap 95% CI over questions.",
+    "interpretation": "slope_user ~0: the assistant answers from its own view; ~1: it echoes the user's guess. slope_crowd separates echoing the crowd median. Descriptive, not causal.",
+    "by_condition": {
+      "C1": {
+        "slope_user": {
+          "mean": 0.0681,
+          "ci95": [
+            -0.1615,
+            0.2512
+          ],
+          "n_questions": 11
+        },
+        "slope_user_round1": {
+          "mean": 0.0053,
+          "ci95": [
+            -0.235,
+            0.1838
+          ],
+          "n_questions": 11
+        },
+        "n_observations": 176,
+        "per_question": {
+          "ag_ind_gold": {
+            "n": 16,
+            "slope_user": -0.5812,
+            "slope_user_round1": -0.792
+          },
+          "ag_ind_total": {
+            "n": 16,
+            "slope_user": 0.2056,
+            "slope_user_round1": 0.1872
+          },
+          "box_minions_cume": {
+            "n": 16,
+            "slope_user": 0.2337,
+            "slope_user_round1": 0.0849
+          },
+          "box_moana_cume": {
+            "n": 16,
+            "slope_user": 0.2962,
+            "slope_user_round1": 0.2348
+          },
+          "box_odyssey_cume": {
+            "n": 16,
+            "slope_user": 0.3411,
+            "slope_user_round1": 0.3131
+          },
+          "ctrl_kullu": {
+            "n": 16,
+            "slope_user": -0.8351,
+            "slope_user_round1": -0.657
+          },
+          "ctrl_nahan": {
+            "n": 16,
+            "slope_user": 0.1811,
+            "slope_user_round1": 0.091
+          },
+          "ctrl_newcastle_wy": {
+            "n": 16,
+            "slope_user": 0.2364,
+            "slope_user_round1": 0.0957
+          },
+          "cwg_aus_gold": {
+            "n": 16,
+            "slope_user": 0.154,
+            "slope_user_round1": 0.0539
+          },
+          "cwg_ind_total": {
+            "n": 16,
+            "slope_user": 0.2212,
+            "slope_user_round1": 0.2114
+          },
+          "cwg_nga_total": {
+            "n": 16,
+            "slope_user": 0.2962,
+            "slope_user_round1": 0.2353
+          }
+        }
+      },
+      "C2": {
+        "slope_user": {
+          "mean": 0.2044,
+          "ci95": [
+            0.1057,
+            0.312
+          ],
+          "n_questions": 11
+        },
+        "slope_user_round1": {
+          "mean": 0.2262,
+          "ci95": [
+            0.0942,
+            0.3772
+          ],
+          "n_questions": 11
+        },
+        "n_observations": 176,
+        "per_question": {
+          "ag_ind_gold": {
+            "n": 16,
+            "slope_user": 0.5616,
+            "slope_crowd": -4.6921,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.5555
+          },
+          "ag_ind_total": {
+            "n": 16,
+            "slope_user": 0.1546,
+            "slope_crowd": -1.2827,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.1528
+          },
+          "box_minions_cume": {
+            "n": 16,
+            "slope_user": 0.0941,
+            "slope_crowd": 0.3517,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.0863
+          },
+          "box_moana_cume": {
+            "n": 16,
+            "slope_user": 0.2475,
+            "slope_crowd": 9.3897,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.0426
+          },
+          "box_odyssey_cume": {
+            "n": 16,
+            "slope_user": 0.2789,
+            "slope_crowd": 1.6971,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.3231
+          },
+          "ctrl_kullu": {
+            "n": 16,
+            "slope_user": 0.5221,
+            "slope_crowd": -150.2109,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.7578
+          },
+          "ctrl_nahan": {
+            "n": 16,
+            "slope_user": -0.0038,
+            "slope_crowd": -1.2328,
+            "crowd_low_variance": true,
+            "slope_user_round1": -0.0141
+          },
+          "ctrl_newcastle_wy": {
+            "n": 16,
+            "slope_user": 0.1647,
+            "slope_crowd": -1.9582,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.2366
+          },
+          "cwg_aus_gold": {
+            "n": 16,
+            "slope_user": 0.0556,
+            "slope_crowd": 862.4898,
+            "crowd_low_variance": true,
+            "slope_user_round1": -0.0093
+          },
+          "cwg_ind_total": {
+            "n": 16,
+            "slope_user": 0.1722,
+            "slope_crowd": -3.5063,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.3554
+          },
+          "cwg_nga_total": {
+            "n": 16,
+            "slope_user": 0.0008,
+            "slope_crowd": -1.1974,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.0012
+          }
+        },
+        "slope_crowd": {
+          "mean": 64.5316,
+          "ci95": [
+            -40.2727,
+            235.3971
+          ],
+          "n_questions": 11
+        }
+      },
+      "C3": {
+        "slope_user": {
+          "mean": 0.424,
+          "ci95": [
+            0.2456,
+            0.6509
+          ],
+          "n_questions": 11
+        },
+        "slope_user_round1": {
+          "mean": 0.3596,
+          "ci95": [
+            0.1902,
+            0.5661
+          ],
+          "n_questions": 11
+        },
+        "n_observations": 176,
+        "per_question": {
+          "ag_ind_gold": {
+            "n": 16,
+            "slope_user": 0.4803,
+            "slope_crowd": -1.7546,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.4305
+          },
+          "ag_ind_total": {
+            "n": 16,
+            "slope_user": 0.1585,
+            "slope_crowd": 0.1287,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.169
+          },
+          "box_minions_cume": {
+            "n": 16,
+            "slope_user": 0.4105,
+            "slope_crowd": 0.6838,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.3388
+          },
+          "box_moana_cume": {
+            "n": 16,
+            "slope_user": 0.5044,
+            "slope_crowd": 0.7239,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.4129
+          },
+          "box_odyssey_cume": {
+            "n": 16,
+            "slope_user": 0.2631,
+            "slope_crowd": 1.5995,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.1589
+          },
+          "ctrl_kullu": {
+            "n": 16,
+            "slope_user": 1.3797,
+            "slope_crowd": 747.9362,
+            "crowd_low_variance": true,
+            "slope_user_round1": 1.2461
+          },
+          "ctrl_nahan": {
+            "n": 16,
+            "slope_user": 0.5445,
+            "slope_crowd": 0.8786,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.4804
+          },
+          "ctrl_newcastle_wy": {
+            "n": 16,
+            "slope_user": 0.4622,
+            "slope_crowd": -0.3696,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.4107
+          },
+          "cwg_aus_gold": {
+            "n": 16,
+            "slope_user": 0.3992,
+            "slope_crowd": 855.6841,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.2909
+          },
+          "cwg_ind_total": {
+            "n": 16,
+            "slope_user": -0.0491,
+            "slope_crowd": -1.3902,
+            "crowd_low_variance": true,
+            "slope_user_round1": -0.0697
+          },
+          "cwg_nga_total": {
+            "n": 16,
+            "slope_user": 0.1107,
+            "slope_crowd": 1.0824,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.0867
+          }
+        },
+        "slope_crowd": {
+          "mean": 145.9275,
+          "ci95": [
+            -0.0994,
+            359.7676
+          ],
+          "n_questions": 11
+        }
+      },
+      "C4": {
+        "slope_user": {
+          "mean": 0.2008,
+          "ci95": [
+            0.0606,
+            0.3258
+          ],
+          "n_questions": 11
+        },
+        "slope_user_round1": {
+          "mean": 0.1945,
+          "ci95": [
+            -0.026,
+            0.3662
+          ],
+          "n_questions": 11
+        },
+        "n_observations": 176,
+        "per_question": {
+          "ag_ind_gold": {
+            "n": 16,
+            "slope_user": 0.5873,
+            "slope_crowd": -0.0387,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.5616
+          },
+          "ag_ind_total": {
+            "n": 16,
+            "slope_user": 0.1987,
+            "slope_crowd": 1.2155,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.1522
+          },
+          "box_minions_cume": {
+            "n": 16,
+            "slope_user": 0.2865,
+            "slope_crowd": 0.3197,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.2033
+          },
+          "box_moana_cume": {
+            "n": 16,
+            "slope_user": 0.4092,
+            "slope_crowd": -3.2931,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.4435
+          },
+          "box_odyssey_cume": {
+            "n": 16,
+            "slope_user": 0.2491,
+            "slope_crowd": -3.1597,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.2074
+          },
+          "ctrl_kullu": {
+            "n": 16,
+            "slope_user": -0.3243,
+            "slope_crowd": -2.1948,
+            "crowd_low_variance": true,
+            "slope_user_round1": -0.6638
+          },
+          "ctrl_nahan": {
+            "n": 16,
+            "slope_user": 0.069,
+            "slope_crowd": -6.08,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.0614
+          },
+          "ctrl_newcastle_wy": {
+            "n": 16,
+            "slope_user": 0.2966,
+            "slope_crowd": -54.4863,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.5031
+          },
+          "cwg_aus_gold": {
+            "n": 16,
+            "slope_user": 0.2351,
+            "slope_crowd": 0.5585,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.5585
+          },
+          "cwg_ind_total": {
+            "n": 16,
+            "slope_user": 0.147,
+            "slope_crowd": -37.7153,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.0686
+          },
+          "cwg_nga_total": {
+            "n": 16,
+            "slope_user": 0.0547,
+            "slope_crowd": -0.4667,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.0444
+          }
+        },
+        "slope_crowd": {
+          "mean": -9.5764,
+          "ci95": [
+            -20.8695,
+            -0.9717
+          ],
+          "n_questions": 11
+        }
+      },
+      "C5": {
+        "slope_user": {
+          "mean": 0.2218,
+          "ci95": [
+            0.1379,
+            0.3167
+          ],
+          "n_questions": 11
+        },
+        "slope_user_round1": {
+          "mean": 0.1997,
+          "ci95": [
+            0.121,
+            0.2998
+          ],
+          "n_questions": 11
+        },
+        "n_observations": 176,
+        "per_question": {
+          "ag_ind_gold": {
+            "n": 16,
+            "slope_user": 0.6239,
+            "slope_crowd": 1.0097,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.5836,
+            "slope_user_model_fe": 0.5742
+          },
+          "ag_ind_total": {
+            "n": 16,
+            "slope_user": 0.2913,
+            "slope_crowd": 0.4786,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.2305,
+            "slope_user_model_fe": 0.1244
+          },
+          "box_minions_cume": {
+            "n": 16,
+            "slope_user": 0.3224,
+            "slope_crowd": 4.2252,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.3712,
+            "slope_user_model_fe": 0.3017
+          },
+          "box_moana_cume": {
+            "n": 16,
+            "slope_user": 0.163,
+            "slope_crowd": -0.311,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.1314,
+            "slope_user_model_fe": 0.1721
+          },
+          "box_odyssey_cume": {
+            "n": 16,
+            "slope_user": 0.1411,
+            "slope_crowd": 3.3287,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.1125,
+            "slope_user_model_fe": 0.1789
+          },
+          "ctrl_kullu": {
+            "n": 16,
+            "slope_user": 0.1904,
+            "slope_crowd": 38.9358,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.1851,
+            "slope_user_model_fe": 0.2252
+          },
+          "ctrl_nahan": {
+            "n": 16,
+            "slope_user": 0.2747,
+            "slope_crowd": -0.2169,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.2455,
+            "slope_user_model_fe": 0.2259
+          },
+          "ctrl_newcastle_wy": {
+            "n": 16,
+            "slope_user": 0.1305,
+            "slope_crowd": 3.8858,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.0975,
+            "slope_user_model_fe": 0.0677
+          },
+          "cwg_aus_gold": {
+            "n": 16,
+            "slope_user": 0.1899,
+            "slope_crowd": 0.0365,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.1846,
+            "slope_user_model_fe": 0.1478
+          },
+          "cwg_ind_total": {
+            "n": 16,
+            "slope_user": 0.1523,
+            "slope_crowd": 0.2575,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.0328,
+            "slope_user_model_fe": 0.0892
+          },
+          "cwg_nga_total": {
+            "n": 16,
+            "slope_user": -0.0391,
+            "slope_crowd": -21.1253,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.0218,
+            "slope_user_model_fe": 0.0537
+          }
+        },
+        "slope_crowd": {
+          "mean": 2.7731,
+          "ci95": [
+            -4.5851,
+            11.5107
+          ],
+          "n_questions": 11
+        },
+        "slope_user_model_fe": {
+          "mean": 0.1964,
+          "ci95": [
+            0.1278,
+            0.285
+          ],
+          "n_questions": 11
+        }
+      },
+      "C6": {
+        "slope_user": {
+          "mean": 0.1384,
+          "ci95": [
+            -0.0369,
+            0.3148
+          ],
+          "n_questions": 11
+        },
+        "slope_user_round1": {
+          "mean": 0.079,
+          "ci95": [
+            -0.1188,
+            0.2634
+          ],
+          "n_questions": 11
+        },
+        "n_observations": 176,
+        "per_question": {
+          "ag_ind_gold": {
+            "n": 16,
+            "slope_user": -0.1425,
+            "slope_crowd": 0.4444,
+            "crowd_low_variance": true,
+            "slope_user_round1": -0.2102,
+            "slope_user_model_fe": 0.0536
+          },
+          "ag_ind_total": {
+            "n": 16,
+            "slope_user": 0.2816,
+            "slope_crowd": 0.5511,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.2212,
+            "slope_user_model_fe": 0.1002
+          },
+          "box_minions_cume": {
+            "n": 16,
+            "slope_user": 0.5363,
+            "slope_crowd": 0.0321,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.4828,
+            "slope_user_model_fe": 0.4919
+          },
+          "box_moana_cume": {
+            "n": 16,
+            "slope_user": 0.6177,
+            "slope_crowd": -0.4258,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.5509,
+            "slope_user_model_fe": 0.5567
+          },
+          "box_odyssey_cume": {
+            "n": 16,
+            "slope_user": 0.0731,
+            "slope_crowd": -1.1347,
+            "crowd_low_variance": true,
+            "slope_user_round1": -0.0564,
+            "slope_user_model_fe": -0.0349
+          },
+          "ctrl_kullu": {
+            "n": 16,
+            "slope_user": -0.0677,
+            "slope_crowd": -0.7306,
+            "crowd_low_variance": true,
+            "slope_user_round1": -0.1567,
+            "slope_user_model_fe": 0.2516
+          },
+          "ctrl_nahan": {
+            "n": 16,
+            "slope_user": 0.2173,
+            "slope_crowd": 1.9635,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.3004,
+            "slope_user_model_fe": 0.3034
+          },
+          "ctrl_newcastle_wy": {
+            "n": 16,
+            "slope_user": 0.0367,
+            "slope_crowd": 0.3168,
+            "crowd_low_variance": true,
+            "slope_user_round1": -0.2064,
+            "slope_user_model_fe": -0.134
+          },
+          "cwg_aus_gold": {
+            "n": 16,
+            "slope_user": 0.2311,
+            "slope_crowd": 0.1488,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.2327,
+            "slope_user_model_fe": 0.2233
+          },
+          "cwg_ind_total": {
+            "n": 16,
+            "slope_user": 0.1939,
+            "slope_crowd": 0.3513,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.2461,
+            "slope_user_model_fe": 0.1607
+          },
+          "cwg_nga_total": {
+            "n": 16,
+            "slope_user": -0.4554,
+            "slope_crowd": -0.1637,
+            "crowd_low_variance": true,
+            "slope_user_round1": -0.5353,
+            "slope_user_model_fe": -0.23
+          }
+        },
+        "slope_crowd": {
+          "mean": 0.123,
+          "ci95": [
+            -0.2827,
+            0.5864
+          ],
+          "n_questions": 11
+        },
+        "slope_user_model_fe": {
+          "mean": 0.1584,
+          "ci95": [
+            0.0179,
+            0.2945
+          ],
+          "n_questions": 11
+        }
+      }
+    },
+    "crowd_pull_vs_c1_r1": {
+      "C2": {
+        "slope": 0.955,
+        "intercept": -0.0833,
+        "n_questions": 11
+      },
+      "C3": {
+        "slope": 0.9087,
+        "intercept": -0.0925,
+        "n_questions": 11
+      },
+      "C4": {
+        "slope": 0.7688,
+        "intercept": -0.0854,
+        "n_questions": 11
+      }
+    }
+  },
+  "by_stratum": {
+    "control": {
+      "questions": [
+        "ctrl_kullu",
+        "ctrl_nahan",
+        "ctrl_newcastle_wy"
+      ],
+      "by_condition_final": {
+        "C1": {
+          "n_cells": 3,
+          "crowd_error": 0.012332,
+          "avg_individual_error": 0.029628,
+          "diversity": 0.017297,
+          "between_model_diversity": 0.0,
+          "within_model_diversity": 0.017297,
+          "excess_between_model_diversity": 0.0,
+          "between_share": 0.0,
+          "iqr": 0.174234,
+          "miss_rate": 0.0,
+          "evrr": 1.284644,
+          "evrr_between": 0.0,
+          "evrr_within": 1.284644,
+          "evrr_cumulative": 1.420088
+        },
+        "C2": {
+          "n_cells": 3,
+          "crowd_error": 0.035253,
+          "avg_individual_error": 0.051545,
+          "diversity": 0.016292,
+          "between_model_diversity": 0.0,
+          "within_model_diversity": 0.016292,
+          "excess_between_model_diversity": 0.0,
+          "between_share": 0.0,
+          "iqr": 0.167888,
+          "miss_rate": 0.0,
+          "evrr": 1.1228,
+          "evrr_between": 0.0,
+          "evrr_within": 1.1228,
+          "evrr_cumulative": 1.681733
+        },
+        "C3": {
+          "n_cells": 3,
+          "crowd_error": 0.029981,
+          "avg_individual_error": 0.064902,
+          "diversity": 0.034922,
+          "between_model_diversity": 0.0,
+          "within_model_diversity": 0.034922,
+          "excess_between_model_diversity": 0.0,
+          "between_share": 0.0,
+          "iqr": 0.162299,
+          "miss_rate": 0.0,
+          "evrr": 1.987257,
+          "evrr_between": 0.0,
+          "evrr_within": 1.987257,
+          "evrr_cumulative": 4.088599
+        },
+        "C4": {
+          "n_cells": 3,
+          "crowd_error": 0.029137,
+          "avg_individual_error": 0.045049,
+          "diversity": 0.015912,
+          "between_model_diversity": 0.0,
+          "within_model_diversity": 0.015912,
+          "excess_between_model_diversity": 0.0,
+          "between_share": 0.0,
+          "iqr": 0.152239,
+          "miss_rate": 0.0,
+          "evrr": 1.138692,
+          "evrr_between": 0.0,
+          "evrr_within": 1.138692,
+          "evrr_cumulative": 1.342882
+        },
+        "C5": {
+          "n_cells": 3,
+          "crowd_error": 0.028007,
+          "avg_individual_error": 0.045066,
+          "diversity": 0.017059,
+          "between_model_diversity": 0.007324,
+          "within_model_diversity": 0.009736,
+          "excess_between_model_diversity": 2.2e-05,
+          "between_share": 0.55466,
+          "iqr": 0.211792,
+          "miss_rate": 0.0,
+          "evrr": 1.303641,
+          "evrr_between": 0.713627,
+          "evrr_within": 0.590013,
+          "evrr_cumulative": 1.53678
+        },
+        "C6": {
+          "n_cells": 3,
+          "crowd_error": 0.017535,
+          "avg_individual_error": 0.037598,
+          "diversity": 0.020063,
+          "between_model_diversity": 0.011678,
+          "within_model_diversity": 0.008385,
+          "excess_between_model_diversity": 0.00539,
+          "between_share": 0.548949,
+          "iqr": 0.20615,
+          "miss_rate": 0.0,
+          "evrr": 1.331104,
+          "evrr_between": 0.74385,
+          "evrr_within": 0.587254,
+          "evrr_cumulative": 1.588736
+        }
+      },
+      "h4_slopes": {
+        "method": "Per condition and question: OLS of (assistant_log10 - log_truth) on (agent_log10_before - log_truth) [+ (pop_median_log10 - log_truth) for C2..C6]; slopes averaged over questions with a bootstrap 95% CI over questions.",
+        "interpretation": "slope_user ~0: the assistant answers from its own view; ~1: it echoes the user's guess. slope_crowd separates echoing the crowd median. Descriptive, not causal.",
+        "by_condition": {
+          "C1": {
+            "slope_user": {
+              "mean": -0.1392,
+              "ci95": [
+                -0.8351,
+                0.2364
+              ],
+              "n_questions": 3
+            },
+            "slope_user_round1": {
+              "mean": -0.1568,
+              "ci95": [
+                -0.657,
+                0.0957
+              ],
+              "n_questions": 3
+            },
+            "n_observations": 48,
+            "per_question": {
+              "ctrl_kullu": {
+                "n": 16,
+                "slope_user": -0.8351,
+                "slope_user_round1": -0.657
+              },
+              "ctrl_nahan": {
+                "n": 16,
+                "slope_user": 0.1811,
+                "slope_user_round1": 0.091
+              },
+              "ctrl_newcastle_wy": {
+                "n": 16,
+                "slope_user": 0.2364,
+                "slope_user_round1": 0.0957
+              }
+            }
+          },
+          "C2": {
+            "slope_user": {
+              "mean": 0.2277,
+              "ci95": [
+                -0.0038,
+                0.5221
+              ],
+              "n_questions": 3
+            },
+            "slope_user_round1": {
+              "mean": 0.3268,
+              "ci95": [
+                -0.0141,
+                0.7578
+              ],
+              "n_questions": 3
+            },
+            "n_observations": 48,
+            "per_question": {
+              "ctrl_kullu": {
+                "n": 16,
+                "slope_user": 0.5221,
+                "slope_crowd": -150.2109,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.7578
+              },
+              "ctrl_nahan": {
+                "n": 16,
+                "slope_user": -0.0038,
+                "slope_crowd": -1.2328,
+                "crowd_low_variance": true,
+                "slope_user_round1": -0.0141
+              },
+              "ctrl_newcastle_wy": {
+                "n": 16,
+                "slope_user": 0.1647,
+                "slope_crowd": -1.9582,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.2366
+              }
+            },
+            "slope_crowd": {
+              "mean": -51.134,
+              "ci95": [
+                -150.2109,
+                -1.2328
+              ],
+              "n_questions": 3
+            }
+          },
+          "C3": {
+            "slope_user": {
+              "mean": 0.7955,
+              "ci95": [
+                0.4622,
+                1.3797
+              ],
+              "n_questions": 3
+            },
+            "slope_user_round1": {
+              "mean": 0.7124,
+              "ci95": [
+                0.4107,
+                1.2461
+              ],
+              "n_questions": 3
+            },
+            "n_observations": 48,
+            "per_question": {
+              "ctrl_kullu": {
+                "n": 16,
+                "slope_user": 1.3797,
+                "slope_crowd": 747.9362,
+                "crowd_low_variance": true,
+                "slope_user_round1": 1.2461
+              },
+              "ctrl_nahan": {
+                "n": 16,
+                "slope_user": 0.5445,
+                "slope_crowd": 0.8786,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.4804
+              },
+              "ctrl_newcastle_wy": {
+                "n": 16,
+                "slope_user": 0.4622,
+                "slope_crowd": -0.3696,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.4107
+              }
+            },
+            "slope_crowd": {
+              "mean": 249.4817,
+              "ci95": [
+                -0.3696,
+                747.9362
+              ],
+              "n_questions": 3
+            }
+          },
+          "C4": {
+            "slope_user": {
+              "mean": 0.0138,
+              "ci95": [
+                -0.3243,
+                0.2966
+              ],
+              "n_questions": 3
+            },
+            "slope_user_round1": {
+              "mean": -0.0331,
+              "ci95": [
+                -0.6638,
+                0.5031
+              ],
+              "n_questions": 3
+            },
+            "n_observations": 48,
+            "per_question": {
+              "ctrl_kullu": {
+                "n": 16,
+                "slope_user": -0.3243,
+                "slope_crowd": -2.1948,
+                "crowd_low_variance": true,
+                "slope_user_round1": -0.6638
+              },
+              "ctrl_nahan": {
+                "n": 16,
+                "slope_user": 0.069,
+                "slope_crowd": -6.08,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.0614
+              },
+              "ctrl_newcastle_wy": {
+                "n": 16,
+                "slope_user": 0.2966,
+                "slope_crowd": -54.4863,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.5031
+              }
+            },
+            "slope_crowd": {
+              "mean": -20.9203,
+              "ci95": [
+                -54.4863,
+                -2.1948
+              ],
+              "n_questions": 3
+            }
+          },
+          "C5": {
+            "slope_user": {
+              "mean": 0.1985,
+              "ci95": [
+                0.1305,
+                0.2747
+              ],
+              "n_questions": 3
+            },
+            "slope_user_round1": {
+              "mean": 0.176,
+              "ci95": [
+                0.0975,
+                0.2455
+              ],
+              "n_questions": 3
+            },
+            "n_observations": 48,
+            "per_question": {
+              "ctrl_kullu": {
+                "n": 16,
+                "slope_user": 0.1904,
+                "slope_crowd": 38.9358,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.1851,
+                "slope_user_model_fe": 0.2252
+              },
+              "ctrl_nahan": {
+                "n": 16,
+                "slope_user": 0.2747,
+                "slope_crowd": -0.2169,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.2455,
+                "slope_user_model_fe": 0.2259
+              },
+              "ctrl_newcastle_wy": {
+                "n": 16,
+                "slope_user": 0.1305,
+                "slope_crowd": 3.8858,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.0975,
+                "slope_user_model_fe": 0.0677
+              }
+            },
+            "slope_crowd": {
+              "mean": 14.2015,
+              "ci95": [
+                -0.2169,
+                38.9358
+              ],
+              "n_questions": 3
+            },
+            "slope_user_model_fe": {
+              "mean": 0.1729,
+              "ci95": [
+                0.0677,
+                0.2259
+              ],
+              "n_questions": 3
+            }
+          },
+          "C6": {
+            "slope_user": {
+              "mean": 0.0621,
+              "ci95": [
+                -0.0677,
+                0.2173
+              ],
+              "n_questions": 3
+            },
+            "slope_user_round1": {
+              "mean": -0.0209,
+              "ci95": [
+                -0.2064,
+                0.3004
+              ],
+              "n_questions": 3
+            },
+            "n_observations": 48,
+            "per_question": {
+              "ctrl_kullu": {
+                "n": 16,
+                "slope_user": -0.0677,
+                "slope_crowd": -0.7306,
+                "crowd_low_variance": true,
+                "slope_user_round1": -0.1567,
+                "slope_user_model_fe": 0.2516
+              },
+              "ctrl_nahan": {
+                "n": 16,
+                "slope_user": 0.2173,
+                "slope_crowd": 1.9635,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.3004,
+                "slope_user_model_fe": 0.3034
+              },
+              "ctrl_newcastle_wy": {
+                "n": 16,
+                "slope_user": 0.0367,
+                "slope_crowd": 0.3168,
+                "crowd_low_variance": true,
+                "slope_user_round1": -0.2064,
+                "slope_user_model_fe": -0.134
+              }
+            },
+            "slope_crowd": {
+              "mean": 0.5165,
+              "ci95": [
+                -0.7306,
+                1.9635
+              ],
+              "n_questions": 3
+            },
+            "slope_user_model_fe": {
+              "mean": 0.1403,
+              "ci95": [
+                -0.134,
+                0.3034
+              ],
+              "n_questions": 3
+            }
+          }
+        },
+        "crowd_pull_vs_c1_r1": {
+          "C2": {
+            "slope": 0.8623,
+            "intercept": 0.0702,
+            "n_questions": 3
+          },
+          "C3": {
+            "slope": 0.9737,
+            "intercept": 0.0222,
+            "n_questions": 3
+          },
+          "C4": {
+            "slope": 0.7298,
+            "intercept": 0.0383,
+            "n_questions": 3
+          }
+        }
+      }
+    },
+    "high_spread": {
+      "questions": [
+        "box_moana_cume",
+        "box_odyssey_cume",
+        "cwg_ind_total",
+        "cwg_nga_total"
+      ],
+      "by_condition_final": {
+        "C1": {
+          "n_cells": 4,
+          "crowd_error": 0.032078,
+          "avg_individual_error": 0.058214,
+          "diversity": 0.026136,
+          "between_model_diversity": 0.0,
+          "within_model_diversity": 0.026136,
+          "excess_between_model_diversity": 0.0,
+          "between_share": 0.0,
+          "iqr": 0.154964,
+          "miss_rate": 0.0,
+          "evrr": 1.426655,
+          "evrr_between": 0.0,
+          "evrr_within": 1.426655,
+          "evrr_cumulative": 1.766213
+        },
+        "C2": {
+          "n_cells": 4,
+          "crowd_error": 0.021278,
+          "avg_individual_error": 0.041394,
+          "diversity": 0.020116,
+          "between_model_diversity": 0.0,
+          "within_model_diversity": 0.020116,
+          "excess_between_model_diversity": 0.0,
+          "between_share": 0.0,
+          "iqr": 0.169949,
+          "miss_rate": 0.0,
+          "evrr": 1.195976,
+          "evrr_between": 0.0,
+          "evrr_within": 1.195976,
+          "evrr_cumulative": 1.381028
+        },
+        "C3": {
+          "n_cells": 4,
+          "crowd_error": 0.020015,
+          "avg_individual_error": 0.041365,
+          "diversity": 0.02135,
+          "between_model_diversity": 0.0,
+          "within_model_diversity": 0.02135,
+          "excess_between_model_diversity": 0.0,
+          "between_share": 0.0,
+          "iqr": 0.176426,
+          "miss_rate": 0.0,
+          "evrr": 1.308675,
+          "evrr_between": 0.0,
+          "evrr_within": 1.308675,
+          "evrr_cumulative": 1.533244
+        },
+        "C4": {
+          "n_cells": 4,
+          "crowd_error": 0.022239,
+          "avg_individual_error": 0.043908,
+          "diversity": 0.021668,
+          "between_model_diversity": 0.0,
+          "within_model_diversity": 0.021668,
+          "excess_between_model_diversity": 0.0,
+          "between_share": 0.0,
+          "iqr": 0.172831,
+          "miss_rate": 0.0,
+          "evrr": 1.246002,
+          "evrr_between": 0.0,
+          "evrr_within": 1.246002,
+          "evrr_cumulative": 1.481419
+        },
+        "C5": {
+          "n_cells": 4,
+          "crowd_error": 0.018044,
+          "avg_individual_error": 0.037577,
+          "diversity": 0.019532,
+          "between_model_diversity": 0.007211,
+          "within_model_diversity": 0.012322,
+          "excess_between_model_diversity": -0.00203,
+          "between_share": 0.339896,
+          "iqr": 0.144671,
+          "miss_rate": 0.0,
+          "evrr": 1.18536,
+          "evrr_between": 0.415941,
+          "evrr_within": 0.769418,
+          "evrr_cumulative": 1.280259
+        },
+        "C6": {
+          "n_cells": 4,
+          "crowd_error": 0.010646,
+          "avg_individual_error": 0.032093,
+          "diversity": 0.021447,
+          "between_model_diversity": 0.008064,
+          "within_model_diversity": 0.013383,
+          "excess_between_model_diversity": -0.001974,
+          "between_share": 0.350916,
+          "iqr": 0.182271,
+          "miss_rate": 0.0,
+          "evrr": 1.271514,
+          "evrr_between": 0.46221,
+          "evrr_within": 0.809304,
+          "evrr_cumulative": 1.562467
+        }
+      },
+      "h4_slopes": {
+        "method": "Per condition and question: OLS of (assistant_log10 - log_truth) on (agent_log10_before - log_truth) [+ (pop_median_log10 - log_truth) for C2..C6]; slopes averaged over questions with a bootstrap 95% CI over questions.",
+        "interpretation": "slope_user ~0: the assistant answers from its own view; ~1: it echoes the user's guess. slope_crowd separates echoing the crowd median. Descriptive, not causal.",
+        "by_condition": {
+          "C1": {
+            "slope_user": {
+              "mean": 0.2887,
+              "ci95": [
+                0.24,
+                0.3299
+              ],
+              "n_questions": 4
+            },
+            "slope_user_round1": {
+              "mean": 0.2486,
+              "ci95": [
+                0.2174,
+                0.2935
+              ],
+              "n_questions": 4
+            },
+            "n_observations": 64,
+            "per_question": {
+              "box_moana_cume": {
+                "n": 16,
+                "slope_user": 0.2962,
+                "slope_user_round1": 0.2348
+              },
+              "box_odyssey_cume": {
+                "n": 16,
+                "slope_user": 0.3411,
+                "slope_user_round1": 0.3131
+              },
+              "cwg_ind_total": {
+                "n": 16,
+                "slope_user": 0.2212,
+                "slope_user_round1": 0.2114
+              },
+              "cwg_nga_total": {
+                "n": 16,
+                "slope_user": 0.2962,
+                "slope_user_round1": 0.2353
+              }
+            }
+          },
+          "C2": {
+            "slope_user": {
+              "mean": 0.1748,
+              "ci95": [
+                0.0624,
+                0.2632
+              ],
+              "n_questions": 4
+            },
+            "slope_user_round1": {
+              "mean": 0.1806,
+              "ci95": [
+                0.0219,
+                0.3393
+              ],
+              "n_questions": 4
+            },
+            "n_observations": 64,
+            "per_question": {
+              "box_moana_cume": {
+                "n": 16,
+                "slope_user": 0.2475,
+                "slope_crowd": 9.3897,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.0426
+              },
+              "box_odyssey_cume": {
+                "n": 16,
+                "slope_user": 0.2789,
+                "slope_crowd": 1.6971,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.3231
+              },
+              "cwg_ind_total": {
+                "n": 16,
+                "slope_user": 0.1722,
+                "slope_crowd": -3.5063,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.3554
+              },
+              "cwg_nga_total": {
+                "n": 16,
+                "slope_user": 0.0008,
+                "slope_crowd": -1.1974,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.0012
+              }
+            },
+            "slope_crowd": {
+              "mean": 1.5958,
+              "ci95": [
+                -2.3519,
+                6.7429
+              ],
+              "n_questions": 4
+            }
+          },
+          "C3": {
+            "slope_user": {
+              "mean": 0.2073,
+              "ci95": [
+                0.0289,
+                0.4059
+              ],
+              "n_questions": 4
+            },
+            "slope_user_round1": {
+              "mean": 0.1472,
+              "ci95": [
+                -0.0126,
+                0.3313
+              ],
+              "n_questions": 4
+            },
+            "n_observations": 64,
+            "per_question": {
+              "box_moana_cume": {
+                "n": 16,
+                "slope_user": 0.5044,
+                "slope_crowd": 0.7239,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.4129
+              },
+              "box_odyssey_cume": {
+                "n": 16,
+                "slope_user": 0.2631,
+                "slope_crowd": 1.5995,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.1589
+              },
+              "cwg_ind_total": {
+                "n": 16,
+                "slope_user": -0.0491,
+                "slope_crowd": -1.3902,
+                "crowd_low_variance": true,
+                "slope_user_round1": -0.0697
+              },
+              "cwg_nga_total": {
+                "n": 16,
+                "slope_user": 0.1107,
+                "slope_crowd": 1.0824,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.0867
+              }
+            },
+            "slope_crowd": {
+              "mean": 0.5039,
+              "ci95": [
+                -0.772,
+                1.3806
+              ],
+              "n_questions": 4
+            }
+          },
+          "C4": {
+            "slope_user": {
+              "mean": 0.215,
+              "ci95": [
+                0.1008,
+                0.3436
+              ],
+              "n_questions": 4
+            },
+            "slope_user_round1": {
+              "mean": 0.191,
+              "ci95": [
+                0.0565,
+                0.3498
+              ],
+              "n_questions": 4
+            },
+            "n_observations": 64,
+            "per_question": {
+              "box_moana_cume": {
+                "n": 16,
+                "slope_user": 0.4092,
+                "slope_crowd": -3.2931,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.4435
+              },
+              "box_odyssey_cume": {
+                "n": 16,
+                "slope_user": 0.2491,
+                "slope_crowd": -3.1597,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.2074
+              },
+              "cwg_ind_total": {
+                "n": 16,
+                "slope_user": 0.147,
+                "slope_crowd": -37.7153,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.0686
+              },
+              "cwg_nga_total": {
+                "n": 16,
+                "slope_user": 0.0547,
+                "slope_crowd": -0.4667,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.0444
+              }
+            },
+            "slope_crowd": {
+              "mean": -11.1587,
+              "ci95": [
+                -29.0764,
+                -1.1733
+              ],
+              "n_questions": 4
+            }
+          },
+          "C5": {
+            "slope_user": {
+              "mean": 0.1043,
+              "ci95": [
+                0.0087,
+                0.1577
+              ],
+              "n_questions": 4
+            },
+            "slope_user_round1": {
+              "mean": 0.0746,
+              "ci95": [
+                0.0273,
+                0.1219
+              ],
+              "n_questions": 4
+            },
+            "n_observations": 64,
+            "per_question": {
+              "box_moana_cume": {
+                "n": 16,
+                "slope_user": 0.163,
+                "slope_crowd": -0.311,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.1314,
+                "slope_user_model_fe": 0.1721
+              },
+              "box_odyssey_cume": {
+                "n": 16,
+                "slope_user": 0.1411,
+                "slope_crowd": 3.3287,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.1125,
+                "slope_user_model_fe": 0.1789
+              },
+              "cwg_ind_total": {
+                "n": 16,
+                "slope_user": 0.1523,
+                "slope_crowd": 0.2575,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.0328,
+                "slope_user_model_fe": 0.0892
+              },
+              "cwg_nga_total": {
+                "n": 16,
+                "slope_user": -0.0391,
+                "slope_crowd": -21.1253,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.0218,
+                "slope_user_model_fe": 0.0537
+              }
+            },
+            "slope_crowd": {
+              "mean": -4.4625,
+              "ci95": [
+                -15.7796,
+                2.4188
+              ],
+              "n_questions": 4
+            },
+            "slope_user_model_fe": {
+              "mean": 0.1234,
+              "ci95": [
+                0.0714,
+                0.1755
+              ],
+              "n_questions": 4
+            }
+          },
+          "C6": {
+            "slope_user": {
+              "mean": 0.1073,
+              "ci95": [
+                -0.2931,
+                0.4816
+              ],
+              "n_questions": 4
+            },
+            "slope_user_round1": {
+              "mean": 0.0513,
+              "ci95": [
+                -0.3399,
+                0.4747
+              ],
+              "n_questions": 4
+            },
+            "n_observations": 64,
+            "per_question": {
+              "box_moana_cume": {
+                "n": 16,
+                "slope_user": 0.6177,
+                "slope_crowd": -0.4258,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.5509,
+                "slope_user_model_fe": 0.5567
+              },
+              "box_odyssey_cume": {
+                "n": 16,
+                "slope_user": 0.0731,
+                "slope_crowd": -1.1347,
+                "crowd_low_variance": true,
+                "slope_user_round1": -0.0564,
+                "slope_user_model_fe": -0.0349
+              },
+              "cwg_ind_total": {
+                "n": 16,
+                "slope_user": 0.1939,
+                "slope_crowd": 0.3513,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.2461,
+                "slope_user_model_fe": 0.1607
+              },
+              "cwg_nga_total": {
+                "n": 16,
+                "slope_user": -0.4554,
+                "slope_crowd": -0.1637,
+                "crowd_low_variance": true,
+                "slope_user_round1": -0.5353,
+                "slope_user_model_fe": -0.23
+              }
+            },
+            "slope_crowd": {
+              "mean": -0.3432,
+              "ci95": [
+                -0.892,
+                0.157
+              ],
+              "n_questions": 4
+            },
+            "slope_user_model_fe": {
+              "mean": 0.1131,
+              "ci95": [
+                -0.1325,
+                0.4088
+              ],
+              "n_questions": 4
+            }
+          }
+        },
+        "crowd_pull_vs_c1_r1": {
+          "C2": {
+            "slope": 0.275,
+            "intercept": -0.0964,
+            "n_questions": 4
+          },
+          "C3": {
+            "slope": 0.2528,
+            "intercept": -0.1038,
+            "n_questions": 4
+          },
+          "C4": {
+            "slope": 0.2861,
+            "intercept": -0.082,
+            "n_questions": 4
+          }
+        }
+      }
+    },
+    "low_spread": {
+      "questions": [
+        "ag_ind_gold",
+        "ag_ind_total",
+        "box_minions_cume",
+        "cwg_aus_gold"
+      ],
+      "by_condition_final": {
+        "C1": {
+          "n_cells": 4,
+          "crowd_error": 0.017932,
+          "avg_individual_error": 0.040061,
+          "diversity": 0.022129,
+          "between_model_diversity": 0.0,
+          "within_model_diversity": 0.022129,
+          "excess_between_model_diversity": 0.0,
+          "between_share": 0.0,
+          "iqr": 0.198384,
+          "miss_rate": 0.0,
+          "evrr": 1.498763,
+          "evrr_between": 0.0,
+          "evrr_within": 1.498763,
+          "evrr_cumulative": 1.458009
+        },
+        "C2": {
+          "n_cells": 4,
+          "crowd_error": 0.061638,
+          "avg_individual_error": 0.082109,
+          "diversity": 0.020471,
+          "between_model_diversity": 0.0,
+          "within_model_diversity": 0.020471,
+          "excess_between_model_diversity": 0.0,
+          "between_share": 0.0,
+          "iqr": 0.223234,
+          "miss_rate": 0.0,
+          "evrr": 1.248072,
+          "evrr_between": 0.0,
+          "evrr_within": 1.248072,
+          "evrr_cumulative": 1.521575
+        },
+        "C3": {
+          "n_cells": 4,
+          "crowd_error": 0.05533,
+          "avg_individual_error": 0.081797,
+          "diversity": 0.026467,
+          "between_model_diversity": 0.0,
+          "within_model_diversity": 0.026467,
+          "excess_between_model_diversity": 0.0,
+          "between_share": 0.0,
+          "iqr": 0.247149,
+          "miss_rate": 0.0,
+          "evrr": 1.433832,
+          "evrr_between": 0.0,
+          "evrr_within": 1.433832,
+          "evrr_cumulative": 1.8651
+        },
+        "C4": {
+          "n_cells": 4,
+          "crowd_error": 0.043903,
+          "avg_individual_error": 0.068315,
+          "diversity": 0.024412,
+          "between_model_diversity": 0.0,
+          "within_model_diversity": 0.024412,
+          "excess_between_model_diversity": 0.0,
+          "between_share": 0.0,
+          "iqr": 0.235157,
+          "miss_rate": 0.0,
+          "evrr": 1.300561,
+          "evrr_between": 0.0,
+          "evrr_within": 1.300561,
+          "evrr_cumulative": 1.769139
+        },
+        "C5": {
+          "n_cells": 4,
+          "crowd_error": 0.035719,
+          "avg_individual_error": 0.062662,
+          "diversity": 0.026943,
+          "between_model_diversity": 0.007349,
+          "within_model_diversity": 0.019594,
+          "excess_between_model_diversity": -0.007346,
+          "between_share": 0.273098,
+          "iqr": 0.245006,
+          "miss_rate": 0.0,
+          "evrr": 1.419428,
+          "evrr_between": 0.381711,
+          "evrr_within": 1.037717,
+          "evrr_cumulative": 1.937222
+        },
+        "C6": {
+          "n_cells": 4,
+          "crowd_error": 0.033504,
+          "avg_individual_error": 0.062081,
+          "diversity": 0.028576,
+          "between_model_diversity": 0.006726,
+          "within_model_diversity": 0.021851,
+          "excess_between_model_diversity": -0.009663,
+          "between_share": 0.237679,
+          "iqr": 0.261672,
+          "miss_rate": 0.0,
+          "evrr": 1.619448,
+          "evrr_between": 0.355299,
+          "evrr_within": 1.264149,
+          "evrr_cumulative": 1.956797
+        }
+      },
+      "h4_slopes": {
+        "method": "Per condition and question: OLS of (assistant_log10 - log_truth) on (agent_log10_before - log_truth) [+ (pop_median_log10 - log_truth) for C2..C6]; slopes averaged over questions with a bootstrap 95% CI over questions.",
+        "interpretation": "slope_user ~0: the assistant answers from its own view; ~1: it echoes the user's guess. slope_crowd separates echoing the crowd median. Descriptive, not causal.",
+        "by_condition": {
+          "C1": {
+            "slope_user": {
+              "mean": 0.003,
+              "ci95": [
+                -0.3845,
+                0.2197
+              ],
+              "n_questions": 4
+            },
+            "slope_user_round1": {
+              "mean": -0.1165,
+              "ci95": [
+                -0.5728,
+                0.1539
+              ],
+              "n_questions": 4
+            },
+            "n_observations": 64,
+            "per_question": {
+              "ag_ind_gold": {
+                "n": 16,
+                "slope_user": -0.5812,
+                "slope_user_round1": -0.792
+              },
+              "ag_ind_total": {
+                "n": 16,
+                "slope_user": 0.2056,
+                "slope_user_round1": 0.1872
+              },
+              "box_minions_cume": {
+                "n": 16,
+                "slope_user": 0.2337,
+                "slope_user_round1": 0.0849
+              },
+              "cwg_aus_gold": {
+                "n": 16,
+                "slope_user": 0.154,
+                "slope_user_round1": 0.0539
+              }
+            }
+          },
+          "C2": {
+            "slope_user": {
+              "mean": 0.2165,
+              "ci95": [
+                0.0749,
+                0.4448
+              ],
+              "n_questions": 4
+            },
+            "slope_user_round1": {
+              "mean": 0.1963,
+              "ci95": [
+                0.0312,
+                0.4382
+              ],
+              "n_questions": 4
+            },
+            "n_observations": 64,
+            "per_question": {
+              "ag_ind_gold": {
+                "n": 16,
+                "slope_user": 0.5616,
+                "slope_crowd": -4.6921,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.5555
+              },
+              "ag_ind_total": {
+                "n": 16,
+                "slope_user": 0.1546,
+                "slope_crowd": -1.2827,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.1528
+              },
+              "box_minions_cume": {
+                "n": 16,
+                "slope_user": 0.0941,
+                "slope_crowd": 0.3517,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.0863
+              },
+              "cwg_aus_gold": {
+                "n": 16,
+                "slope_user": 0.0556,
+                "slope_crowd": 862.4898,
+                "crowd_low_variance": true,
+                "slope_user_round1": -0.0093
+              }
+            },
+            "slope_crowd": {
+              "mean": 214.2167,
+              "ci95": [
+                -3.4312,
+                646.9553
+              ],
+              "n_questions": 4
+            }
+          },
+          "C3": {
+            "slope_user": {
+              "mean": 0.3621,
+              "ci95": [
+                0.2215,
+                0.46
+              ],
+              "n_questions": 4
+            },
+            "slope_user_round1": {
+              "mean": 0.3073,
+              "ci95": [
+                0.2114,
+                0.4076
+              ],
+              "n_questions": 4
+            },
+            "n_observations": 64,
+            "per_question": {
+              "ag_ind_gold": {
+                "n": 16,
+                "slope_user": 0.4803,
+                "slope_crowd": -1.7546,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.4305
+              },
+              "ag_ind_total": {
+                "n": 16,
+                "slope_user": 0.1585,
+                "slope_crowd": 0.1287,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.169
+              },
+              "box_minions_cume": {
+                "n": 16,
+                "slope_user": 0.4105,
+                "slope_crowd": 0.6838,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.3388
+              },
+              "cwg_aus_gold": {
+                "n": 16,
+                "slope_user": 0.3992,
+                "slope_crowd": 855.6841,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.2909
+              }
+            },
+            "slope_crowd": {
+              "mean": 213.6855,
+              "ci95": [
+                -1.145,
+                641.9341
+              ],
+              "n_questions": 4
+            }
+          },
+          "C4": {
+            "slope_user": {
+              "mean": 0.3269,
+              "ci95": [
+                0.2169,
+                0.4993
+              ],
+              "n_questions": 4
+            },
+            "slope_user_round1": {
+              "mean": 0.3689,
+              "ci95": [
+                0.1777,
+                0.56
+              ],
+              "n_questions": 4
+            },
+            "n_observations": 64,
+            "per_question": {
+              "ag_ind_gold": {
+                "n": 16,
+                "slope_user": 0.5873,
+                "slope_crowd": -0.0387,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.5616
+              },
+              "ag_ind_total": {
+                "n": 16,
+                "slope_user": 0.1987,
+                "slope_crowd": 1.2155,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.1522
+              },
+              "box_minions_cume": {
+                "n": 16,
+                "slope_user": 0.2865,
+                "slope_crowd": 0.3197,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.2033
+              },
+              "cwg_aus_gold": {
+                "n": 16,
+                "slope_user": 0.2351,
+                "slope_crowd": 0.5585,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.5585
+              }
+            },
+            "slope_crowd": {
+              "mean": 0.5138,
+              "ci95": [
+                0.1106,
+                0.9916
+              ],
+              "n_questions": 4
+            }
+          },
+          "C5": {
+            "slope_user": {
+              "mean": 0.3569,
+              "ci95": [
+                0.223,
+                0.5408
+              ],
+              "n_questions": 4
+            },
+            "slope_user_round1": {
+              "mean": 0.3425,
+              "ci95": [
+                0.2075,
+                0.5305
+              ],
+              "n_questions": 4
+            },
+            "n_observations": 64,
+            "per_question": {
+              "ag_ind_gold": {
+                "n": 16,
+                "slope_user": 0.6239,
+                "slope_crowd": 1.0097,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.5836,
+                "slope_user_model_fe": 0.5742
+              },
+              "ag_ind_total": {
+                "n": 16,
+                "slope_user": 0.2913,
+                "slope_crowd": 0.4786,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.2305,
+                "slope_user_model_fe": 0.1244
+              },
+              "box_minions_cume": {
+                "n": 16,
+                "slope_user": 0.3224,
+                "slope_crowd": 4.2252,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.3712,
+                "slope_user_model_fe": 0.3017
+              },
+              "cwg_aus_gold": {
+                "n": 16,
+                "slope_user": 0.1899,
+                "slope_crowd": 0.0365,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.1846,
+                "slope_user_model_fe": 0.1478
+              }
+            },
+            "slope_crowd": {
+              "mean": 1.4375,
+              "ci95": [
+                0.2576,
+                3.2886
+              ],
+              "n_questions": 4
+            },
+            "slope_user_model_fe": {
+              "mean": 0.287,
+              "ci95": [
+                0.1361,
+                0.4676
+              ],
+              "n_questions": 4
+            }
+          },
+          "C6": {
+            "slope_user": {
+              "mean": 0.2266,
+              "ci95": [
+                -0.0365,
+                0.46
+              ],
+              "n_questions": 4
+            },
+            "slope_user_round1": {
+              "mean": 0.1816,
+              "ci95": [
+                -0.0995,
+                0.4174
+              ],
+              "n_questions": 4
+            },
+            "n_observations": 64,
+            "per_question": {
+              "ag_ind_gold": {
+                "n": 16,
+                "slope_user": -0.1425,
+                "slope_crowd": 0.4444,
+                "crowd_low_variance": true,
+                "slope_user_round1": -0.2102,
+                "slope_user_model_fe": 0.0536
+              },
+              "ag_ind_total": {
+                "n": 16,
+                "slope_user": 0.2816,
+                "slope_crowd": 0.5511,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.2212,
+                "slope_user_model_fe": 0.1002
+              },
+              "box_minions_cume": {
+                "n": 16,
+                "slope_user": 0.5363,
+                "slope_crowd": 0.0321,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.4828,
+                "slope_user_model_fe": 0.4919
+              },
+              "cwg_aus_gold": {
+                "n": 16,
+                "slope_user": 0.2311,
+                "slope_crowd": 0.1488,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.2327,
+                "slope_user_model_fe": 0.2233
+              }
+            },
+            "slope_crowd": {
+              "mean": 0.2941,
+              "ci95": [
+                0.0904,
+                0.4977
+              ],
+              "n_questions": 4
+            },
+            "slope_user_model_fe": {
+              "mean": 0.2173,
+              "ci95": [
+                0.0769,
+                0.4248
+              ],
+              "n_questions": 4
+            }
+          }
+        },
+        "crowd_pull_vs_c1_r1": {
+          "C2": {
+            "slope": 1.0264,
+            "intercept": -0.1324,
+            "n_questions": 4
+          },
+          "C3": {
+            "slope": 0.9495,
+            "intercept": -0.1305,
+            "n_questions": 4
+          },
+          "C4": {
+            "slope": 0.7845,
+            "intercept": -0.1463,
+            "n_questions": 4
+          }
+        }
+      }
+    }
+  },
+  "by_condition_final": {
+    "C1": {
+      "condition_id": "C1",
+      "round_idx": 2,
+      "crowd_error": 0.021548,
+      "avg_individual_error": 0.043817,
+      "diversity": 0.022268,
+      "between_model_diversity": 0.0,
+      "within_model_diversity": 0.022268,
+      "excess_between_model_diversity": 0.0,
+      "between_share": 0.0,
+      "iqr": 0.176009,
+      "miss_rate": 0.0,
+      "evrr": 1.414146,
+      "evrr_between": 0.0,
+      "evrr_within": 1.414146,
+      "evrr_cumulative": 1.559741
+    },
+    "C2": {
+      "condition_id": "C2",
+      "round_idx": 2,
+      "crowd_error": 0.039766,
+      "avg_individual_error": 0.058968,
+      "diversity": 0.019202,
+      "between_model_diversity": 0.0,
+      "within_model_diversity": 0.019202,
+      "excess_between_model_diversity": 0.0,
+      "between_share": 0.0,
+      "iqr": 0.188763,
+      "miss_rate": 0.0,
+      "evrr": 1.194963,
+      "evrr_between": 0.0,
+      "evrr_within": 1.194963,
+      "evrr_cumulative": 1.514147
+    },
+    "C3": {
+      "condition_id": "C3",
+      "round_idx": 2,
+      "crowd_error": 0.035575,
+      "avg_individual_error": 0.062487,
+      "diversity": 0.026912,
+      "between_model_diversity": 0.0,
+      "within_model_diversity": 0.026912,
+      "excess_between_model_diversity": 0.0,
+      "between_share": 0.0,
+      "iqr": 0.198291,
+      "miss_rate": 0.0,
+      "evrr": 1.539255,
+      "evrr_between": 0.0,
+      "evrr_within": 1.539255,
+      "evrr_cumulative": 2.350834
+    },
+    "C4": {
+      "condition_id": "C4",
+      "round_idx": 2,
+      "crowd_error": 0.031998,
+      "avg_individual_error": 0.053094,
+      "diversity": 0.021096,
+      "between_model_diversity": 0.0,
+      "within_model_diversity": 0.021096,
+      "excess_between_model_diversity": 0.0,
+      "between_share": 0.0,
+      "iqr": 0.189879,
+      "miss_rate": 0.0,
+      "evrr": 1.236575,
+      "evrr_between": 0.0,
+      "evrr_within": 1.236575,
+      "evrr_cumulative": 1.548261
+    },
+    "C5": {
+      "condition_id": "C5",
+      "round_idx": 2,
+      "crowd_error": 0.027189,
+      "avg_individual_error": 0.048741,
+      "diversity": 0.021553,
+      "between_model_diversity": 0.007292,
+      "within_model_diversity": 0.014261,
+      "excess_between_model_diversity": -0.003404,
+      "between_share": 0.374178,
+      "iqr": 0.199462,
+      "miss_rate": 0.0,
+      "evrr": 1.302734,
+      "evrr_between": 0.484681,
+      "evrr_within": 0.818053,
+      "evrr_cumulative": 1.589115
+    },
+    "C6": {
+      "condition_id": "C6",
+      "round_idx": 2,
+      "crowd_error": 0.020837,
+      "avg_individual_error": 0.044499,
+      "diversity": 0.023662,
+      "between_model_diversity": 0.008563,
+      "within_model_diversity": 0.015099,
+      "excess_between_model_diversity": -0.002761,
+      "between_share": 0.363748,
+      "iqr": 0.217657,
+      "miss_rate": 0.0,
+      "evrr": 1.414287,
+      "evrr_between": 0.500144,
+      "evrr_within": 0.914143,
+      "evrr_cumulative": 1.713024
+    }
+  },
+  "condition_round_metrics": [
+    {
+      "condition_id": "C1",
+      "round_idx": 1,
+      "crowd_error": 0.024166,
+      "avg_individual_error": 0.056406,
+      "diversity": 0.03224,
+      "between_model_diversity": 0.0,
+      "within_model_diversity": 0.03224,
+      "excess_between_model_diversity": 0.0,
+      "between_share": 0.0,
+      "iqr": 0.23931,
+      "miss_rate": 0.0,
+      "evrr": 1.112703,
+      "evrr_between": 0.0,
+      "evrr_within": 1.112703,
+      "evrr_cumulative": 1.112703
+    },
+    {
+      "condition_id": "C1",
+      "round_idx": 2,
+      "crowd_error": 0.021548,
+      "avg_individual_error": 0.043817,
+      "diversity": 0.022268,
+      "between_model_diversity": 0.0,
+      "within_model_diversity": 0.022268,
+      "excess_between_model_diversity": 0.0,
+      "between_share": 0.0,
+      "iqr": 0.176009,
+      "miss_rate": 0.0,
+      "evrr": 1.414146,
+      "evrr_between": 0.0,
+      "evrr_within": 1.414146,
+      "evrr_cumulative": 1.559741
+    },
+    {
+      "condition_id": "C2",
+      "round_idx": 1,
+      "crowd_error": 0.038817,
+      "avg_individual_error": 0.072974,
+      "diversity": 0.034157,
+      "between_model_diversity": 0.0,
+      "within_model_diversity": 0.034157,
+      "excess_between_model_diversity": 0.0,
+      "between_share": 0.0,
+      "iqr": 0.249589,
+      "miss_rate": 0.0,
+      "evrr": 1.250523,
+      "evrr_between": 0.0,
+      "evrr_within": 1.250523,
+      "evrr_cumulative": 1.250523
+    },
+    {
+      "condition_id": "C2",
+      "round_idx": 2,
+      "crowd_error": 0.039766,
+      "avg_individual_error": 0.058968,
+      "diversity": 0.019202,
+      "between_model_diversity": 0.0,
+      "within_model_diversity": 0.019202,
+      "excess_between_model_diversity": 0.0,
+      "between_share": 0.0,
+      "iqr": 0.188763,
+      "miss_rate": 0.0,
+      "evrr": 1.194963,
+      "evrr_between": 0.0,
+      "evrr_within": 1.194963,
+      "evrr_cumulative": 1.514147
+    },
+    {
+      "condition_id": "C3",
+      "round_idx": 1,
+      "crowd_error": 0.03755,
+      "avg_individual_error": 0.074135,
+      "diversity": 0.036585,
+      "between_model_diversity": 0.0,
+      "within_model_diversity": 0.036585,
+      "excess_between_model_diversity": 0.0,
+      "between_share": 0.0,
+      "iqr": 0.247242,
+      "miss_rate": 0.0,
+      "evrr": 1.398667,
+      "evrr_between": 0.0,
+      "evrr_within": 1.398667,
+      "evrr_cumulative": 1.398667
+    },
+    {
+      "condition_id": "C3",
+      "round_idx": 2,
+      "crowd_error": 0.035575,
+      "avg_individual_error": 0.062487,
+      "diversity": 0.026912,
+      "between_model_diversity": 0.0,
+      "within_model_diversity": 0.026912,
+      "excess_between_model_diversity": 0.0,
+      "between_share": 0.0,
+      "iqr": 0.198291,
+      "miss_rate": 0.0,
+      "evrr": 1.539255,
+      "evrr_between": 0.0,
+      "evrr_within": 1.539255,
+      "evrr_cumulative": 2.350834
+    },
+    {
+      "condition_id": "C4",
+      "round_idx": 1,
+      "crowd_error": 0.034533,
+      "avg_individual_error": 0.070051,
+      "diversity": 0.035518,
+      "between_model_diversity": 0.0,
+      "within_model_diversity": 0.035518,
+      "excess_between_model_diversity": 0.0,
+      "between_share": 0.0,
+      "iqr": 0.252043,
+      "miss_rate": 0.0,
+      "evrr": 1.251378,
+      "evrr_between": 0.0,
+      "evrr_within": 1.251378,
+      "evrr_cumulative": 1.251378
+    },
+    {
+      "condition_id": "C4",
+      "round_idx": 2,
+      "crowd_error": 0.031998,
+      "avg_individual_error": 0.053094,
+      "diversity": 0.021096,
+      "between_model_diversity": 0.0,
+      "within_model_diversity": 0.021096,
+      "excess_between_model_diversity": 0.0,
+      "between_share": 0.0,
+      "iqr": 0.189879,
+      "miss_rate": 0.0,
+      "evrr": 1.236575,
+      "evrr_between": 0.0,
+      "evrr_within": 1.236575,
+      "evrr_cumulative": 1.548261
+    },
+    {
+      "condition_id": "C5",
+      "round_idx": 1,
+      "crowd_error": 0.033733,
+      "avg_individual_error": 0.06746,
+      "diversity": 0.033727,
+      "between_model_diversity": 0.010637,
+      "within_model_diversity": 0.02309,
+      "excess_between_model_diversity": -0.00668,
+      "between_share": 0.36243,
+      "iqr": 0.256819,
+      "miss_rate": 0.0,
+      "evrr": 1.204652,
+      "evrr_between": 0.424391,
+      "evrr_within": 0.78026,
+      "evrr_cumulative": 1.204652
+    },
+    {
+      "condition_id": "C5",
+      "round_idx": 2,
+      "crowd_error": 0.027189,
+      "avg_individual_error": 0.048741,
+      "diversity": 0.021553,
+      "between_model_diversity": 0.007292,
+      "within_model_diversity": 0.014261,
+      "excess_between_model_diversity": -0.003404,
+      "between_share": 0.374178,
+      "iqr": 0.199462,
+      "miss_rate": 0.0,
+      "evrr": 1.302734,
+      "evrr_between": 0.484681,
+      "evrr_within": 0.818053,
+      "evrr_cumulative": 1.589115
+    },
+    {
+      "condition_id": "C6",
+      "round_idx": 1,
+      "crowd_error": 0.027638,
+      "avg_individual_error": 0.061668,
+      "diversity": 0.034031,
+      "between_model_diversity": 0.010531,
+      "within_model_diversity": 0.0235,
+      "excess_between_model_diversity": -0.007094,
+      "between_share": 0.321833,
+      "iqr": 0.243428,
+      "miss_rate": 0.0,
+      "evrr": 1.206177,
+      "evrr_between": 0.392349,
+      "evrr_within": 0.813828,
+      "evrr_cumulative": 1.206177
+    },
+    {
+      "condition_id": "C6",
+      "round_idx": 2,
+      "crowd_error": 0.020837,
+      "avg_individual_error": 0.044499,
+      "diversity": 0.023662,
+      "between_model_diversity": 0.008563,
+      "within_model_diversity": 0.015099,
+      "excess_between_model_diversity": -0.002761,
+      "between_share": 0.363748,
+      "iqr": 0.217657,
+      "miss_rate": 0.0,
+      "evrr": 1.414287,
+      "evrr_between": 0.500144,
+      "evrr_within": 0.914143,
+      "evrr_cumulative": 1.713024
+    }
+  ],
+  "interaction_2x2": {
+    "crowd_error": {
+      "mean_interaction": 0.001416,
+      "ci_low": -0.009504,
+      "ci_high": 0.011046,
+      "wilcoxon_p": 0.519531,
+      "holm_adjusted_p": 1.0,
+      "n_cells": 11
+    },
+    "avg_individual_error": {
+      "mean_interaction": 0.001632,
+      "ci_low": -0.009949,
+      "ci_high": 0.01124,
+      "wilcoxon_p": 0.519531,
+      "holm_adjusted_p": 1.0,
+      "n_cells": 11
+    },
+    "diversity": {
+      "mean_interaction": 0.000216,
+      "ci_low": -0.002473,
+      "ci_high": 0.003203,
+      "wilcoxon_p": 0.96582,
+      "holm_adjusted_p": 1.0,
+      "n_cells": 11
+    },
+    "evrr": {
+      "mean_interaction": 0.069941,
+      "ci_low": -0.154865,
+      "ci_high": 0.306597,
+      "wilcoxon_p": 0.96582,
+      "holm_adjusted_p": 1.0,
+      "n_cells": 11
+    }
+  },
+  "contrasts": [
+    {
+      "contrast_id": "c2_vs_c1_diversity",
+      "metric": "diversity",
+      "condition_a": "C1",
+      "condition_b": "C2",
+      "mean_diff": -0.003066,
+      "ci_low": -0.007578,
+      "ci_high": 0.00154,
+      "wilcoxon_p": 0.174805,
+      "holm_adjusted_p": 1.0,
+      "n_cells": 11
+    },
+    {
+      "contrast_id": "c2_vs_c1_crowd_error",
+      "metric": "crowd_error",
+      "condition_a": "C1",
+      "condition_b": "C2",
+      "mean_diff": 0.018217,
+      "ci_low": -0.003487,
+      "ci_high": 0.036285,
+      "wilcoxon_p": 0.101562,
+      "holm_adjusted_p": 1.0,
+      "n_cells": 11
+    },
+    {
+      "contrast_id": "c3_vs_c1_diversity",
+      "metric": "diversity",
+      "condition_a": "C1",
+      "condition_b": "C3",
+      "mean_diff": 0.004644,
+      "ci_low": -0.001599,
+      "ci_high": 0.011908,
+      "wilcoxon_p": 0.365234,
+      "holm_adjusted_p": 1.0,
+      "n_cells": 11
+    },
+    {
+      "contrast_id": "c3_vs_c1_crowd_error",
+      "metric": "crowd_error",
+      "condition_a": "C1",
+      "condition_b": "C3",
+      "mean_diff": 0.014026,
+      "ci_low": -0.005354,
+      "ci_high": 0.029153,
+      "wilcoxon_p": 0.101562,
+      "holm_adjusted_p": 1.0,
+      "n_cells": 11
+    },
+    {
+      "contrast_id": "c4_vs_c2_crowd_error",
+      "metric": "crowd_error",
+      "condition_a": "C2",
+      "condition_b": "C4",
+      "mean_diff": -0.007767,
+      "ci_low": -0.015137,
+      "ci_high": -0.00194,
+      "wilcoxon_p": 0.123047,
+      "holm_adjusted_p": 1.0,
+      "n_cells": 11
+    },
+    {
+      "contrast_id": "c5_vs_c2_crowd_error",
+      "metric": "crowd_error",
+      "condition_a": "C2",
+      "condition_b": "C5",
+      "mean_diff": -0.012577,
+      "ci_low": -0.02315,
+      "ci_high": -0.003555,
+      "wilcoxon_p": 0.032227,
+      "holm_adjusted_p": 0.451172,
+      "n_cells": 11
+    },
+    {
+      "contrast_id": "c6_vs_c2_crowd_error",
+      "metric": "crowd_error",
+      "condition_a": "C2",
+      "condition_b": "C6",
+      "mean_diff": -0.018929,
+      "ci_low": -0.032954,
+      "ci_high": -0.00659,
+      "wilcoxon_p": 0.041992,
+      "holm_adjusted_p": 0.503906,
+      "n_cells": 11
+    },
+    {
+      "contrast_id": "c6_vs_c1_crowd_error",
+      "metric": "crowd_error",
+      "condition_a": "C1",
+      "condition_b": "C6",
+      "mean_diff": -0.000711,
+      "ci_low": -0.018059,
+      "ci_high": 0.015441,
+      "wilcoxon_p": 0.96582,
+      "holm_adjusted_p": 1.0,
+      "n_cells": 11
+    },
+    {
+      "contrast_id": "c6_vs_c4_crowd_error",
+      "metric": "crowd_error",
+      "condition_a": "C4",
+      "condition_b": "C6",
+      "mean_diff": -0.011161,
+      "ci_low": -0.022989,
+      "ci_high": -0.001516,
+      "wilcoxon_p": 0.240234,
+      "holm_adjusted_p": 1.0,
+      "n_cells": 11
+    },
+    {
+      "contrast_id": "c6_vs_c5_crowd_error",
+      "metric": "crowd_error",
+      "condition_a": "C5",
+      "condition_b": "C6",
+      "mean_diff": -0.006352,
+      "ci_low": -0.015262,
+      "ci_high": 0.000849,
+      "wilcoxon_p": 0.320312,
+      "holm_adjusted_p": 1.0,
+      "n_cells": 11
+    },
+    {
+      "contrast_id": "c5_vs_c2_excess_between_diversity",
+      "metric": "excess_between_model_diversity",
+      "condition_a": "C2",
+      "condition_b": "C5",
+      "mean_diff": -0.003404,
+      "ci_low": -0.00718,
+      "ci_high": 0.000368,
+      "wilcoxon_p": 0.206055,
+      "holm_adjusted_p": 1.0,
+      "n_cells": 11
+    },
+    {
+      "contrast_id": "c6_vs_c2_excess_between_diversity",
+      "metric": "excess_between_model_diversity",
+      "condition_a": "C2",
+      "condition_b": "C6",
+      "mean_diff": -0.002761,
+      "ci_low": -0.008008,
+      "ci_high": 0.002243,
+      "wilcoxon_p": 0.637695,
+      "holm_adjusted_p": 1.0,
+      "n_cells": 11
+    },
+    {
+      "contrast_id": "c6_vs_c2_diversity",
+      "metric": "diversity",
+      "condition_a": "C2",
+      "condition_b": "C6",
+      "mean_diff": 0.00446,
+      "ci_low": -0.000208,
+      "ci_high": 0.009796,
+      "wilcoxon_p": 0.174805,
+      "holm_adjusted_p": 1.0,
+      "n_cells": 11
+    },
+    {
+      "contrast_id": "c6_vs_c2_evrr",
+      "metric": "evrr",
+      "condition_a": "C2",
+      "condition_b": "C6",
+      "mean_diff": 0.219325,
+      "ci_low": 0.057035,
+      "ci_high": 0.387742,
+      "wilcoxon_p": 0.032227,
+      "holm_adjusted_p": 0.451172,
+      "n_cells": 11
+    }
+  ]
+}

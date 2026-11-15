@@ -20,7 +20,15 @@ from apart_epistemics.backends.base import DEFAULT_NUMERIC_MAX_TOKENS
 from apart_epistemics.datasets import generate_agent_population
 from apart_epistemics.engine.contrasts import compute_paired_holm_contrasts
 from apart_epistemics.engine.h4 import compute_h4_slopes
-from apart_epistemics.metrics import compute_page_decomposition, pearson_corr, quantile_sorted
+from apart_epistemics.metrics import (
+    bootstrap_ci,
+    compute_hierarchical_page_decomposition,
+    compute_page_decomposition,
+    holm_bonferroni,
+    paired_wilcoxon_p,
+    pearson_corr,
+    quantile_sorted,
+)
 from apart_epistemics.models import AgentProfile, NumericEstimateRecord, TaskItem
 from apart_epistemics.parsers import NumericParseResult, parse_numeric_estimate
 from apart_epistemics.run_state import backend_identity, configure_budget, validate_manifest
@@ -29,6 +37,31 @@ from apart_epistemics.run_state import backend_identity, configure_budget, valid
 # treated as a parse miss: a factor of 100 catches 10^3 and 10^6 unit slips (e.g. 235,000 vs
 # 235,000,000 gave distance 2.898) while preserving genuine estimates (max observed jump 1.013).
 MAX_LOG10_JUMP = 2.0
+
+_VALID_NUMERIC_CONDITIONS = frozenset({"C1", "C2", "C3", "C4", "C5", "C6"})
+_SOCIAL_CONDITIONS = frozenset({"C2", "C3", "C4", "C5", "C6"})
+_COUNTER_ANCHOR_CONDITIONS = frozenset({"C4", "C6"})
+_COUNTER_ANCHOR_TEXT = (
+    "Before estimating, apply dialectical counter-anchoring: in 2-3 concise sentences, "
+    "critically examine how both my current estimate and the crowd median could be skewed "
+    "(either too high or too low) by shared misconceptions or herding, and check independent "
+    "base rates or known reference facts before forming your own independent estimate."
+)
+_ROUND_METRIC_KEYS = (
+    "crowd_error",
+    "avg_individual_error",
+    "diversity",
+    "between_model_diversity",
+    "within_model_diversity",
+    "excess_between_model_diversity",
+    "between_share",
+    "iqr",
+    "miss_rate",
+    "evrr",
+    "evrr_between",
+    "evrr_within",
+    "evrr_cumulative",
+)
 
 
 def format_prompt_number(value: float) -> str:
@@ -76,12 +109,12 @@ def build_numeric_prompts(
     unit: str = "",
     current_date: str = "",
 ) -> tuple[str, str]:
-    """Construct C1 (baseline), C2 (social summary), or C3 (personalized+history) prompts."""
+    """Construct C1..C6 prompts (baseline, social, persona, dialectical, and K=4 polyphony)."""
     cond = condition_id.upper()
     est_str = format_prompt_number(current_x)
 
-    # One shared system prompt for C1/C2/C3 so conditions differ only in what they add:
-    # C2 adds the social summary (user prompt), C3 adds the profile sentence and history.
+    # One shared system prompt for C1/C2/C4/C5/C6 so conditions differ only in what they add:
+    # C2/C5 add social summary, C4/C6 add counter-anchoring, C3 adds profile sentence + history.
     system_prompt = shared_system_prompt(current_date)
     if cond == "C3":
         system_prompt += (
@@ -90,7 +123,7 @@ def build_numeric_prompts(
         )
 
     parts = [f"Question: {question}"]
-    if cond in ("C2", "C3") and pop_stats is not None:
+    if cond in _SOCIAL_CONDITIONS and pop_stats is not None:
         med, q25, q75 = pop_stats
         parts.append(
             "Other people asking this recently gave a median of "
@@ -103,6 +136,8 @@ def build_numeric_prompts(
             f"Turn {idx + 1} User: {u} | Assistant: {a}" for idx, (u, a) in enumerate(recent)
         ]
         parts.append("Recent conversation history:\n" + "\n".join(hist_lines))
+    if cond in _COUNTER_ANCHOR_CONDITIONS:
+        parts.append(_COUNTER_ANCHOR_TEXT)
 
     unit_str = f" {unit}" if unit else ""
     parts.append(
@@ -252,6 +287,8 @@ class _RoundContext:
     pricing: TokenPricing | None
     abort: threading.Event
     current_date: str = ""
+    models: tuple[str, ...] = ()
+    routed_backends: dict[str, Any] = field(default_factory=dict)
 
 
 def _query_agent(ctx: _RoundContext, a_idx: int) -> tuple[str, Any]:
@@ -261,20 +298,26 @@ def _query_agent(ctx: _RoundContext, a_idx: int) -> tuple[str, Any]:
     try:
         ctx.tracker.check()
         cur_x = 10.0 ** ctx.current_logs[a_idx]
+        cond_upper = ctx.cond_id.upper()
         sys_p, usr_p = build_numeric_prompts(
             condition_id=ctx.cond_id,
             agent=ctx.agents[a_idx],
             question=ctx.task.question,
             current_x=cur_x,
-            pop_stats=ctx.pop_stats if ctx.cond_id in ("C2", "C3") else None,
+            pop_stats=ctx.pop_stats if cond_upper in _SOCIAL_CONDITIONS else None,
             history=ctx.histories[a_idx],
             unit=ctx.task.unit,
             current_date=ctx.current_date,
         )
+        agent_backend = (
+            ctx.routed_backends[ctx.models[a_idx % len(ctx.models)]]
+            if cond_upper in ("C5", "C6") and ctx.models
+            else ctx.backend
+        )
         return (
             "ok",
             _query_with_retry(
-                ctx.backend,
+                agent_backend,
                 sys_p,
                 usr_p,
                 ctx.cond_id,
@@ -364,6 +407,8 @@ def _build_round_context(
     pricing: TokenPricing | None,
     abort: threading.Event,
     current_date: str,
+    models: tuple[str, ...] = (),
+    routed_backends: dict[str, Any] | None = None,
 ) -> _RoundContext:
     sorted_x = sorted(10.0**lg for lg in traj.current_logs)
     return _RoundContext(
@@ -384,6 +429,8 @@ def _build_round_context(
         pricing=pricing,
         abort=abort,
         current_date=current_date,
+        models=models,
+        routed_backends=routed_backends or {},
     )
 
 
@@ -471,7 +518,8 @@ def _validate_numeric_inputs(
     alpha: float,
     budget_usd: float,
     workers: int,
-) -> None:
+    models: list[str] | None = None,
+) -> list[str]:
     if workers < 1:
         raise BackendConfigError("workers must be at least 1.")
     if not hasattr(backend, "generate_numeric_reply"):
@@ -492,6 +540,21 @@ def _validate_numeric_inputs(
         or len(set(conditions)) != len(conditions)
     ):
         raise BackendConfigError("Numeric dimensions must be positive and conditions unique.")
+    if any(c.upper() not in _VALID_NUMERIC_CONDITIONS for c in conditions):
+        raise BackendConfigError(
+            f"Numeric conditions must be drawn from {sorted(_VALID_NUMERIC_CONDITIONS)}."
+        )
+    normalized_models = [m.strip() if isinstance(m, str) else "" for m in (models or [])]
+    if any(not m for m in normalized_models):
+        raise BackendConfigError("Numeric models must be non-empty strings.")
+    if any(c.upper() in ("C5", "C6") for c in conditions):
+        if len(set(normalized_models)) < 2:
+            raise BackendConfigError(
+                "Conditions C5 and C6 require at least 2 unique non-empty models."
+            )
+        if not hasattr(backend, "for_model"):
+            raise BackendConfigError("Selected backend does not support multi-model routing.")
+    return normalized_models
 
 
 def _build_trajectories(
@@ -542,6 +605,8 @@ def _run_trajectories_parallel(
     current_date: str,
     existing: dict[tuple[str, str, int, int, str], NumericEstimateRecord],
     fh: Any,
+    models: tuple[str, ...] = (),
+    routed_backends: dict[str, Any] | None = None,
 ) -> None:
     """Execute independent trajectories concurrently via one shared worker pool."""
     run_abort = threading.Event()
@@ -552,7 +617,16 @@ def _run_trajectories_parallel(
             traj = trajs[traj_idx]
             while traj.round_idx <= n_rounds:
                 ctx = _build_round_context(
-                    backend, agents, traj, tracker, max_tokens, pricing, run_abort, current_date
+                    backend,
+                    agents,
+                    traj,
+                    tracker,
+                    max_tokens,
+                    pricing,
+                    run_abort,
+                    current_date,
+                    models,
+                    routed_backends,
                 )
                 pending = [
                     i
@@ -625,18 +699,28 @@ def run_numeric_core(
     start_bias_weight: float = 0.22,
     start_sd: float = 0.24,
     current_date: str = "",
+    models: list[str] | None = None,
 ) -> list[NumericEstimateRecord]:
-    """Run crash-resumable C1/C2/C3 numeric estimation sweeps with retry-once and budget cap.
+    """Run crash-resumable C1..C6 numeric estimation sweeps with retry-once and budget cap.
 
     Independent trajectories and their within-round agents share `workers > 1` concurrently.
     Results are applied and returned in canonical `(condition, question, replicate, round, agent)`
     order so outputs match sequential execution.
     """
-    _validate_numeric_inputs(
-        tasks, conditions, n_agents, n_rounds, replicates, backend, alpha, budget_usd, workers
+    normalized_models = _validate_numeric_inputs(
+        tasks,
+        conditions,
+        n_agents,
+        n_rounds,
+        replicates,
+        backend,
+        alpha,
+        budget_usd,
+        workers,
+        models=models,
     )
     runs_path.parent.mkdir(parents=True, exist_ok=True)
-    spec = {
+    spec: dict[str, Any] = {
         "version": 1,
         "seed": seed,
         "alpha": alpha,
@@ -651,9 +735,16 @@ def run_numeric_core(
         "tasks": [t.model_dump(mode="json") for t in tasks],
         "backend": backend_identity(backend),
     }
+    if normalized_models:
+        spec["numeric_models"] = list(normalized_models)
     validate_manifest(runs_path.with_suffix(".manifest.json"), spec, runs_path)
     ledger = getattr(backend, "budget_ledger", None)
     configure_budget(backend, runs_path.parent, budget_usd, ledger.per_request if ledger else 1.0)
+    has_polyphony = any(c.upper() in ("C5", "C6") for c in conditions)
+    routed_backends = (
+        {m: backend.for_model(m) for m in dict.fromkeys(normalized_models)} if has_polyphony else {}
+    )
+    model_tuple = tuple(normalized_models)
     agents = generate_agent_population(num_agents=n_agents, seed=seed)
     existing = _load_existing_numeric_records(runs_path)
 
@@ -681,6 +772,8 @@ def run_numeric_core(
                         pricing,
                         threading.Event(),
                         current_date,
+                        model_tuple,
+                        routed_backends,
                     )
                     traj.records.extend(
                         _run_round(ctx, spec, traj.rep, alpha, workers, existing, fh)
@@ -701,15 +794,129 @@ def run_numeric_core(
                 current_date,
                 existing,
                 fh,
+                model_tuple,
+                routed_backends,
             )
 
     return [rec for traj in trajs for rec in traj.records]
 
 
+def _mean_metric(cells: list[dict[str, Any]], key: str) -> float | None:
+    vals = [float(m[key]) for m in cells if m.get(key) is not None]
+    return round(sum(vals) / len(vals), 6) if vals else None
+
+
+def _summarize_cells(cells: list[dict[str, Any]]) -> dict[str, Any]:
+    return {key: _mean_metric(cells, key) for key in _ROUND_METRIC_KEYS}
+
+
+def _compute_cell_metrics(
+    by_cell: dict[tuple[str, str, int, int], list[NumericEstimateRecord]],
+    truth_by_qid: dict[str, float],
+    alpha: float,
+) -> tuple[dict[tuple[str, str, int, int], dict[str, Any]], float]:
+    d0_by_traj: dict[tuple[str, str, int], float] = {}
+    for (cond_id, qid, rep, r_idx), cell_recs in by_cell.items():
+        if r_idx == 1:
+            d0_by_traj[(cond_id, qid, rep)] = compute_page_decomposition(
+                [r.agent_log10_before for r in cell_recs],
+                truth_by_qid[qid],
+            )["diversity"]
+
+    cell_metrics: dict[tuple[str, str, int, int], dict[str, Any]] = {}
+    max_resid = 0.0
+    for key, cell_recs in by_cell.items():
+        cond_id, qid, rep, r_idx = key
+        truth = truth_by_qid[qid]
+        decomp: dict[str, Any] = compute_hierarchical_page_decomposition(
+            [r.agent_log10_after for r in cell_recs],
+            [r.model_slug for r in cell_recs],
+            log_truth=truth,
+        )
+        decomp["miss_rate"] = sum(1 for r in cell_recs if r.miss) / len(cell_recs)
+        d_prev = compute_page_decomposition(
+            [r.agent_log10_before for r in cell_recs],
+            truth,
+        )["diversity"]
+        denom = ((1.0 - alpha) ** 2) * d_prev
+        if denom <= 1e-15:
+            decomp["evrr"] = None
+            decomp["evrr_between"] = None
+            decomp["evrr_within"] = None
+        else:
+            decomp["evrr"] = decomp["diversity"] / denom
+            decomp["evrr_between"] = decomp["between_model_diversity"] / denom
+            decomp["evrr_within"] = decomp["within_model_diversity"] / denom
+
+        d_0 = d0_by_traj.get((cond_id, qid, rep))
+        cum_denom = ((1.0 - alpha) ** (2 * r_idx)) * d_0 if d_0 is not None else 0.0
+        decomp["evrr_cumulative"] = (
+            None if d_0 is None or cum_denom <= 1e-15 else decomp["diversity"] / cum_denom
+        )
+        max_resid = max(
+            max_resid,
+            decomp["identity_residual"],
+            decomp["hierarchical_identity_residual"],
+        )
+        cell_metrics[key] = decomp
+    return cell_metrics, max_resid
+
+
+def _compute_interaction_2x2(
+    cell_metrics: dict[tuple[str, str, int, int], dict[str, Any]],
+    max_round: int,
+    complete: bool,
+) -> dict[str, Any]:
+    if not complete:
+        return {}
+    present = {c for (c, _, _, r) in cell_metrics if r == max_round}
+    if not {"C2", "C4", "C5", "C6"}.issubset(present):
+        return {}
+
+    metrics = ("crowd_error", "avg_individual_error", "diversity", "evrr")
+    raw: list[tuple[str, list[float], float, float, float]] = []
+    for metric in metrics:
+        per_cond = {
+            cond: {
+                (qid, rep): float(val)
+                for (c, qid, rep, r), m in cell_metrics.items()
+                if c == cond and r == max_round and (val := m.get(metric)) is not None
+            }
+            for cond in ("C2", "C4", "C5", "C6")
+        }
+        common = sorted(
+            set(per_cond["C2"]) & set(per_cond["C4"]) & set(per_cond["C5"]) & set(per_cond["C6"])
+        )
+        if not common:
+            continue
+        dids = [
+            (per_cond["C6"][k] - per_cond["C5"][k]) - (per_cond["C4"][k] - per_cond["C2"][k])
+            for k in common
+        ]
+        ci_lo, ci_hi = bootstrap_ci(dids, seed=42)
+        p_val = paired_wilcoxon_p([0.0] * len(dids), dids)
+        raw.append((metric, dids, ci_lo, ci_hi, p_val))
+
+    if not raw:
+        return {}
+    adj_ps = holm_bonferroni([item[4] for item in raw])
+    return {
+        metric: {
+            "mean_interaction": round(sum(dids) / len(dids), 6),
+            "ci_low": round(ci_lo, 6),
+            "ci_high": round(ci_hi, 6),
+            "wilcoxon_p": round(p_val, 6),
+            "holm_adjusted_p": round(adj_p, 6),
+            "n_cells": len(dids),
+        }
+        for (metric, dids, ci_lo, ci_hi, p_val), adj_p in zip(raw, adj_ps, strict=True)
+    }
+
+
 def _stratum_report(
     records: list[NumericEstimateRecord],
     tasks: list[TaskItem],
-    cell_metrics: dict[tuple[str, str, int, int], dict[str, float]],
+    cell_metrics: dict[tuple[str, str, int, int], dict[str, Any]],
     max_round: int,
     complete: bool,
 ) -> dict[str, Any]:
@@ -730,20 +937,7 @@ def _stratum_report(
                     if c == cond and q in qids and r == max_round
                 ]
                 if cells:
-                    n = len(cells)
-                    final[cond] = {
-                        "n_cells": n,
-                        **{
-                            key: round(sum(m[key] for m in cells) / n, 6)
-                            for key in (
-                                "crowd_error",
-                                "avg_individual_error",
-                                "diversity",
-                                "iqr",
-                                "miss_rate",
-                            )
-                        },
-                    }
+                    final[cond] = {"n_cells": len(cells), **_summarize_cells(cells)}
         report[name] = {
             "questions": sorted(qids),
             "by_condition_final": final,
@@ -758,7 +952,7 @@ def analyze_numeric_core(
     records: list[NumericEstimateRecord],
     tasks: list[TaskItem],
 ) -> dict[str, Any]:
-    """Compute Page decomposition per cell, H4 correlation, and 4 Holm-corrected contrasts."""
+    """Compute hierarchical Page decomposition, EVRR, H4 slopes, contrasts, and 2x2 DiD."""
     truth_by_qid = {t.id: math.log10(t.numeric_truth) for t in tasks if t.numeric_truth is not None}
     by_cell: dict[tuple[str, str, int, int], list[NumericEstimateRecord]] = defaultdict(list)
     for rec in records:
@@ -794,17 +988,9 @@ def analyze_numeric_core(
         raise RuntimeError("Analysis ground truth differs from the saved run specification.")
     if any(r.question_id not in truth_by_qid for r in records):
         raise RuntimeError("Cannot analyze records without their question ground truth.")
-    cell_metrics: dict[tuple[str, str, int, int], dict[str, float]] = {}
-    max_resid = 0.0
-    for key, cell_recs in by_cell.items():
-        _, qid, _, _ = key
-        decomp = compute_page_decomposition(
-            [r.agent_log10_after for r in cell_recs],
-            log_truth=truth_by_qid[qid],
-        )
-        decomp["miss_rate"] = sum(1 for r in cell_recs if r.miss) / len(cell_recs)
-        max_resid = max(max_resid, decomp["identity_residual"])
-        cell_metrics[key] = decomp
+
+    alpha = float(spec.get("alpha", 0.3))
+    cell_metrics, max_resid = _compute_cell_metrics(by_cell, truth_by_qid, alpha)
 
     valid_recs = [r for r in records if not r.miss and r.assistant_log10 is not None]
     h4_corr = pearson_corr(
@@ -813,24 +999,14 @@ def analyze_numeric_core(
     )
 
     max_round = spec.get("n_rounds", max((r.round_idx for r in records), default=1))
-    by_cond_round: dict[tuple[str, int], list[dict[str, float]]] = defaultdict(list)
+    by_cond_round: dict[tuple[str, int], list[dict[str, Any]]] = defaultdict(list)
     for (cond_id, _qid, _rep, r_idx), m in cell_metrics.items():
         by_cond_round[(cond_id, r_idx)].append(m)
 
-    condition_round_metrics: list[dict[str, Any]] = []
-    for (cond_id, r_idx), ms in sorted(by_cond_round.items()):
-        n = len(ms)
-        condition_round_metrics.append(
-            {
-                "condition_id": cond_id,
-                "round_idx": r_idx,
-                "crowd_error": round(sum(m["crowd_error"] for m in ms) / n, 6),
-                "avg_individual_error": round(sum(m["avg_individual_error"] for m in ms) / n, 6),
-                "diversity": round(sum(m["diversity"] for m in ms) / n, 6),
-                "iqr": round(sum(m["iqr"] for m in ms) / n, 6),
-                "miss_rate": round(sum(m["miss_rate"] for m in ms) / n, 6),
-            }
-        )
+    condition_round_metrics: list[dict[str, Any]] = [
+        {"condition_id": cond_id, "round_idx": r_idx, **_summarize_cells(ms)}
+        for (cond_id, r_idx), ms in sorted(by_cond_round.items())
+    ]
 
     by_condition_final = {
         row["condition_id"]: row
@@ -843,13 +1019,26 @@ def analyze_numeric_core(
         ("c2_vs_c1_crowd_error", "crowd_error", "C1", "C2"),
         ("c3_vs_c1_diversity", "diversity", "C1", "C3"),
         ("c3_vs_c1_crowd_error", "crowd_error", "C1", "C3"),
+        ("c4_vs_c2_crowd_error", "crowd_error", "C2", "C4"),
+        ("c5_vs_c2_crowd_error", "crowd_error", "C2", "C5"),
+        ("c6_vs_c2_crowd_error", "crowd_error", "C2", "C6"),
+        ("c6_vs_c1_crowd_error", "crowd_error", "C1", "C6"),
+        ("c6_vs_c4_crowd_error", "crowd_error", "C4", "C6"),
+        ("c6_vs_c5_crowd_error", "crowd_error", "C5", "C6"),
+        ("c5_vs_c2_excess_between_diversity", "excess_between_model_diversity", "C2", "C5"),
+        ("c6_vs_c2_excess_between_diversity", "excess_between_model_diversity", "C2", "C6"),
+        ("c6_vs_c2_diversity", "diversity", "C2", "C6"),
+        ("c6_vs_c2_evrr", "evrr", "C2", "C6"),
     ]
 
     def _cell_metric(cond_id: str, metric: str) -> dict[tuple[str, int], float]:
         return {
-            (qid, rep): m[metric]
+            (qid, rep): float(val)
             for (c, qid, rep, r_idx), m in cell_metrics.items()
-            if complete and c == cond_id and r_idx == max_round
+            if complete
+            and c == cond_id
+            and r_idx == max_round
+            and (val := m.get(metric)) is not None
         }
 
     contrasts = compute_paired_holm_contrasts(
@@ -873,5 +1062,6 @@ def analyze_numeric_core(
         "h4_assistant_agent_corr": round(h4_corr, 4),
         "by_condition_final": by_condition_final,
         "condition_round_metrics": condition_round_metrics,
+        "interaction_2x2": _compute_interaction_2x2(cell_metrics, max_round, complete),
         "contrasts": contrasts,
     }

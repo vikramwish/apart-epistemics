@@ -651,3 +651,346 @@ def test_run_numeric_core_parallel_trajectories_match_sequential(tmp_path: Path)
         workers=8,
     )
     assert [r.model_dump() for r in resumed] == [r.model_dump() for r in seq]
+
+
+def test_hierarchical_page_decomposition_identities_and_edge_cases() -> None:
+    from apart_epistemics.metrics import compute_hierarchical_page_decomposition
+
+    # Closed-form balanced case: cluster A=[1,3] (mean 2), cluster B=[5,7] (mean 6), truth=0
+    out = compute_hierarchical_page_decomposition([1.0, 3.0, 5.0, 7.0], ["A", "A", "B", "B"], 0.0)
+    assert out["crowd_error"] == pytest.approx(16.0)
+    assert out["avg_individual_error"] == pytest.approx(21.0)
+    assert out["diversity"] == pytest.approx(5.0)
+    assert out["between_model_diversity"] == pytest.approx(4.0)
+    assert out["within_model_diversity"] == pytest.approx(1.0)
+    assert out["excess_between_model_diversity"] == pytest.approx(4.0 - (1 / 2) * 1.0)
+    assert out["between_share"] == pytest.approx(0.8)
+    assert out["num_models"] == 2.0
+    assert out["identity_residual"] < 1e-15
+    assert out["hierarchical_identity_residual"] < 1e-15
+
+    # Unbalanced K=3, N=7 clusters still preserve exact ANOVA decomposition.
+    unbal = compute_hierarchical_page_decomposition(
+        [0.1, -0.3, 0.4, 0.8, 1.0, -0.5, -0.2],
+        ["m1", "m1", "m2", "m2", "m2", "m3", "m3"],
+        0.2,
+    )
+    assert unbal["identity_residual"] < 1e-15
+    assert unbal["hierarchical_identity_residual"] < 1e-15
+    assert unbal["between_model_diversity"] + unbal["within_model_diversity"] == pytest.approx(
+        unbal["diversity"], abs=1e-15
+    )
+
+    # K=1 monoculture and K=N singletons set excess_between_model_diversity to 0.0.
+    mono = compute_hierarchical_page_decomposition([1.0, 2.0, 4.0], ["m1", "m1", "m1"], 0.0)
+    assert mono["between_model_diversity"] == pytest.approx(0.0, abs=1e-15)
+    assert mono["within_model_diversity"] == pytest.approx(mono["diversity"], abs=1e-15)
+    assert mono["excess_between_model_diversity"] == 0.0
+    assert mono["between_share"] == 0.0
+
+    singleton = compute_hierarchical_page_decomposition([1.0, 2.0, 4.0], ["a", "b", "c"], 0.0)
+    assert singleton["within_model_diversity"] == pytest.approx(0.0, abs=1e-15)
+    assert singleton["excess_between_model_diversity"] == 0.0
+
+    zero_div = compute_hierarchical_page_decomposition([2.0, 2.0], ["a", "b"], 2.0)
+    assert zero_div["between_share"] == 0.0
+    assert zero_div["hierarchical_identity_residual"] < 1e-15
+
+    empty = compute_hierarchical_page_decomposition([], [], 0.0)
+    assert all(val == 0.0 for val in empty.values())
+
+    with pytest.raises(ValueError, match="identical length"):
+        compute_hierarchical_page_decomposition([1.0], ["a", "b"], 0.0)
+
+
+def test_c1_through_c6_prompt_symmetry_and_social_routing(
+    tmp_path: Path, sample_agent: AgentProfile
+) -> None:
+    def prompts(cond: str) -> tuple[str, str]:
+        return build_numeric_prompts(
+            condition_id=cond,
+            agent=sample_agent,
+            question="How many medals?",
+            current_x=104.3,
+            pop_stats=(110.2, 52.4, 249.6),
+            history=[("Turn 1 u", "Turn 1 a")],
+            unit="medals",
+            current_date="2026-11-14",
+        )
+
+    sys_c1, usr_c1 = prompts("C1")
+    sys_c2, usr_c2 = prompts("C2")
+    sys_c3, usr_c3 = prompts("C3")
+    sys_c4, usr_c4 = prompts("C4")
+    sys_c5, usr_c5 = prompts("C5")
+    sys_c6, usr_c6 = prompts("C6")
+
+    assert sys_c1 == sys_c2 == sys_c4 == sys_c5 == sys_c6
+    assert sys_c3.startswith(sys_c1)
+    assert usr_c5 == usr_c2
+    assert usr_c6 == usr_c4
+    assert "Other people asking this recently gave a median of" not in usr_c1
+    assert "dialectical counter-anchoring" not in usr_c2.lower()
+    assert "dialectical counter-anchoring" not in usr_c3.lower()
+    assert "dialectical counter-anchoring" in usr_c4
+    assert usr_c4.index("median of") < usr_c4.index("dialectical counter-anchoring")
+    assert usr_c4.index("dialectical counter-anchoring") < usr_c4.index("My current estimate")
+
+    # Runner passes pop_stats into prompts for C2, C3, C4, C5, and C6 (never C1).
+    seen_by_cond: dict[str, list[str]] = {}
+
+    class PromptSpy(SyntheticEpistemicBackend):
+        def generate_numeric_reply(self, **kwargs: Any) -> dict[str, Any]:
+            seen_by_cond.setdefault(kwargs["condition_id"], []).append(kwargs["user_prompt"])
+            return super().generate_numeric_reply(**kwargs)
+
+    run_numeric_core(
+        tasks=build_numeric_core_tasks()[:1],
+        conditions=["C1", "C2", "C3", "C4", "C5", "C6"],
+        n_agents=4,
+        n_rounds=1,
+        replicates=1,
+        runs_path=tmp_path / "prompts.jsonl",
+        backend=PromptSpy(seed=3),
+        models=["m1", "m2"],
+    )
+    assert all("median of" not in p for p in seen_by_cond["C1"])
+    for cond in ("C2", "C3", "C4", "C5", "C6"):
+        assert all("median of" in p for p in seen_by_cond[cond])
+    assert all("dialectical counter-anchoring" in p for p in seen_by_cond["C4"])
+    assert all("dialectical counter-anchoring" in p for p in seen_by_cond["C6"])
+
+
+def test_polyphony_validation_routing_manifest_and_backward_compatibility(tmp_path: Path) -> None:
+    from apart_epistemics.backends import BackendConfigError
+    from apart_epistemics.models import ExperimentSuiteConfig
+
+    cfg_default = ExperimentSuiteConfig(conditions=[])
+    assert cfg_default.numeric_conditions == ["C1", "C2", "C3"]
+    assert cfg_default.numeric_models == []
+
+    task = build_numeric_core_tasks()[:1]
+    backend = SyntheticEpistemicBackend(seed=5)
+
+    with pytest.raises(BackendConfigError, match="drawn from"):
+        run_numeric_core(task, ["C7"], 4, 1, 1, tmp_path / "bad_c.jsonl", backend)
+
+    for bad_models in (None, [], ["m1"], ["m1", "m1"], ["m1", ""]):
+        with pytest.raises(BackendConfigError):
+            run_numeric_core(
+                task, ["C5"], 4, 1, 1, tmp_path / "bad_m.jsonl", backend, models=bad_models
+            )
+
+    class NoForModel:
+        def generate_numeric_reply(self, **_kwargs: Any) -> dict[str, Any]:
+            return {"raw_reply": "Final estimate: 10"}
+
+    with pytest.raises(BackendConfigError, match="multi-model"):
+        run_numeric_core(
+            task, ["C5"], 4, 1, 1, tmp_path / "no_fm.jsonl", NoForModel(), models=["a", "b"]
+        )
+
+    # C1..C3 without models omits numeric_models from run_spec (backward-compatible manifests).
+    legacy_recs = run_numeric_core(
+        task, ["C1", "C2", "C3"], 4, 1, 1, tmp_path / "legacy.jsonl", backend
+    )
+    assert "numeric_models" not in legacy_recs[0].run_spec
+    assert len(analyze_numeric_core(legacy_recs, task)["contrasts"]) == 4
+
+    # C1..C4 stay on base backend; C5/C6 cycle models[a_idx % len(models)].
+    models = ["gemma-4-26b-a4b-it", "deepseek-v4-flash", "qwen3.8-27b", "glm-5.2"]
+    recs = run_numeric_core(
+        task,
+        ["C1", "C4", "C5", "C6"],
+        8,
+        1,
+        1,
+        tmp_path / "poly.jsonl",
+        backend,
+        models=models,
+    )
+    assert recs[0].run_spec["numeric_models"] == models
+    by_cond = {c: [r for r in recs if r.condition_id == c] for c in ("C1", "C4", "C5", "C6")}
+    assert {r.model_slug for r in by_cond["C1"]} == {"openai/gpt-frontier"}
+    assert {r.model_slug for r in by_cond["C4"]} == {"openai/gpt-frontier"}
+    for cond in ("C5", "C6"):
+        assert [r.model_slug for r in by_cond[cond]] == models * 2
+
+
+def test_c1_through_c6_analysis_evrr_nan_guard_contrasts_and_interaction(tmp_path: Path) -> None:
+    import json
+
+    from apart_epistemics.cli import _execute_numeric_track, _serialize_numeric_analysis
+    from apart_epistemics.models import ExperimentSuiteConfig
+
+    tasks = build_numeric_core_tasks()[:4]
+    models = ["gemma-4-26b-a4b-it", "deepseek-v4-flash", "qwen3.8-27b", "glm-5.2"]
+    cfg = ExperimentSuiteConfig(
+        seed=42,
+        num_agents=8,
+        num_rounds=2,
+        tasks_per_track=4,
+        numeric_tasks=4,
+        numeric_replicates=1,
+        numeric_conditions=["C1", "C2", "C3", "C4", "C5", "C6"],
+        numeric_models=models,
+        conditions=[],
+    )
+    analysis, recs = _execute_numeric_track(
+        cfg,
+        SyntheticEpistemicBackend(seed=42),
+        tmp_path / "cli_out",
+        n_agents=cfg.num_agents,
+        budget_usd=50.0,
+    )
+    assert len(recs) == 4 * 6 * 8 * 2
+    assert analysis["completion_status"] == "complete"
+    assert analysis["missing_or_incomplete_cells"] == 0
+    assert analysis["max_identity_residual"] < 1e-12
+    assert len(analysis["contrasts"]) == 14
+
+    c5_final = analysis["by_condition_final"]["C5"]
+    c6_final = analysis["by_condition_final"]["C6"]
+    for row in (c5_final, c6_final):
+        assert row["between_model_diversity"] > 0.0
+        assert row["within_model_diversity"] > 0.0
+        assert row["between_model_diversity"] + row["within_model_diversity"] == pytest.approx(
+            row["diversity"], abs=1e-5
+        )
+        assert row["evrr"] == pytest.approx(row["evrr_between"] + row["evrr_within"], abs=1e-5)
+        assert row["evrr_cumulative"] is not None
+
+    c2_final = analysis["by_condition_final"]["C2"]
+    assert c2_final["between_model_diversity"] == 0.0
+    assert c2_final["excess_between_model_diversity"] == 0.0
+
+    inter = analysis["interaction_2x2"]
+    assert set(inter) == {"crowd_error", "avg_individual_error", "diversity", "evrr"}
+    for item in inter.values():
+        assert item["n_cells"] == 4
+        assert 0.0 <= item["wilcoxon_p"] <= item["holm_adjusted_p"] <= 1.0
+
+    # Disk-persisted JSON includes completion metadata and interaction_2x2 without NaNs.
+    saved = json.loads((tmp_path / "cli_out" / "numeric_analysis.json").read_text(encoding="utf-8"))
+    assert saved["completion_status"] == "complete"
+    assert saved["missing_or_incomplete_cells"] == 0
+    assert set(saved["interaction_2x2"]) == set(inter)
+    json.dumps(_serialize_numeric_analysis(analysis), allow_nan=False)
+
+    # Partial run returns empty interaction_2x2 and incomplete_or_unverified.
+    partial = analyze_numeric_core(recs[:-1], tasks)
+    assert partial["completion_status"] == "incomplete_or_unverified"
+    assert partial["interaction_2x2"] == {}
+
+    # Zero-variance initial state (alpha=1.0 -> denom == 0.0) sets EVRR fields to None (never NaN).
+    zero_denom_recs = run_numeric_core(
+        tasks=tasks[:1],
+        conditions=["C2", "C4", "C5", "C6"],
+        n_agents=4,
+        n_rounds=1,
+        replicates=1,
+        runs_path=tmp_path / "alpha1.jsonl",
+        backend=SyntheticEpistemicBackend(seed=9),
+        alpha=1.0,
+        models=models[:2],
+    )
+    z_analysis = analyze_numeric_core(zero_denom_recs, tasks[:1])
+    z_row = z_analysis["by_condition_final"]["C5"]
+    assert z_row["evrr"] is None
+    assert z_row["evrr_between"] is None
+    assert z_row["evrr_within"] is None
+    assert z_row["evrr_cumulative"] is None
+    assert z_analysis["interaction_2x2"] != {}
+    assert "evrr" not in z_analysis["interaction_2x2"]
+    json.dumps(_serialize_numeric_analysis(z_analysis), allow_nan=False)
+
+
+def test_h4_slopes_cover_c1_c6_round1_model_fe_and_crowd_pull() -> None:
+    import random
+
+    from apart_epistemics.engine.h4 import compute_h4_slopes
+    from apart_epistemics.models import NumericEstimateRecord
+
+    tasks = [
+        TaskItem(
+            id=f"q{i}",
+            kind="numeric_estimate",
+            domain="d",
+            question=f"q{i}?",
+            numeric_truth=10.0 ** (i + 1),
+        )
+        for i in range(4)
+    ]
+    rng = random.Random(17)
+    recs: list[NumericEstimateRecord] = []
+    model_offsets = {"gemma": -0.2, "deepseek": 0.05, "qwen": 0.15, "glm": 0.25}
+
+    def add_rec(
+        cond: str,
+        qid: str,
+        truth: float,
+        rnd: int,
+        slug: str,
+        u_err: float,
+        c_err: float | None,
+        a_err: float,
+    ) -> None:
+        lt = math.log10(truth)
+        recs.append(
+            NumericEstimateRecord(
+                condition_id=cond,
+                question_id=qid,
+                replicate=0,
+                round_idx=rnd,
+                agent_id=f"a_{slug}_{rnd}_{len(recs)}",
+                model_slug=slug,
+                provider="p",
+                raw_reply="Final estimate: 100",
+                parsed_value=10.0 ** (lt + a_err),
+                assistant_log10=lt + a_err,
+                agent_log10_before=lt + u_err,
+                agent_log10_after=lt + u_err,
+                pop_median_log10=None if c_err is None else lt + c_err,
+                miss=False,
+            )
+        )
+
+    for idx, t in enumerate(tasks):
+        truth = float(t.numeric_truth or 100.0)
+        pop_r1 = -0.4 + 0.25 * idx  # varies cleanly across questions
+        pop_r2 = pop_r1 * 0.5
+        for k in range(8):
+            u1 = rng.uniform(-0.3, 0.3)
+            u2 = rng.uniform(-0.3, 0.3)
+            # C1: slope_user = 0.2, constant item baseline 0.1
+            add_rec("C1", t.id, truth, 1, "gemma", u1, None, 0.1 + 0.2 * u1)
+            add_rec("C1", t.id, truth, 2, "gemma", u2, None, 0.1 + 0.2 * u2)
+            # C2: crowd pull = 0.6 * pop_r1 extra relative to C1 in Round 1
+            add_rec("C2", t.id, truth, 1, "gemma", u1, pop_r1, 0.1 + 0.2 * u1 + 0.6 * pop_r1)
+            add_rec("C2", t.id, truth, 2, "gemma", u2, pop_r2, 0.1 + 0.2 * u2 + 0.6 * pop_r2)
+            # C4: low crowd pull = 0.1 * pop_r1 extra relative to C1 in Round 1
+            add_rec("C4", t.id, truth, 1, "gemma", u1, pop_r1, 0.1 + 0.2 * u1 + 0.1 * pop_r1)
+            add_rec("C4", t.id, truth, 2, "gemma", u2, pop_r2, 0.1 + 0.2 * u2 + 0.1 * pop_r2)
+            # C5: K=4 multi-model with strong model offsets, true slope_user = 0.35
+            slug = list(model_offsets)[k % 4]
+            off = model_offsets[slug]
+            add_rec("C5", t.id, truth, 1, slug, u1, pop_r1, off + 0.35 * u1 + 0.3 * pop_r1)
+            add_rec("C5", t.id, truth, 2, slug, u2, pop_r2, off + 0.35 * u2 + 0.3 * pop_r2)
+
+    h4 = compute_h4_slopes(recs, tasks)
+    by_cond = h4["by_condition"]
+    assert "slope_crowd" not in by_cond["C1"]
+    assert "slope_crowd" in by_cond["C4"]
+    assert "slope_crowd" in by_cond["C5"]
+    assert by_cond["C2"]["per_question"]["q0"]["crowd_low_variance"] is True
+    assert by_cond["C1"]["slope_user_round1"]["mean"] == pytest.approx(0.2, abs=1e-3)
+    assert by_cond["C2"]["slope_user_round1"]["mean"] == pytest.approx(0.2, abs=1e-3)
+    assert by_cond["C4"]["slope_user_round1"]["mean"] == pytest.approx(0.2, abs=1e-3)
+    assert "slope_user_model_fe" not in by_cond["C1"]
+    assert by_cond["C5"]["slope_user_model_fe"]["mean"] == pytest.approx(0.35, abs=1e-3)
+
+    pull = h4["crowd_pull_vs_c1_r1"]
+    assert set(pull) == {"C2", "C4"}  # C5 is multi-model and excluded
+    assert pull["C2"]["slope"] == pytest.approx(0.6, abs=1e-3)
+    assert pull["C4"]["slope"] == pytest.approx(0.1, abs=1e-3)
+    assert pull["C2"]["n_questions"] == 4
