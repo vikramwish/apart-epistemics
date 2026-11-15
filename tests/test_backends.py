@@ -577,3 +577,15 @@ def test_synthetic_for_model_preserves_unrouted_defaults_and_supports_c4_c5_c6()
     )
     assert c4_reply["model_slug"] == "openai/gpt-frontier"
     assert "Final estimate:" in c4_reply["raw_reply"]
+
+    pinned = create_backend("synthetic", seed=42, model="gemma-4-26b-a4b-it")
+    pinned_reply = pinned.generate_numeric_reply(
+        system_prompt="s",
+        user_prompt="u",
+        condition_id="P0",
+        task=task,
+        round_idx=1,
+        current_x=100.0,
+        agent=agent,
+    )
+    assert pinned_reply["model_slug"] == "gemma-4-26b-a4b-it"
