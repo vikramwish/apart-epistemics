@@ -82,6 +82,13 @@ DESCRIPTIVE = [
     ("p3_vs_pooled_jensen_bound", POOLED, "P3"),
     ("silent_poly_vs_virtual_silent", VIRTUAL_SILENT, "P0_POLY"),
 ]
+# Pre-registered replication contrasts on the P-series (Holm, m = 4).
+REPLICATION_P_SERIES = [
+    ("p1_vs_p0", "P0", "P1"),
+    ("p2_vs_p1", "P1", "P2"),
+    ("p4_vs_p3", "P3", "P4"),
+    ("p4_vs_p0", "P0", "P4"),
+]
 SPEC_KEYS_ALLOWED_TO_DIFFER = {"conditions", "numeric_models"}
 
 
@@ -180,13 +187,32 @@ def crowd_error(logs: list[float], y: float) -> float:
     return (sum(logs) / len(logs) - y) ** 2
 
 
+def abs_log_error(logs: list[float], y: float) -> float:
+    return abs(sum(logs) / len(logs) - y)
+
+
+def crowd_metric(logs: list[float], y: float, metric: str = "squared_log_error") -> float:
+    if metric == "squared_log_error":
+        return crowd_error(logs, y)
+    if metric == "abs_log_error":
+        return abs_log_error(logs, y)
+    raise ValueError(f"Unsupported metric: {metric!r}")
+
+
 def condition_errors(
-    idx: dict, cond: str, truth: dict[str, float], rnd: int, n_agents: int
+    idx: dict,
+    cond: str,
+    truth: dict[str, float],
+    rnd: int,
+    n_agents: int,
+    metric: str = "squared_log_error",
 ) -> dict[tuple, float]:
     out = {}
     for (q, rep, r), agents in idx.get(cond, {}).items():
         if r == rnd and len(agents) == n_agents:
-            out[(q, rep)] = crowd_error([a["agent_log10_after"] for a in agents.values()], truth[q])
+            out[(q, rep)] = crowd_metric(
+                [a["agent_log10_after"] for a in agents.values()], truth[q], metric=metric
+            )
     return out
 
 
@@ -206,6 +232,7 @@ def virtual_panel_errors(
     truth: dict[str, float],
     rnd: int,
     n_agents: int,
+    metric: str = "squared_log_error",
 ) -> tuple[dict[tuple, float], list[str]]:
     """Seat-matched mix: each template seat's agent_id taken from its family's single-model arm."""
     problems: list[str] = []
@@ -217,20 +244,27 @@ def virtual_panel_errors(
     for (q, rep, r), seats in idx.get(template_cond, {}).items():
         if r != 1 or len(seats) != n_agents:
             continue
+        if len(idx.get(template_cond, {}).get((q, rep, rnd), {})) != n_agents:
+            problems.append(f"incomplete template {template_cond}/{q}/rep{rep}/round{rnd}")
+            continue
         logs = []
         for agent_id, rec in seats.items():
             src = source_by_family.get(family_of(rec["model_slug"]))
             src_rec = idx.get(src, {}).get((q, rep, rnd), {}).get(agent_id) if src else None
-            if src_rec is None:
-                problems.append(f"missing {src}/{q}/rep{rep}/round{rnd}/{agent_id}")
+            prior_rec = idx.get(src, {}).get((q, rep, 1), {}).get(agent_id) if src else None
+            if src_rec is None or prior_rec is None:
+                miss_r = rnd if src_rec is None else 1
+                problems.append(f"missing {src}/{q}/rep{rep}/round{miss_r}/{agent_id}")
                 break
-            prior = idx[src][(q, rep, 1)][agent_id]["agent_log10_before"]
+            prior = prior_rec["agent_log10_before"]
             if abs(prior - rec["agent_log10_before"]) > 1e-9:
-                problems.append(f"prior mismatch {template_cond} vs {src} at {q}/{agent_id}")
+                problems.append(
+                    f"prior mismatch {template_cond} vs {src} at {q}/rep{rep}/{agent_id}"
+                )
                 break
             logs.append(src_rec["agent_log10_after"])
         else:
-            out[(q, rep)] = crowd_error(logs, truth[q])
+            out[(q, rep)] = crowd_metric(logs, truth[q], metric=metric)
     return out, problems
 
 
@@ -399,24 +433,24 @@ def interpret(conf: dict[str, dict], sec: dict[str, dict], desc: dict[str, dict]
 
 
 # ----------------------------------------------------------------------------------------
-def main(argv: list[str] | None = None) -> int:
-    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("runs", nargs="+", type=Path, help="numeric_runs.jsonl files (baseline + controls)")
-    ap.add_argument("--out", type=Path, default=None)
-    ap.add_argument("--n-agents", type=int, default=8)
-    args = ap.parse_args(argv)
+def _evaluate_metric(
+    idx: dict,
+    truth: dict[str, float],
+    rnd: int,
+    n_agents: int,
+    conds: list[str],
+    metric: str,
+) -> tuple[dict[str, Any], list[str], list[str], dict[str, dict[tuple, float]]]:
+    per_cell = {
+        c: condition_errors(idx, c, truth, rnd, n_agents, metric=metric) for c in conds
+    }
 
-    records, specs = load_records(args.runs)
-    audit = audit_specs(specs)
-    truth = truths_from_specs(specs)
-    rnd = final_round(records)
-    idx = index_by_condition(records)
-
-    conds = sorted(idx)
-    per_cell = {c: condition_errors(idx, c, truth, rnd, args.n_agents) for c in conds}
-
-    v_social, prob_social = virtual_panel_errors(idx, "P3", K1_SOCIAL, truth, rnd, args.n_agents)
-    v_silent, prob_silent = virtual_panel_errors(idx, "P0_POLY", K1_SILENT, truth, rnd, args.n_agents)
+    v_social, prob_social = virtual_panel_errors(
+        idx, "P3", K1_SOCIAL, truth, rnd, n_agents, metric=metric
+    )
+    v_silent, prob_silent = virtual_panel_errors(
+        idx, "P0_POLY", K1_SILENT, truth, rnd, n_agents, metric=metric
+    )
     per_cell[VIRTUAL_SOCIAL] = v_social
     per_cell[VIRTUAL_SILENT] = v_silent
 
@@ -438,13 +472,65 @@ def main(argv: list[str] | None = None) -> int:
     conf = [contrast(*c, err) for c in CONFIRMATORY]
     sec = [contrast(*c, err) for c in SECONDARY]
     desc = [contrast(*c, err) for c in DESCRIPTIVE]
+    repl = [contrast(*c, err) for c in REPLICATION_P_SERIES]
     apply_holm(conf)
     apply_holm(sec)
+    apply_holm(repl)
 
-    tokens: dict[str, float] = {}
+    summary = {
+        "n_tasks_per_condition": {c: len(v) for c, v in err.items()},
+        "mean_by_condition": {
+            c: round(statistics.fmean(v.values()), 6) for c, v in err.items() if v
+        },
+        "best_single_model_by_silent_arm": best_family,
+        "silent_arm_means": {k: round(v, 6) for k, v in silent_means.items()},
+        "confirmatory_holm_m8": conf,
+        "secondary_holm_m2": sec,
+        "descriptive": desc,
+        "replication_p_series_holm_m4": repl,
+    }
+    return summary, prob_social, prob_silent, per_cell
+
+
+def main(argv: list[str] | None = None) -> int:
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("runs", nargs="+", type=Path, help="numeric_runs.jsonl files (baseline + controls)")
+    ap.add_argument("--out", type=Path, default=None)
+    ap.add_argument("--n-agents", type=int, default=8)
+    args = ap.parse_args(argv)
+
+    records, specs = load_records(args.runs)
+    if not records:
+        raise RuntimeError("No records found in input runs.")
+    audit = audit_specs(specs)
+    truth = truths_from_specs(specs)
+    rnd = final_round(records)
+    idx = index_by_condition(records)
+
+    conds = sorted(idx)
+    primary, prob_social, prob_silent, primary_cells = _evaluate_metric(
+        idx, truth, rnd, args.n_agents, conds, metric="squared_log_error"
+    )
+    secondary_abs, _, _, _ = _evaluate_metric(
+        idx, truth, rnd, args.n_agents, conds, metric="abs_log_error"
+    )
+
+    tokens: dict[str, float | None] = {}
     for c in conds:
         outs = [r.get("output_tokens", 0) or 0 for cells in idx[c].values() for r in cells.values()]
         tokens[c] = round(statistics.fmean(outs), 1) if outs else None
+
+    replicate_counts = {
+        c: {
+            "tasks": primary["n_tasks_per_condition"].get(c, 0),
+            "complete_task_replicates": len(primary_cells.get(c, {})),
+        }
+        for c in [*conds, VIRTUAL_SOCIAL, VIRTUAL_SILENT]
+    }
+
+    conf = primary["confirmatory_holm_m8"]
+    sec = primary["secondary_holm_m2"]
+    desc = primary["descriptive"]
 
     result = {
         "preregistered_constants": {
@@ -457,18 +543,24 @@ def main(argv: list[str] | None = None) -> int:
         "spec_audit": audit,
         "final_round": rnd,
         "conditions_found": conds,
-        "n_tasks_per_condition": {c: len(v) for c, v in err.items()},
-        "mean_crowd_error": {c: round(statistics.fmean(v.values()), 6) for c, v in err.items() if v},
-        "best_single_model_by_silent_arm": best_family,
-        "silent_arm_means": {k: round(v, 6) for k, v in silent_means.items()},
+        "n_tasks_per_condition": primary["n_tasks_per_condition"],
+        "replicate_counts": replicate_counts,
+        "mean_crowd_error": primary["mean_by_condition"],
+        "best_single_model_by_silent_arm": primary["best_single_model_by_silent_arm"],
+        "silent_arm_means": primary["silent_arm_means"],
         "virtual_panel_problems": {"social": prob_social[:20], "silent": prob_silent[:20]},
         "mean_output_tokens": tokens,
         "confirmatory_holm_m8": conf,
         "secondary_holm_m2": sec,
         "descriptive": desc,
+        "replication_p_series_holm_m4": primary["replication_p_series_holm_m4"],
         "interpretation": interpret(
             {r["name"]: r for r in conf}, {r["name"]: r for r in sec}, {r["name"]: r for r in desc}
         ),
+        "secondary_metric_abs_log_error": {
+            "metric_definition": "|xbar_2 - y*|",
+            **secondary_abs,
+        },
     }
     text = json.dumps(result, indent=2)
     if args.out:
