@@ -1240,3 +1240,152 @@ def test_p_series_analysis_matrix_did_h4_and_benchmark_disjointness(tmp_path: Pa
         SyntheticEpistemicBackend(seed=5),
     )
     assert analyze_numeric_core(c_recs, legacy[:1])["polyphony_contrast_matrix"] == {}
+
+
+def test_polyphony_control_arms_config_routing_prompts_and_contrasts(tmp_path: Path) -> None:
+    """Verify P0_POLY, P1_REFLECT, and constituent K=1 homogeneous control setup end to end."""
+    import json
+
+    from apart_epistemics.cli import (
+        _execute_numeric_track,
+        _load_config,
+        _serialize_numeric_analysis,
+    )
+    from apart_epistemics.datasets import build_numeric_core_tasks, generate_agent_population
+    from apart_epistemics.engine.numeric_core import (
+        _P_COUNTER_ANCHOR_TEXT,
+        _P_GENERIC_REFLECT_TEXT,
+        analyze_numeric_core,
+        build_numeric_prompts,
+    )
+    from apart_epistemics.models import ExperimentSuiteConfig
+
+    ctrl_cfg_path = Path(__file__).resolve().parents[1] / "configs" / "polyphony_controls.yaml"
+    ctrl_cfg = _load_config(ctrl_cfg_path)
+    assert ctrl_cfg.numeric_conditions == [
+        "P0_POLY",
+        "P1_REFLECT",
+        "P0_DS",
+        "P1_DS",
+        "P0_QWEN",
+        "P1_QWEN",
+        "P0_GLM",
+        "P1_GLM",
+    ]
+    assert ctrl_cfg.numeric_tasks == 16
+    assert ctrl_cfg.alpha == 0.4
+    assert ctrl_cfg.numeric_models == [
+        "gemma-4-26b-a4b-it",
+        "deepseek-v4-flash",
+        "qwen3.8-27b",
+        "glm-5.2",
+    ]
+
+    # Prompt length-matching check between counter-anchoring and reflection (P1_REFLECT).
+    ca_words = len(_P_COUNTER_ANCHOR_TEXT.split())
+    ref_words = len(_P_GENERIC_REFLECT_TEXT.split())
+    assert abs(ca_words - ref_words) <= 3
+    assert abs(len(_P_COUNTER_ANCHOR_TEXT) - len(_P_GENERIC_REFLECT_TEXT)) <= 20
+
+    agent = generate_agent_population(num_agents=8, seed=42)[0]
+    _, p0_poly_prompt = build_numeric_prompts(
+        "P0_POLY", agent, "Length in km?", 100.0, (95.0, 80.0, 110.0), [], unit="km"
+    )
+    _, p1_refl_prompt = build_numeric_prompts(
+        "P1_REFLECT", agent, "Length in km?", 100.0, (95.0, 80.0, 110.0), [], unit="km"
+    )
+    _, p0_ds_prompt = build_numeric_prompts(
+        "P0_DS", agent, "Length in km?", 100.0, (95.0, 80.0, 110.0), [], unit="km"
+    )
+    _, p1_ds_prompt = build_numeric_prompts(
+        "P1_DS", agent, "Length in km?", 100.0, (95.0, 80.0, 110.0), [], unit="km"
+    )
+    assert "Peer consensus telemetry" not in p0_poly_prompt
+    assert "Peer consensus telemetry" not in p0_ds_prompt
+    assert "Peer consensus telemetry" in p1_refl_prompt
+    assert "Peer consensus telemetry" in p1_ds_prompt
+    assert _P_GENERIC_REFLECT_TEXT in p1_refl_prompt
+    assert _P_COUNTER_ANCHOR_TEXT not in p1_refl_prompt
+
+    # Run all 13 conditions (P0..P4 + 8 controls) on 2 tasks to verify routing and contrasts.
+    all_cfg = ExperimentSuiteConfig(
+        seed=42,
+        num_agents=8,
+        num_rounds=2,
+        tasks_per_track=2,
+        numeric_tasks=2,
+        numeric_replicates=1,
+        alpha=0.4,
+        numeric_conditions=["P0", "P1", "P2", "P3", "P4", *ctrl_cfg.numeric_conditions],
+        numeric_models=ctrl_cfg.numeric_models,
+        conditions=[],
+    )
+    analysis, recs = _execute_numeric_track(
+        all_cfg,
+        SyntheticEpistemicBackend(seed=42),
+        tmp_path / "ctrl_out",
+        n_agents=8,
+        budget_usd=50.0,
+    )
+    assert analysis["completion_status"] == "complete"
+    assert len(recs) == 2 * 13 * 8 * 2
+
+    # Check exact constituent model routing in JSONL records.
+    control_conds = (
+        "P0_POLY",
+        "P1_REFLECT",
+        "P0_DS",
+        "P1_DS",
+        "P0_QWEN",
+        "P1_QWEN",
+        "P0_GLM",
+        "P1_GLM",
+    )
+    by_cond_models = {c: {r.model_slug for r in recs if r.condition_id == c} for c in control_conds}
+    assert by_cond_models["P0_POLY"] == set(ctrl_cfg.numeric_models)
+    assert by_cond_models["P0_DS"] == {"deepseek-v4-flash"}
+    assert by_cond_models["P1_DS"] == {"deepseek-v4-flash"}
+    assert by_cond_models["P0_QWEN"] == {"qwen3.8-27b"}
+    assert by_cond_models["P1_QWEN"] == {"qwen3.8-27b"}
+    assert by_cond_models["P0_GLM"] == {"glm-5.2"}
+    assert by_cond_models["P1_GLM"] == {"glm-5.2"}
+
+    # Core P0..P4 contrast families remain unchanged; control_contrasts adds the 8 planned checks.
+    assert len(analysis["contrasts"]) == 20
+    assert len(analysis["polyphony_contrast_matrix"]["crowd_error"]) == 9
+    ctrl_ids = {c.contrast_id for c in analysis["control_contrasts"]}
+    assert ctrl_ids == {
+        "p3_vs_p0_poly_crowd_error",
+        "p4_vs_p0_poly_crowd_error",
+        "p2_vs_p1_reflect_crowd_error",
+        "p1_reflect_vs_p1_crowd_error",
+        "p1_ds_vs_p0_ds_crowd_error",
+        "p1_qwen_vs_p0_qwen_crowd_error",
+        "p1_glm_vs_p0_glm_crowd_error",
+        "p3_vs_pooled_k1_social_crowd_error",
+    }
+    serialized = _serialize_numeric_analysis(analysis)
+    assert len(serialized["control_contrasts"]) == 8
+    json.dumps(serialized, allow_nan=False)
+
+    # Also verify merging separate baseline (P0..P4) + controls runs reproduces identical analysis.
+    base_cfg = all_cfg.model_copy(update={"numeric_conditions": ["P0", "P1", "P2", "P3", "P4"]})
+    ctrl_only_cfg = all_cfg.model_copy(update={"numeric_conditions": ctrl_cfg.numeric_conditions})
+    _, base_recs = _execute_numeric_track(
+        base_cfg,
+        SyntheticEpistemicBackend(seed=42),
+        tmp_path / "split_base",
+        n_agents=8,
+        budget_usd=50.0,
+    )
+    _, ctrl_recs = _execute_numeric_track(
+        ctrl_only_cfg,
+        SyntheticEpistemicBackend(seed=42),
+        tmp_path / "split_ctrl",
+        n_agents=8,
+        budget_usd=50.0,
+    )
+    tasks_2 = build_numeric_core_tasks()[:2]
+    merged_analysis = analyze_numeric_core([*base_recs, *ctrl_recs], tasks_2)
+    assert merged_analysis["completion_status"] == "complete"
+    assert len(merged_analysis["control_contrasts"]) == 8

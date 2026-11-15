@@ -23,7 +23,23 @@ from typing import Any
 
 from apart_epistemics.models import NumericEstimateRecord, TaskItem
 
-_CROWD_CONDITIONS = frozenset({"C2", "C3", "C4", "C5", "C6", "P1", "P2", "P3", "P4"})
+_CROWD_CONDITIONS = frozenset(
+    {
+        "C2",
+        "C3",
+        "C4",
+        "C5",
+        "C6",
+        "P1",
+        "P2",
+        "P3",
+        "P4",
+        "P1_REFLECT",
+        "P1_DS",
+        "P1_QWEN",
+        "P1_GLM",
+    }
+)
 _N_BOOT = 2000
 
 

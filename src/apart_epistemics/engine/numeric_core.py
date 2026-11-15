@@ -38,13 +38,39 @@ from apart_epistemics.run_state import backend_identity, configure_budget, valid
 # 235,000,000 gave distance 2.898) while preserving genuine estimates (max observed jump 1.013).
 MAX_LOG10_JUMP = 2.0
 
-_P_SERIES_CONDITIONS = frozenset({"P0", "P1", "P2", "P3", "P4"})
-_VALID_NUMERIC_CONDITIONS = frozenset(
-    {"C1", "C2", "C3", "C4", "C5", "C6", "P0", "P1", "P2", "P3", "P4"}
+_P_CONTROL_CONDITIONS = frozenset(
+    {"P0_POLY", "P1_REFLECT", "P0_DS", "P1_DS", "P0_QWEN", "P1_QWEN", "P0_GLM", "P1_GLM"}
 )
-_SOCIAL_CONDITIONS = frozenset({"C2", "C3", "C4", "C5", "C6", "P1", "P2", "P3", "P4"})
+_P_SERIES_CONDITIONS = frozenset({"P0", "P1", "P2", "P3", "P4"}) | _P_CONTROL_CONDITIONS
+_VALID_NUMERIC_CONDITIONS = frozenset({"C1", "C2", "C3", "C4", "C5", "C6"}) | _P_SERIES_CONDITIONS
+_SOCIAL_CONDITIONS = frozenset(
+    {
+        "C2",
+        "C3",
+        "C4",
+        "C5",
+        "C6",
+        "P1",
+        "P2",
+        "P3",
+        "P4",
+        "P1_REFLECT",
+        "P1_DS",
+        "P1_QWEN",
+        "P1_GLM",
+    }
+)
 _COUNTER_ANCHOR_CONDITIONS = frozenset({"C4", "C6", "P2", "P4"})
-_POLYPHONY_CONDITIONS = frozenset({"C5", "C6", "P3", "P4"})
+_REFLECT_CONDITIONS = frozenset({"P1_REFLECT"})
+_POLYPHONY_CONDITIONS = frozenset({"C5", "C6", "P3", "P4", "P0_POLY"})
+_CONSTITUENT_MODEL_TOKENS: dict[str, tuple[str, int]] = {
+    "P0_DS": ("deepseek", 1),
+    "P1_DS": ("deepseek", 1),
+    "P0_QWEN": ("qwen", 2),
+    "P1_QWEN": ("qwen", 2),
+    "P0_GLM": ("glm", 3),
+    "P1_GLM": ("glm", 3),
+}
 _COUNTER_ANCHOR_TEXT = (
     "Before estimating, apply dialectical counter-anchoring: in 2-3 concise sentences, "
     "critically examine how both my current estimate and the crowd median could be skewed "
@@ -57,6 +83,13 @@ _P_COUNTER_ANCHOR_TEXT = (
     "which both the prior estimate and peer median could systematically overshoot (too high) OR "
     "undershoot (too low) the true value \u2014 then derive your estimate from independent "
     "physical principles and reference scales."
+)
+_P_GENERIC_REFLECT_TEXT = (
+    "Structured verification protocol: before estimating, write 2-3 concise sentences checking "
+    "the quantity carefully \u2014 verify exact unit definitions, confirm any geographical or "
+    "historical time bounds, and audit each step of intermediate arithmetic to ensure clear "
+    "order-of-magnitude plausibility \u2014 then derive your final estimate directly from "
+    "verified physical principles and reference scales."
 )
 _P_MATRIX_PAIRS = (
     ("P1", "P4"),
@@ -165,6 +198,8 @@ def _build_p_series_prompts(
         )
     if cond in _COUNTER_ANCHOR_CONDITIONS:
         parts.append(_P_COUNTER_ANCHOR_TEXT)
+    elif cond in _REFLECT_CONDITIONS:
+        parts.append(_P_GENERIC_REFLECT_TEXT)
     parts.append(
         "What is your best estimate of the true quantity? "
         f"End with 'Final estimate: <plain number{in_unit}>' and nothing after the number."
@@ -366,6 +401,22 @@ class _RoundContext:
     routed_backends: dict[str, Any] = field(default_factory=dict)
 
 
+def _resolve_condition_model(
+    cond_upper: str, a_idx: int, models: tuple[str, ...] | list[str]
+) -> str | None:
+    """Resolve the routed model slug for polyphonic or constituent-homogeneous conditions."""
+    if cond_upper in _POLYPHONY_CONDITIONS and models:
+        return models[a_idx % len(models)]
+    if cond_upper in _CONSTITUENT_MODEL_TOKENS and models:
+        token, fallback_idx = _CONSTITUENT_MODEL_TOKENS[cond_upper]
+        for model_name in models:
+            if token in model_name.lower():
+                return model_name
+        if fallback_idx < len(models):
+            return models[fallback_idx]
+    return None
+
+
 def _query_agent(ctx: _RoundContext, a_idx: int) -> tuple[str, Any]:
     """Query one agent from round-start state; never raises, so a pool can collect outcomes."""
     if ctx.abort.is_set():
@@ -384,10 +435,9 @@ def _query_agent(ctx: _RoundContext, a_idx: int) -> tuple[str, Any]:
             unit=ctx.task.unit,
             current_date=ctx.current_date,
         )
+        routed_model = _resolve_condition_model(cond_upper, a_idx, ctx.models)
         agent_backend = (
-            ctx.routed_backends[ctx.models[a_idx % len(ctx.models)]]
-            if cond_upper in _POLYPHONY_CONDITIONS and ctx.models
-            else ctx.backend
+            ctx.routed_backends[routed_model] if routed_model is not None else ctx.backend
         )
         return (
             "ok",
@@ -625,10 +675,19 @@ def _validate_numeric_inputs(
     if any(c.upper() in _POLYPHONY_CONDITIONS for c in conditions):
         if len(set(normalized_models)) < 2:
             raise BackendConfigError(
-                "Conditions C5, C6, P3, and P4 require at least 2 unique non-empty models."
+                "Conditions C5, C6, P3, P4, and P0_POLY require at least 2 unique non-empty models."
             )
         if not hasattr(backend, "for_model"):
             raise BackendConfigError("Selected backend does not support multi-model routing.")
+    constituents = [c.upper() for c in conditions if c.upper() in _CONSTITUENT_MODEL_TOKENS]
+    if constituents:
+        if not hasattr(backend, "for_model"):
+            raise BackendConfigError("Selected backend does not support multi-model routing.")
+        for c_upper in constituents:
+            if _resolve_condition_model(c_upper, 0, normalized_models) is None:
+                raise BackendConfigError(
+                    f"Condition {c_upper} requires matching model in numeric_models."
+                )
     return normalized_models
 
 
@@ -815,9 +874,12 @@ def run_numeric_core(
     validate_manifest(runs_path.with_suffix(".manifest.json"), spec, runs_path)
     ledger = getattr(backend, "budget_ledger", None)
     configure_budget(backend, runs_path.parent, budget_usd, ledger.per_request if ledger else 1.0)
-    has_polyphony = any(c.upper() in _POLYPHONY_CONDITIONS for c in conditions)
+    needs_routing = any(
+        c.upper() in _POLYPHONY_CONDITIONS or c.upper() in _CONSTITUENT_MODEL_TOKENS
+        for c in conditions
+    )
     routed_backends = (
-        {m: backend.for_model(m) for m in dict.fromkeys(normalized_models)} if has_polyphony else {}
+        {m: backend.for_model(m) for m in dict.fromkeys(normalized_models)} if needs_routing else {}
     )
     model_tuple = tuple(normalized_models)
     agents = generate_agent_population(num_agents=n_agents, seed=seed)
@@ -1032,12 +1094,25 @@ def _compute_interaction_2x2(
     }
 
 
+_CONTROL_CONTRAST_SPECS = [
+    ("p3_vs_p0_poly_crowd_error", "crowd_error", "P0_POLY", "P3"),
+    ("p4_vs_p0_poly_crowd_error", "crowd_error", "P0_POLY", "P4"),
+    ("p2_vs_p1_reflect_crowd_error", "crowd_error", "P1_REFLECT", "P2"),
+    ("p1_reflect_vs_p1_crowd_error", "crowd_error", "P1", "P1_REFLECT"),
+    ("p1_ds_vs_p0_ds_crowd_error", "crowd_error", "P0_DS", "P1_DS"),
+    ("p1_qwen_vs_p0_qwen_crowd_error", "crowd_error", "P0_QWEN", "P1_QWEN"),
+    ("p1_glm_vs_p0_glm_crowd_error", "crowd_error", "P0_GLM", "P1_GLM"),
+    ("p3_vs_pooled_k1_social_crowd_error", "crowd_error", "POOLED_K1_SOCIAL", "P3"),
+]
+
+
 def _compute_polyphony_contrast_matrix(
     by_condition_final: dict[str, dict[str, Any]],
     cell_metric_fn: Any,
     complete: bool,
 ) -> dict[str, list[Any]]:
-    if not complete or not any(c.upper().startswith("P") for c in by_condition_final):
+    core_p = {"P0", "P1", "P2", "P3", "P4"}
+    if not complete or not any(c.upper() in core_p for c in by_condition_final):
         return {}
     return {
         metric: compute_paired_holm_contrasts(
@@ -1049,6 +1124,33 @@ def _compute_polyphony_contrast_matrix(
         )
         for metric in _P_MATRIX_METRICS
     }
+
+
+def _compute_control_contrasts(
+    by_condition_final: dict[str, dict[str, Any]],
+    cell_metric_fn: Any,
+    complete: bool,
+) -> list[Any]:
+    if not complete or not any(c.upper() in _P_CONTROL_CONDITIONS for c in by_condition_final):
+        return []
+    k1_social = ("P1", "P1_DS", "P1_QWEN", "P1_GLM")
+
+    def _control_metric_fn(cond_id: str, metric: str) -> dict[Any, float]:
+        if cond_id == "POOLED_K1_SOCIAL":
+            if not all(c in by_condition_final for c in k1_social):
+                return {}
+            maps = [cell_metric_fn(c, metric) for c in k1_social]
+            common = sorted(set.intersection(*(set(m) for m in maps))) if maps else []
+            return {k: sum(m[k] for m in maps) / len(maps) for k in common}
+        return cell_metric_fn(cond_id, metric)
+
+    return compute_paired_holm_contrasts(
+        _CONTROL_CONTRAST_SPECS,
+        _control_metric_fn,
+        seed=42,
+        effect_decimals=6,
+        include_empty=False,
+    )
 
 
 def _stratum_report(
@@ -1086,6 +1188,26 @@ def _stratum_report(
     return report
 
 
+def _merge_compatible_run_specs(records: list[NumericEstimateRecord]) -> dict[str, Any]:
+    """Return unified run_spec when records match on everything except condition subsets."""
+    if not records:
+        return {}
+    raw_specs = [r.run_spec for r in records]
+    if len({json.dumps(s, sort_keys=True) for s in raw_specs}) == 1:
+        return raw_specs[0]
+    base_json = {
+        json.dumps(
+            {k: v for k, v in s.items() if k not in {"conditions", "numeric_models"}},
+            sort_keys=True,
+        )
+        for s in raw_specs
+    }
+    if len(base_json) != 1:
+        return {}
+    merged_conditions = list(dict.fromkeys(c for s in raw_specs for c in s.get("conditions", [])))
+    return {**raw_specs[0], "conditions": merged_conditions}
+
+
 def analyze_numeric_core(
     records: list[NumericEstimateRecord],
     tasks: list[TaskItem],
@@ -1096,8 +1218,7 @@ def analyze_numeric_core(
     for rec in records:
         by_cell[(rec.condition_id, rec.question_id, rec.replicate, rec.round_idx)].append(rec)
 
-    specs = {json.dumps(r.run_spec, sort_keys=True) for r in records}
-    spec = records[0].run_spec if records and len(specs) == 1 else {}
+    spec = _merge_compatible_run_specs(records)
     expected_agents = (
         {a.agent_id for a in generate_agent_population(spec["n_agents"], seed=spec["seed"])}
         if spec
@@ -1208,7 +1329,8 @@ def analyze_numeric_core(
         include_empty=False,
     )
 
-    return {
+    control_contrasts = _compute_control_contrasts(by_condition_final, _cell_metric, complete)
+    out: dict[str, Any] = {
         "completion_status": "complete" if complete else "incomplete_or_unverified",
         "missing_or_incomplete_cells": len(expected_cells - complete_cells),
         "h4_interpretation": (
@@ -1227,3 +1349,6 @@ def analyze_numeric_core(
             by_condition_final, _cell_metric, complete
         ),
     }
+    if control_contrasts:
+        out["control_contrasts"] = control_contrasts
+    return out

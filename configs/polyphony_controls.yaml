@@ -1,0 +1,26 @@
+suite_name: "Polyphony Control Arms: P0_POLY, P1_REFLECT, and Constituent K=1 Panels"
+seed: 42
+num_agents: 8
+num_rounds: 2
+tasks_per_track: 16
+numeric_tasks: 16
+numeric_tasks_file: "configs/polyphony_benchmark_tasks.json"
+numeric_start_bias_weight: 0.22
+numeric_start_sd: 0.24
+numeric_replicates: 1
+alpha: 0.4
+numeric_conditions:
+  - P0_POLY
+  - P1_REFLECT
+  - P0_DS
+  - P1_DS
+  - P0_QWEN
+  - P1_QWEN
+  - P0_GLM
+  - P1_GLM
+numeric_models:
+  - gemma-4-26b-a4b-it
+  - deepseek-v4-flash
+  - qwen3.8-27b
+  - glm-5.2
+conditions: []

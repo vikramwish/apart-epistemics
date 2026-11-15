@@ -570,7 +570,10 @@ class SyntheticEpistemicBackend:
             (((zlib.crc32(active_model.encode("utf-8")) % 9) - 4) * 0.05) if active_model else 0.0
         )
 
-        if condition_id in ("C2", "C5", "P1", "P3") and pop_stats is not None:
+        if (
+            condition_id in ("C2", "C5", "P1", "P3", "P1_REFLECT", "P1_DS", "P1_QWEN", "P1_GLM")
+            and pop_stats is not None
+        ):
             pop_med = math.log10(max(pop_stats[0], 1e-6))
             target_log = 0.65 * pop_med + 0.25 * (log_truth + shared_bias) + 0.10 * log_cur
             noise = rng.gauss(0.0, 0.03 * max(0.3, temperature))

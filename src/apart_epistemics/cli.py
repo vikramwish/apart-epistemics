@@ -199,7 +199,7 @@ def _dump_contrast(c: Any) -> Any:
 
 def _serialize_numeric_analysis(analysis: dict[str, Any]) -> dict[str, Any]:
     raw_matrix = analysis.get("polyphony_contrast_matrix", {})
-    return {
+    out: dict[str, Any] = {
         "completion_status": analysis.get("completion_status", "incomplete_or_unverified"),
         "missing_or_incomplete_cells": analysis.get("missing_or_incomplete_cells", 0),
         "max_identity_residual": analysis["max_identity_residual"],
@@ -214,6 +214,9 @@ def _serialize_numeric_analysis(analysis: dict[str, Any]) -> dict[str, Any]:
             metric: [_dump_contrast(c) for c in items] for metric, items in raw_matrix.items()
         },
     }
+    if analysis.get("control_contrasts"):
+        out["control_contrasts"] = [_dump_contrast(c) for c in analysis["control_contrasts"]]
+    return out
 
 
 def _resolve_fig_dir(args_figures: str | None, out_dir: Path) -> Path:
