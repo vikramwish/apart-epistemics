@@ -38,14 +38,43 @@ from apart_epistemics.run_state import backend_identity, configure_budget, valid
 # 235,000,000 gave distance 2.898) while preserving genuine estimates (max observed jump 1.013).
 MAX_LOG10_JUMP = 2.0
 
-_VALID_NUMERIC_CONDITIONS = frozenset({"C1", "C2", "C3", "C4", "C5", "C6"})
-_SOCIAL_CONDITIONS = frozenset({"C2", "C3", "C4", "C5", "C6"})
-_COUNTER_ANCHOR_CONDITIONS = frozenset({"C4", "C6"})
+_P_SERIES_CONDITIONS = frozenset({"P0", "P1", "P2", "P3", "P4"})
+_VALID_NUMERIC_CONDITIONS = frozenset(
+    {"C1", "C2", "C3", "C4", "C5", "C6", "P0", "P1", "P2", "P3", "P4"}
+)
+_SOCIAL_CONDITIONS = frozenset({"C2", "C3", "C4", "C5", "C6", "P1", "P2", "P3", "P4"})
+_COUNTER_ANCHOR_CONDITIONS = frozenset({"C4", "C6", "P2", "P4"})
+_POLYPHONY_CONDITIONS = frozenset({"C5", "C6", "P3", "P4"})
 _COUNTER_ANCHOR_TEXT = (
     "Before estimating, apply dialectical counter-anchoring: in 2-3 concise sentences, "
     "critically examine how both my current estimate and the crowd median could be skewed "
     "(either too high or too low) by shared misconceptions or herding, and check independent "
     "base rates or known reference facts before forming your own independent estimate."
+)
+_P_COUNTER_ANCHOR_TEXT = (
+    "Dialectical counter-anchoring protocol: before estimating, write 2-3 concise sentences "
+    "testing both tails \u2014 identify specific physical scaling mechanisms or misconceptions by "
+    "which both the prior estimate and peer median could systematically overshoot (too high) OR "
+    "undershoot (too low) the true value \u2014 then derive your estimate from independent "
+    "physical principles and reference scales."
+)
+_P_MATRIX_PAIRS = (
+    ("P1", "P4"),
+    ("P1", "P3"),
+    ("P1", "P2"),
+    ("P3", "P4"),
+    ("P2", "P4"),
+    ("P0", "P4"),
+    ("P0", "P1"),
+    ("P0", "P3"),
+    ("P0", "P2"),
+)
+_P_MATRIX_METRICS = (
+    "crowd_error",
+    "diversity",
+    "excess_between_model_diversity",
+    "between_model_diversity",
+    "evrr",
 )
 _ROUND_METRIC_KEYS = (
     "crowd_error",
@@ -99,6 +128,43 @@ def shared_system_prompt(current_date: str = "") -> str:
     return f"{prompt} Today's date is {current_date}." if current_date else prompt
 
 
+def p_series_system_prompt(current_date: str = "") -> str:
+    """Return the shared P0..P4 scientific estimator system prompt."""
+    prompt = (
+        "You are a rigorous quantitative scientific estimator. "
+        "Reason independently from physical principles and empirical reference scales without "
+        "web lookup, and end with 'Final estimate: <number>'."
+    )
+    return f"{prompt} Today's date is {current_date}." if current_date else prompt
+
+
+def _build_p_series_prompts(
+    cond: str,
+    question: str,
+    est_str: str,
+    pop_stats: tuple[float, float, float] | None,
+    unit: str,
+    current_date: str,
+) -> tuple[str, str]:
+    unit_str = f" {unit}" if unit else ""
+    in_unit = f" in {unit}" if unit else ""
+    parts = [question, f"Prior estimate: {est_str}{unit_str}."]
+    if cond in _SOCIAL_CONDITIONS and pop_stats is not None:
+        med, q25, q75 = pop_stats
+        parts.append(
+            "Peer consensus telemetry from prior estimators reports a median of "
+            f"{format_prompt_number(med)} "
+            f"(interquartile range {format_prompt_number(q25)} to {format_prompt_number(q75)})."
+        )
+    if cond in _COUNTER_ANCHOR_CONDITIONS:
+        parts.append(_P_COUNTER_ANCHOR_TEXT)
+    parts.append(
+        "What is your best independent estimate of the true quantity? "
+        f"End with 'Final estimate: <plain number{in_unit}>' and nothing after the number."
+    )
+    return (p_series_system_prompt(current_date), "\n".join(parts))
+
+
 def build_numeric_prompts(
     condition_id: str,
     agent: AgentProfile,
@@ -109,9 +175,11 @@ def build_numeric_prompts(
     unit: str = "",
     current_date: str = "",
 ) -> tuple[str, str]:
-    """Construct C1..C6 prompts (baseline, social, persona, dialectical, and K=4 polyphony)."""
+    """Construct C1..C6 and P0..P4 numeric estimation prompts."""
     cond = condition_id.upper()
     est_str = format_prompt_number(current_x)
+    if cond in _P_SERIES_CONDITIONS:
+        return _build_p_series_prompts(cond, question, est_str, pop_stats, unit, current_date)
 
     # One shared system prompt for C1/C2/C4/C5/C6 so conditions differ only in what they add:
     # C2/C5 add social summary, C4/C6 add counter-anchoring, C3 adds profile sentence + history.
@@ -311,7 +379,7 @@ def _query_agent(ctx: _RoundContext, a_idx: int) -> tuple[str, Any]:
         )
         agent_backend = (
             ctx.routed_backends[ctx.models[a_idx % len(ctx.models)]]
-            if cond_upper in ("C5", "C6") and ctx.models
+            if cond_upper in _POLYPHONY_CONDITIONS and ctx.models
             else ctx.backend
         )
         return (
@@ -547,10 +615,10 @@ def _validate_numeric_inputs(
     normalized_models = [m.strip() if isinstance(m, str) else "" for m in (models or [])]
     if any(not m for m in normalized_models):
         raise BackendConfigError("Numeric models must be non-empty strings.")
-    if any(c.upper() in ("C5", "C6") for c in conditions):
+    if any(c.upper() in _POLYPHONY_CONDITIONS for c in conditions):
         if len(set(normalized_models)) < 2:
             raise BackendConfigError(
-                "Conditions C5 and C6 require at least 2 unique non-empty models."
+                "Conditions C5, C6, P3, and P4 require at least 2 unique non-empty models."
             )
         if not hasattr(backend, "for_model"):
             raise BackendConfigError("Selected backend does not support multi-model routing.")
@@ -740,7 +808,7 @@ def run_numeric_core(
     validate_manifest(runs_path.with_suffix(".manifest.json"), spec, runs_path)
     ledger = getattr(backend, "budget_ledger", None)
     configure_budget(backend, runs_path.parent, budget_usd, ledger.per_request if ledger else 1.0)
-    has_polyphony = any(c.upper() in ("C5", "C6") for c in conditions)
+    has_polyphony = any(c.upper() in _POLYPHONY_CONDITIONS for c in conditions)
     routed_backends = (
         {m: backend.for_model(m) for m in dict.fromkeys(normalized_models)} if has_polyphony else {}
     )
@@ -870,7 +938,11 @@ def _compute_interaction_2x2(
     if not complete:
         return {}
     present = {c for (c, _, _, r) in cell_metrics if r == max_round}
-    if not {"C2", "C4", "C5", "C6"}.issubset(present):
+    if {"P1", "P2", "P3", "P4"}.issubset(present):
+        c00, c01, c10, c11 = "P1", "P2", "P3", "P4"
+    elif {"C2", "C4", "C5", "C6"}.issubset(present):
+        c00, c01, c10, c11 = "C2", "C4", "C5", "C6"
+    else:
         return {}
 
     metrics = ("crowd_error", "avg_individual_error", "diversity", "evrr")
@@ -882,15 +954,15 @@ def _compute_interaction_2x2(
                 for (c, qid, rep, r), m in cell_metrics.items()
                 if c == cond and r == max_round and (val := m.get(metric)) is not None
             }
-            for cond in ("C2", "C4", "C5", "C6")
+            for cond in (c00, c01, c10, c11)
         }
         common = sorted(
-            set(per_cond["C2"]) & set(per_cond["C4"]) & set(per_cond["C5"]) & set(per_cond["C6"])
+            set(per_cond[c00]) & set(per_cond[c01]) & set(per_cond[c10]) & set(per_cond[c11])
         )
         if not common:
             continue
         dids = [
-            (per_cond["C6"][k] - per_cond["C5"][k]) - (per_cond["C4"][k] - per_cond["C2"][k])
+            (per_cond[c11][k] - per_cond[c10][k]) - (per_cond[c01][k] - per_cond[c00][k])
             for k in common
         ]
         ci_lo, ci_hi = bootstrap_ci(dids, seed=42)
@@ -910,6 +982,25 @@ def _compute_interaction_2x2(
             "n_cells": len(dids),
         }
         for (metric, dids, ci_lo, ci_hi, p_val), adj_p in zip(raw, adj_ps, strict=True)
+    }
+
+
+def _compute_polyphony_contrast_matrix(
+    by_condition_final: dict[str, dict[str, Any]],
+    cell_metric_fn: Any,
+    complete: bool,
+) -> dict[str, list[Any]]:
+    if not complete or not any(c.upper().startswith("P") for c in by_condition_final):
+        return {}
+    return {
+        metric: compute_paired_holm_contrasts(
+            [(f"{b.lower()}_vs_{a.lower()}_{metric}", metric, a, b) for a, b in _P_MATRIX_PAIRS],
+            cell_metric_fn,
+            seed=42,
+            effect_decimals=6,
+            include_empty=False,
+        )
+        for metric in _P_MATRIX_METRICS
     }
 
 
@@ -1029,6 +1120,23 @@ def analyze_numeric_core(
         ("c6_vs_c2_excess_between_diversity", "excess_between_model_diversity", "C2", "C6"),
         ("c6_vs_c2_diversity", "diversity", "C2", "C6"),
         ("c6_vs_c2_evrr", "evrr", "C2", "C6"),
+        # Standalone P0..P4 confirmatory contrasts (inactive when only C-series ran).
+        ("p4_vs_p1_crowd_error", "crowd_error", "P1", "P4"),
+        ("p3_vs_p1_crowd_error", "crowd_error", "P1", "P3"),
+        ("p2_vs_p1_crowd_error", "crowd_error", "P1", "P2"),
+        ("p4_vs_p3_crowd_error", "crowd_error", "P3", "P4"),
+        ("p4_vs_p2_crowd_error", "crowd_error", "P2", "P4"),
+        ("p4_vs_p0_crowd_error", "crowd_error", "P0", "P4"),
+        ("p1_vs_p0_crowd_error", "crowd_error", "P0", "P1"),
+        ("p3_vs_p0_crowd_error", "crowd_error", "P0", "P3"),
+        ("p2_vs_p0_crowd_error", "crowd_error", "P0", "P2"),
+        ("p4_vs_p1_diversity", "diversity", "P1", "P4"),
+        ("p3_vs_p1_diversity", "diversity", "P1", "P3"),
+        ("p2_vs_p1_diversity", "diversity", "P1", "P2"),
+        ("p3_vs_p1_excess_between_model_diversity", "excess_between_model_diversity", "P1", "P3"),
+        ("p4_vs_p1_excess_between_model_diversity", "excess_between_model_diversity", "P1", "P4"),
+        ("p4_vs_p3_between_model_diversity", "between_model_diversity", "P3", "P4"),
+        ("p4_vs_p1_evrr", "evrr", "P1", "P4"),
     ]
 
     def _cell_metric(cond_id: str, metric: str) -> dict[tuple[str, int], float]:
@@ -1064,4 +1172,7 @@ def analyze_numeric_core(
         "condition_round_metrics": condition_round_metrics,
         "interaction_2x2": _compute_interaction_2x2(cell_metrics, max_round, complete),
         "contrasts": contrasts,
+        "polyphony_contrast_matrix": _compute_polyphony_contrast_matrix(
+            by_condition_final, _cell_metric, complete
+        ),
     }

@@ -193,7 +193,12 @@ def _load_config(config_path: Path | None) -> ExperimentSuiteConfig:
     return ExperimentSuiteConfig(conditions=_default_conditions())
 
 
+def _dump_contrast(c: Any) -> Any:
+    return c.model_dump() if hasattr(c, "model_dump") else c
+
+
 def _serialize_numeric_analysis(analysis: dict[str, Any]) -> dict[str, Any]:
+    raw_matrix = analysis.get("polyphony_contrast_matrix", {})
     return {
         "completion_status": analysis.get("completion_status", "incomplete_or_unverified"),
         "missing_or_incomplete_cells": analysis.get("missing_or_incomplete_cells", 0),
@@ -204,9 +209,10 @@ def _serialize_numeric_analysis(analysis: dict[str, Any]) -> dict[str, Any]:
         "by_condition_final": analysis["by_condition_final"],
         "condition_round_metrics": analysis["condition_round_metrics"],
         "interaction_2x2": analysis.get("interaction_2x2", {}),
-        "contrasts": [
-            c.model_dump() if hasattr(c, "model_dump") else c for c in analysis["contrasts"]
-        ],
+        "contrasts": [_dump_contrast(c) for c in analysis["contrasts"]],
+        "polyphony_contrast_matrix": {
+            metric: [_dump_contrast(c) for c in items] for metric, items in raw_matrix.items()
+        },
     }
 
 
@@ -265,7 +271,7 @@ def _execute_numeric_track(
     )
     num_analysis = analyze_numeric_core(num_recs, num_tasks)
     (out_dir / "numeric_analysis.json").write_text(
-        json.dumps(_serialize_numeric_analysis(num_analysis), indent=2),
+        json.dumps(_serialize_numeric_analysis(num_analysis), indent=2, allow_nan=False),
         encoding="utf-8",
     )
     return num_analysis, num_recs

@@ -549,7 +549,7 @@ class SyntheticEpistemicBackend:
         temperature: float = 0.8,
         **_: Any,
     ) -> dict[str, Any]:
-        """Simulate Kevin's C1/C2/C3 numeric epistemic responses around log10 ground truth."""
+        """Simulate numeric epistemic estimation responses around log10 ground truth."""
         del system_prompt, user_prompt
         truth = task.numeric_truth if (task and task.numeric_truth) else max(current_x, 1.0)
         log_truth = math.log10(truth)
@@ -570,11 +570,11 @@ class SyntheticEpistemicBackend:
             (((zlib.crc32(active_model.encode("utf-8")) % 9) - 4) * 0.05) if active_model else 0.0
         )
 
-        if condition_id in ("C2", "C5") and pop_stats is not None:
+        if condition_id in ("C2", "C5", "P1", "P3") and pop_stats is not None:
             pop_med = math.log10(max(pop_stats[0], 1e-6))
             target_log = 0.65 * pop_med + 0.25 * (log_truth + shared_bias) + 0.10 * log_cur
             noise = rng.gauss(0.0, 0.03 * max(0.3, temperature))
-        elif condition_id in ("C4", "C6"):
+        elif condition_id in ("C4", "C6", "P2", "P4"):
             reduced_bias = shared_bias * 0.25
             if pop_stats is not None:
                 pop_med = math.log10(max(pop_stats[0], 1e-6))

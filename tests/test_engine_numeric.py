@@ -994,3 +994,204 @@ def test_h4_slopes_cover_c1_c6_round1_model_fe_and_crowd_pull() -> None:
     assert pull["C2"]["slope"] == pytest.approx(0.6, abs=1e-3)
     assert pull["C4"]["slope"] == pytest.approx(0.1, abs=1e-3)
     assert pull["C2"]["n_questions"] == 4
+
+
+def test_p_series_prompts_prior_symmetry_and_model_routing(tmp_path: Path) -> None:
+    from apart_epistemics.backends import BackendConfigError
+    from apart_epistemics.datasets import generate_agent_population
+    from apart_epistemics.engine.numeric_core import p_series_system_prompt
+
+    agent = generate_agent_population(num_agents=1, seed=42)[0]
+    sys_nodate = p_series_system_prompt("")
+    sys_dated = p_series_system_prompt("2026-11-15")
+    assert "rigorous quantitative scientific estimator" in sys_nodate
+    assert sys_dated == f"{sys_nodate} Today's date is 2026-11-15."
+
+    def prompts(cond: str) -> tuple[str, str]:
+        return build_numeric_prompts(
+            condition_id=cond,
+            agent=agent,
+            question="What is Earth's mean radius?",
+            current_x=6500.0,
+            pop_stats=(6400.0, 6100.0, 6700.0),
+            history=[("5000", "6000")],
+            unit="kilometers",
+            current_date="2026-11-15",
+        )
+
+    s0, u0 = prompts("P0")
+    s1, u1 = prompts("P1")
+    s2, u2 = prompts("P2")
+    s3, u3 = prompts("P3")
+    s4, u4 = prompts("P4")
+    assert s0 == s1 == s2 == s3 == s4 == sys_dated
+    assert u1 == u3
+    assert u2 == u4
+    assert "Prior estimate: 6,500 kilometers." in u0
+    assert "Peer consensus telemetry from prior estimators reports a median of" not in u0
+    assert "Peer consensus telemetry from prior estimators reports a median of 6,400" in u1
+    assert "(interquartile range 6,100 to 6,700)." in u1
+    assert "Dialectical counter-anchoring protocol:" not in u1
+    assert "Dialectical counter-anchoring protocol:" in u2
+    assert "prior estimate and peer median" in u2
+    assert u2.index("median of") < u2.index("Dialectical counter-anchoring protocol:")
+    assert "End with 'Final estimate: <plain number in kilometers>'" in u0
+    # C1..C6 prompt builders remain untouched.
+    sys_c1, usr_c1 = build_numeric_prompts("C1", agent, "Q?", 100.0, None, [], "km", "2026-11-15")
+    assert "neutral quantitative estimation assistant" in sys_c1
+    assert "Question: Q?" in usr_c1
+
+    # Validation & K=4 routing on P3/P4 vs K=1 on P0..P2, plus identical R1 agent priors.
+    backend = SyntheticEpistemicBackend(seed=11)
+    task = build_numeric_core_tasks()[:1]
+    with pytest.raises(BackendConfigError):
+        run_numeric_core(task, ["P3"], 4, 1, 1, tmp_path / "bad_p3.jsonl", backend, models=["m1"])
+    models = ["gemma-4-26b-a4b-it", "deepseek-v4-flash", "qwen3.8-27b", "glm-5.2"]
+    recs = run_numeric_core(
+        task,
+        ["P0", "P1", "P2", "P3", "P4"],
+        8,
+        1,
+        1,
+        tmp_path / "p_route.jsonl",
+        backend,
+        models=models,
+        current_date="2026-11-15",
+    )
+    by_cond = {c: [r for r in recs if r.condition_id == c] for c in ("P0", "P1", "P2", "P3", "P4")}
+    priors_p0 = [r.agent_log10_before for r in by_cond["P0"]]
+    for cond in ("P1", "P2", "P3", "P4"):
+        assert [r.agent_log10_before for r in by_cond[cond]] == priors_p0
+    for cond in ("P0", "P1", "P2"):
+        assert {r.model_slug for r in by_cond[cond]} == {"openai/gpt-frontier"}
+    for cond in ("P3", "P4"):
+        assert [r.model_slug for r in by_cond[cond]] == models * 2
+
+
+def test_p_series_analysis_matrix_did_h4_and_benchmark_disjointness(tmp_path: Path) -> None:
+    import json
+
+    from apart_epistemics.cli import (
+        _execute_numeric_track,
+        _load_config,
+        _serialize_numeric_analysis,
+    )
+    from apart_epistemics.models import ExperimentSuiteConfig
+
+    bench_path = Path("configs/polyphony_benchmark_tasks.json")
+    v3_path = Path("configs/numeric_final_tasks.json")
+    cfg_path = Path("configs/polyphony_p0_p4.yaml")
+    bench = [TaskItem.model_validate(item) for item in json.loads(bench_path.read_text())]
+    v3 = [TaskItem.model_validate(item) for item in json.loads(v3_path.read_text())]
+    legacy = build_numeric_core_tasks()
+
+    assert len(bench) == 12
+    assert len({t.id for t in bench}) == 12
+    assert {t.id for t in bench}.isdisjoint({t.id for t in v3} | {t.id for t in legacy})
+    assert {t.question.strip().lower() for t in bench}.isdisjoint(
+        {t.question.strip().lower() for t in v3} | {t.question.strip().lower() for t in legacy}
+    )
+    assert all((t.numeric_truth or 0.0) >= 100.0 for t in bench)
+    by_stratum = {
+        s: [t for t in bench if t.selection_stratum == s]
+        for s in ("control", "low_spread", "high_spread")
+    }
+    assert all(len(v) == 4 for v in by_stratum.values())
+    for tasks_s in by_stratum.values():
+        assert sorted(t.popular_misconception_bias for t in tasks_s) == [-0.8, -0.8, 0.8, 0.8]
+
+    loaded_cfg = _load_config(cfg_path)
+    assert loaded_cfg.numeric_conditions == ["P0", "P1", "P2", "P3", "P4"]
+    assert len(loaded_cfg.numeric_models) == 4
+    assert loaded_cfg.alpha == 0.3
+
+    # Full 4-task synthetic run checking 16 contrasts, 5x9 matrix, 2x2 DiD, H4, and serialization.
+    models = loaded_cfg.numeric_models
+    sub_cfg = ExperimentSuiteConfig(
+        seed=42,
+        num_agents=8,
+        num_rounds=2,
+        tasks_per_track=4,
+        numeric_tasks=4,
+        numeric_replicates=1,
+        alpha=0.3,
+        numeric_conditions=["P0", "P1", "P2", "P3", "P4"],
+        numeric_models=models,
+        conditions=[],
+    )
+    analysis, recs = _execute_numeric_track(
+        sub_cfg,
+        SyntheticEpistemicBackend(seed=42),
+        tmp_path / "p_out",
+        n_agents=8,
+        budget_usd=50.0,
+    )
+    assert len(recs) == 4 * 5 * 8 * 2
+    assert analysis["completion_status"] == "complete"
+    assert analysis["max_identity_residual"] < 1e-12
+    assert len(analysis["contrasts"]) == 16
+    assert "p4_vs_p1_excess_between_model_diversity" in {
+        c.contrast_id for c in analysis["contrasts"]
+    }
+    assert set(analysis["interaction_2x2"]) == {
+        "crowd_error",
+        "avg_individual_error",
+        "diversity",
+        "evrr",
+    }
+
+    matrix = analysis["polyphony_contrast_matrix"]
+    assert set(matrix) == {
+        "crowd_error",
+        "diversity",
+        "excess_between_model_diversity",
+        "between_model_diversity",
+        "evrr",
+    }
+    for metric, items in matrix.items():
+        assert len(items) == 9
+        assert all(item.metric == metric for item in items)
+
+    # Confirm H4 crowd pull anchors P1/P2 vs P0 (never P3/P4) and includes model FE on P3/P4.
+    h4 = analysis["h4_slopes"]
+    assert set(h4["crowd_pull_vs_c1_r1"]) == {"P1", "P2"}
+    assert "slope_crowd" not in h4["by_condition"]["P0"]
+    for p_social in ("P1", "P2", "P3", "P4"):
+        assert "slope_crowd" in h4["by_condition"][p_social]
+    assert "slope_user_model_fe" in h4["by_condition"]["P3"]
+    assert "slope_user_model_fe" in h4["by_condition"]["P4"]
+
+    # Saved JSON preserves polyphony_contrast_matrix cleanly with allow_nan=False.
+    saved = json.loads((tmp_path / "p_out" / "numeric_analysis.json").read_text(encoding="utf-8"))
+    assert set(saved["polyphony_contrast_matrix"]) == set(matrix)
+    json.dumps(_serialize_numeric_analysis(analysis), allow_nan=False)
+
+    # Incomplete run and alpha=1.0 zero-EVRR guard keep polyphony_contrast_matrix safe.
+    assert analyze_numeric_core(recs[:-1], legacy[:4])["polyphony_contrast_matrix"] == {}
+    z_recs = run_numeric_core(
+        legacy[:2],
+        ["P0", "P1", "P2", "P3", "P4"],
+        4,
+        1,
+        1,
+        tmp_path / "pz.jsonl",
+        SyntheticEpistemicBackend(seed=7),
+        alpha=1.0,
+        models=models[:2],
+    )
+    z_analysis = analyze_numeric_core(z_recs, legacy[:2])
+    assert z_analysis["polyphony_contrast_matrix"]["evrr"] == []
+    assert "evrr" not in z_analysis["interaction_2x2"]
+    json.dumps(_serialize_numeric_analysis(z_analysis), allow_nan=False)
+
+    # Legacy C-series runs emit empty polyphony_contrast_matrix.
+    c_recs = run_numeric_core(
+        legacy[:1],
+        ["C1", "C2", "C3"],
+        4,
+        1,
+        1,
+        tmp_path / "c_only.jsonl",
+        SyntheticEpistemicBackend(seed=5),
+    )
+    assert analyze_numeric_core(c_recs, legacy[:1])["polyphony_contrast_matrix"] == {}
