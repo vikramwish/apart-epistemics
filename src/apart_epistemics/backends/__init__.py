@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from pathlib import Path
 from typing import Any
 
 from apart_epistemics.backends.base import (
@@ -19,23 +18,11 @@ from apart_epistemics.backends.providers import (
     OpenAICompatibleBackend,
     OpenRouterBackend,
 )
-from apart_epistemics.backends.replay import ReplayBackend
-from apart_epistemics.backends.synthetic import SyntheticEpistemicBackend
 
 
 def create_backend(name: str, **kwargs: Any) -> Any:
     """Return the configured backend adapter for `name`."""
     norm = name.strip().lower()
-    if norm == "synthetic":
-        return SyntheticEpistemicBackend(
-            seed=int(kwargs.get("seed", 42)),
-            model=str(kwargs["model"]) if kwargs.get("model") else None,
-        )
-    if norm == "replay":
-        path = kwargs.get("jsonl_path") or kwargs.get("path")
-        if not path:
-            raise BackendConfigError("ReplayBackend requires 'jsonl_path'.")
-        return ReplayBackend.from_jsonl(Path(path))
     if norm == "ollama":
         return OllamaBackend(
             model=str(kwargs.get("model", "llama3.1:8b")),
@@ -92,8 +79,6 @@ __all__ = [
     "OllamaBackend",
     "OpenAICompatibleBackend",
     "OpenRouterBackend",
-    "ReplayBackend",
-    "SyntheticEpistemicBackend",
     "TransientBackendError",
     "TransportFn",
     "create_backend",

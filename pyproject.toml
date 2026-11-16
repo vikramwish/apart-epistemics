@@ -31,14 +31,11 @@ apart-epistemics = "apart_epistemics.cli:main"
 where = ["src"]
 
 [tool.setuptools.package-data]
-apart_epistemics = ["templates/*.html", "py.typed"]
+apart_epistemics = ["py.typed"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-q --strict-markers"
-markers = [
-  "e2e: Browser end-to-end tests requiring Playwright Chromium.",
-]
 
 [tool.coverage.run]
 branch = true
@@ -47,7 +44,11 @@ source = ["apart_epistemics"]
 [tool.ruff]
 line-length = 100
 target-version = "py311"
-extend-exclude = ["propaganda-eval"]  # vendored third-party code (Nous Research)
+extend-exclude = [
+    "scripts/audit_and_reproduce_p0_p4.py",
+    "scripts/analyze_controls_preregistered.py",
+    "scripts/audit_replication_2025.py",
+]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B", "SIM", "C90", "PT", "RUF"]

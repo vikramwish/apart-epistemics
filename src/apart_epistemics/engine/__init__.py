@@ -1,4 +1,4 @@
-"""Unified multi-round simulation engine, prompt builders, and statistical analyzers."""
+"""Unified multi-round numeric simulation engine, prompt builders, and statistical analyzers."""
 
 from __future__ import annotations
 
@@ -10,7 +10,6 @@ from apart_epistemics.engine.numeric_core import (
     format_prompt_number,
     run_numeric_core,
 )
-from apart_epistemics.engine.track4 import run_suite
 
 __all__ = [
     "TokenPricing",
@@ -19,5 +18,4 @@ __all__ = [
     "compute_paired_holm_contrasts",
     "format_prompt_number",
     "run_numeric_core",
-    "run_suite",
 ]

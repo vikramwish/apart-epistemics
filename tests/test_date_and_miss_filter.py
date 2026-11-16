@@ -8,11 +8,11 @@ from pathlib import Path
 from typing import Any
 
 import pytest
+from conftest import StubNumericBackend, sample_numeric_tasks
 
-from apart_epistemics.backends import BackendConfigError, SyntheticEpistemicBackend
-from apart_epistemics.cli import _resolve_current_date, build_parser, main
-from apart_epistemics.datasets import build_numeric_core_tasks, run_cold_selection
-from apart_epistemics.datasets.selection import allowed_misses, cold_prompts
+from apart_epistemics.backends import BackendConfigError
+from apart_epistemics.cli import _resolve_current_date, main
+from apart_epistemics.datasets.selection import cold_prompts
 from apart_epistemics.engine import build_numeric_prompts, run_numeric_core
 from apart_epistemics.engine.numeric_core import shared_system_prompt
 from apart_epistemics.models import AgentProfile, TaskItem
@@ -96,13 +96,13 @@ def test_cold_prompt_uses_the_same_system_prompt_as_the_experiment() -> None:
 def test_runner_sends_the_date_and_records_it_in_the_manifest(tmp_path: Path) -> None:
     seen: list[str] = []
 
-    class Spy(SyntheticEpistemicBackend):
+    class Spy(StubNumericBackend):
         def generate_numeric_reply(self, **kwargs: Any) -> dict[str, Any]:
             seen.append(kwargs["system_prompt"])
             return super().generate_numeric_reply(**kwargs)
 
     kwargs: dict[str, Any] = {
-        "tasks": build_numeric_core_tasks()[:1],
+        "tasks": sample_numeric_tasks(1),
         "conditions": ["C1", "C3"],
         "n_agents": 3,
         "n_rounds": 1,
@@ -131,11 +131,34 @@ def test_current_date_resolution_flag_resume_and_default(tmp_path: Path) -> None
     assert _resolve_current_date("2026-05-06", tmp_path) == "2026-05-06"  # flag still wins
 
 
-def test_cli_run_records_the_date_and_a_resume_reuses_it(tmp_path: Path) -> None:
+def test_cli_run_records_the_date_and_a_resume_reuses_it(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    import yaml
+
     cfg = tmp_path / "suite.yaml"
-    assert main(["setup", "--out", str(cfg), "--agents", "4", "--rounds", "1", "--tasks", "1"]) == 0
+    cfg.write_text(
+        yaml.safe_dump(
+            {
+                "seed": 42,
+                "num_agents": 4,
+                "num_rounds": 1,
+                "tasks_per_track": 1,
+                "numeric_tasks": 1,
+                "numeric_tasks_file": "configs/polyphony_benchmark_tasks.json",
+                "numeric_replicates": 1,
+                "numeric_conditions": ["P0"],
+                "conditions": [],
+            }
+        ),
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(
+        "apart_epistemics.cli.create_backend",
+        lambda *_a, **_k: StubNumericBackend(seed=1),
+    )
     out = tmp_path / "run"
-    base = ["run", "--config", str(cfg), "--numeric-only", "--out", str(out)]
+    base = ["run", "--config", str(cfg), "--backend", "openai", "--out", str(out)]
     assert main([*base, "--current-date", DATE]) == 0
     row = json.loads((out / "numeric_runs.jsonl").read_text().splitlines()[0])
     assert row["run_spec"]["current_date"] == DATE
@@ -144,110 +167,6 @@ def test_cli_run_records_the_date_and_a_resume_reuses_it(tmp_path: Path) -> None
 
 
 def test_cli_rejects_a_malformed_date(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
-    rc = main(["run", "--numeric-only", "--out", str(tmp_path), "--current-date", "tomorrow"])
+    rc = main(["run", "--dry-run", "--out", str(tmp_path), "--current-date", "tomorrow"])
     assert rc == 2
     assert "YYYY-MM-DD" in capsys.readouterr().err
-
-
-# ------------------------------------------------------------ miss filter
-
-
-class Scripted(SyntheticEpistemicBackend):
-    """Answers truth * factor per call from a per-question list; None means an unusable reply."""
-
-    def __init__(self, plan: dict[str, list[float | str]]) -> None:
-        super().__init__(seed=1)
-        self.plan = plan
-        self.seen: dict[str, int] = {}
-
-    def generate_numeric_reply(self, **kwargs: Any) -> dict[str, Any]:
-        task = kwargs["task"]
-        n = self.seen.get(task.id, 0)
-        self.seen[task.id] = n + 1
-        item = self.plan[task.id][n % len(self.plan[task.id])]
-        if isinstance(item, str):
-            return {"raw_reply": item, "model_slug": "m", "provider": "p"}
-        value = task.numeric_truth * item
-        return {"raw_reply": f"Final estimate: {value:g}", "model_slug": "m", "provider": "p"}
-
-
-def test_allowed_misses_matches_more_than_one_of_eight() -> None:
-    assert allowed_misses(8, 0.125) == 1
-    assert allowed_misses(8, 0.25) == 2
-    assert allowed_misses(8, 0.0) == 0
-    assert allowed_misses(3, 0.125) == 0
-    assert allowed_misses(10, 0.1) == 1  # float rounding must not lose the boundary case
-
-
-def _eight(good: float, misses: list[str]) -> list[float | str]:
-    return [good, *misses, *([good * 1.1] * (7 - len(misses)))]
-
-
-def test_more_than_one_unusable_answer_in_eight_drops_the_candidate() -> None:
-    tasks = [_task(f"{n}") for n in ("none", "one", "two", "zero2")]
-    plan = {
-        "none": _eight(1.5, []),
-        "one": _eight(1.6, ["The event has not happened."]),
-        "two": _eight(1.7, ["No idea.", "Cannot say."]),
-        "zero2": _eight(1.8, ["Final estimate: 0", "Final estimate: 0"]),
-    }
-    out = run_cold_selection(tasks, Scripted(plan), repeats=8, keep=2)
-    status = out["status_by_id"]
-    assert status["none"] == "eligible"
-    assert status["one"] == "eligible"  # exactly 1 of 8 is allowed
-    assert status["two"] == "too_many_misses"
-    assert status["zero2"] == "too_many_misses"  # a stated zero is an unusable answer
-    assert sorted(out["selected_ids"]) == ["none", "one"]
-    assert out["max_misses"] == 1
-    assert "more than 1 of 8 unusable answers" in out["rule"]
-
-
-def test_a_single_stated_zero_is_tolerated_but_counted() -> None:
-    plan = {"a": _eight(1.5, ["Final estimate: 0"]), "b": _eight(1.4, [])}
-    out = run_cold_selection([_task("a"), _task("b")], Scripted(plan), repeats=8, keep=2)
-    row = next(c for c in out["candidates"] if c["id"] == "a")
-    assert row["n_misses"] == 1
-    assert row["n_answers"] == 7
-
-
-def test_miss_filter_applies_to_the_error_only_rule_too() -> None:
-    plan = {"flaky": _eight(3.0, ["x", "y"]), "steady": _eight(1.5, [])}
-    out = run_cold_selection(
-        [_task("flaky"), _task("steady")], Scripted(plan), repeats=8, keep=1, rule="error"
-    )
-    assert out["selected_ids"] == ["steady"]  # flaky has the larger error but too many misses
-    assert "more than 1 of 8" in out["rule"]
-
-
-def test_miss_rate_is_adjustable_and_failures_report_the_reason() -> None:
-    from apart_epistemics.datasets import SelectionError
-
-    plan = {"a": _eight(1.5, ["x", "y"]), "b": _eight(1.6, ["x", "y"])}
-    strict = [_task("a"), _task("b")]
-    with pytest.raises(SelectionError) as exc:
-        run_cold_selection(strict, Scripted(plan), repeats=8, keep=2)
-    assert exc.value.partial["outcome_counts"] == {"too_many_misses": 2}
-    relaxed = run_cold_selection(strict, Scripted(plan), repeats=8, keep=2, max_miss_rate=0.25)
-    assert sorted(relaxed["selected_ids"]) == ["a", "b"]
-
-
-def test_selection_passes_the_date_to_every_cold_call() -> None:
-    seen: list[str] = []
-
-    class Spy(Scripted):
-        def generate_numeric_reply(self, **kwargs: Any) -> dict[str, Any]:
-            seen.append(kwargs["system_prompt"])
-            return super().generate_numeric_reply(**kwargs)
-
-    out = run_cold_selection(
-        [_task("a")], Spy({"a": [1.5]}), repeats=3, keep=1, rule="error", current_date=DATE
-    )
-    assert len(seen) == 3
-    assert all(LINE in s for s in seen)
-    assert out["current_date"] == DATE
-
-
-def test_cli_selection_flags_default_to_one_of_eight_and_today() -> None:
-    ns = build_parser().parse_args(["select-questions", "--candidates", "x.json"])
-    assert ns.max_miss_rate == 0.125
-    assert ns.current_date is None

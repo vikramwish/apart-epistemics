@@ -177,9 +177,7 @@ def test_probe_runner_retry_resumability_and_min_count_guard(tmp_path: Path):
     assert all(c["max_output_tokens"] >= 8192 for c in calls)
     assert all("reasoning" not in c for c in calls if c["model"] == "gemma-4-26b-a4b-it")
     assert all(
-        c["reasoning"] == {"effort": "none"}
-        for c in calls
-        if c["model"] != "gemma-4-26b-a4b-it"
+        c["reasoning"] == {"effort": "none"} for c in calls if c["model"] != "gemma-4-26b-a4b-it"
     )
     assert (probe_dir / "provider_requests.jsonl").exists()
     assert (probe_dir / "budget.json").exists()

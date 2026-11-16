@@ -12,6 +12,21 @@ venv/
 .ruff_cache/
 .coverage
 htmlcov/
+.ipynb_checkpoints/
+
+# OS, Editor & Agent Scratch
+.DS_Store
+*.bak
+*.tmp
+*.cpgz
+.vscode/
+.idea/
+.claude/
+.cursor/
+.gemini/
+CLAUDE.md
+AGENTS.md
+tmp/
 
 # Environment & Secrets
 .env
@@ -20,17 +35,18 @@ htmlcov/
 *.pem
 *.key
 
-# Local run artifacts (keep compact summaries/figures/docs tracked; ignore large raw JSONL traces)
-# results/ holds the recorded live runs and IS tracked; only the throwaway offline demo output
-# that `make check`/`make smoke` can write there is ignored.
-/results/smoke*
-reports/results/*.jsonl
-tmp/
-.DS_Store
-node_modules/
-/frontend/test-results/
-/frontend/playwright-report/
+# LaTeX build artifacts
+paper/*.aux
+paper/*.bbl
+paper/*.blg
+paper/*.log
+paper/*.out
+paper/*.toc
+paper/*.fls
+paper/*.fdb_latexmk
+paper/*.synctex.gz
 
-
-/frontend/.designs/
-*.cpgz
+# Large raw Study 2 logs (hosted on GitHub Release data-v1; fetched by `make data`)
+results/polyphony-replication-2025/numeric_runs.jsonl
+results/polyphony-replication-2025/provider_requests.jsonl
+results/polyphony-replication-2025/dry_run/

@@ -1,26 +1,116 @@
-"""Shared pytest fixtures for Epistemic Prism unit, integration, and report suites."""
+"""Shared fixtures and deterministic offline stubs for apart_epistemics tests."""
 
 from __future__ import annotations
 
+import copy
+import hashlib
+import json
+import math
 from pathlib import Path
 from typing import Any
 
 import pytest
 
-from apart_epistemics import (
-    AgentProfile,
-    ConditionConfig,
-    ExperimentSuiteConfig,
-    HeterogeneityType,
-    NationalityType,
-    RoundRecord,
-    SyntheticEpistemicBackend,
-    TaskKind,
-    analyze_numeric_core,
-    build_numeric_core_tasks,
-    run_numeric_core,
-    run_suite,
+from apart_epistemics.models import AgentProfile, TaskItem
+
+BENCHMARK_TASKS_PATH = (
+    Path(__file__).resolve().parents[1] / "configs" / "polyphony_benchmark_tasks.json"
 )
+
+
+def sample_numeric_tasks(limit: int | None = None) -> list[TaskItem]:
+    """Load frozen benchmark tasks from configs/polyphony_benchmark_tasks.json."""
+    raw = json.loads(BENCHMARK_TASKS_PATH.read_text(encoding="utf-8"))
+    tasks = [TaskItem.model_validate(item) for item in raw]
+    return tasks[:limit] if limit is not None else tasks
+
+
+class StubNumericBackend:
+    """Stateless, deterministic offline numeric backend for unit and engine tests."""
+
+    def __init__(self, seed: int = 42, model: str = "openai/gpt-frontier") -> None:
+        self.seed = seed
+        self.model = model
+        self.provider = "stub"
+        self.budget_ledger: Any = None
+
+    def for_model(self, model: str) -> StubNumericBackend:
+        """Return a routed stub instance pinned to the requested model slug."""
+        clone = copy.copy(self)
+        clone.model = model
+        return clone
+
+    @staticmethod
+    def _unit_float(key: str) -> float:
+        digest = hashlib.sha256(key.encode("utf-8")).digest()
+        return int.from_bytes(digest[:8], "big") / float(1 << 64)
+
+    def generate_numeric_reply(
+        self,
+        *,
+        system_prompt: str,
+        user_prompt: str,
+        condition_id: str = "C1",
+        task: TaskItem | None = None,
+        round_idx: int = 1,
+        current_x: float = 100.0,
+        pop_stats: tuple[float, float, float] | None = None,
+        agent: AgentProfile | None = None,
+        max_tokens: int = 1024,
+        **_extra: Any,
+    ) -> dict[str, Any]:
+        """Generate a deterministic, parseable numeric reply on the log10 scale."""
+        del system_prompt, user_prompt, max_tokens
+        truth = float(task.numeric_truth) if (task and task.numeric_truth) else float(current_x)
+        log_truth = math.log10(max(truth, 1e-6))
+        log_cur = math.log10(max(float(current_x), 1e-6))
+
+        # Model-specific shift produces non-zero between-model variance under multi-model routing.
+        model_u = self._unit_float(f"model:{self.seed}:{self.model}")
+        model_shift = (model_u - 0.5) * 0.36
+
+        task_id = task.id if task is not None else "unknown"
+        agent_id = agent.agent_id if agent is not None else "agent_00"
+        cell_u = self._unit_float(
+            f"cell:{self.seed}:{self.model}:{condition_id}:{task_id}:{round_idx}:{agent_id}"
+        )
+        noise = (cell_u - 0.5) * 0.24
+
+        cond_upper = condition_id.upper()
+        social_conditions = {
+            "C2",
+            "C3",
+            "C4",
+            "C5",
+            "C6",
+            "P1",
+            "P2",
+            "P3",
+            "P4",
+            "P1_REFLECT",
+            "P1_DS",
+            "P1_QWEN",
+            "P1_GLM",
+        }
+        if pop_stats is not None and cond_upper in social_conditions:
+            log_pop = math.log10(max(float(pop_stats[0]), 1e-6))
+            target_log = 0.35 * log_truth + 0.35 * log_cur + 0.30 * log_pop + model_shift + noise
+        else:
+            target_log = 0.55 * log_truth + 0.45 * log_cur + model_shift + noise
+
+        # Stay well inside _parse_reply's 3.0-decade sanity bound around current_x.
+        bounded_log = max(log_cur - 1.5, min(log_cur + 1.5, target_log))
+        estimate = 10.0**bounded_log
+        return {
+            "raw_reply": f"Final estimate: {estimate:.6g}",
+            "model_slug": self.model,
+            "provider": self.provider,
+            "input_tokens": 120,
+            "output_tokens": 30,
+            "reasoning_tokens": 0,
+            "finish_reason": "stop",
+            "cost_usd": 0.0001,
+        }
 
 
 @pytest.fixture
@@ -28,140 +118,13 @@ def sample_agent() -> AgentProfile:
     """Return a reproducible sample agent profile."""
     return AgentProfile(
         agent_id="agent_00",
-        name="Agent 01",
+        name="Ananya Patel",
         region="south_asia",
         profession="civil engineer",
         age_band="25-34",
-        values=["empirical rigor", "local autonomy"],
-        prior_belief=0.5,
-        prior_confidence=0.7,
-        need_for_cognition=0.8,
-        preferred_topics=["evidence"],
+        values=["empirical_rigor", "fairness"],
+        prior_belief=0.55,
+        prior_confidence=0.80,
+        need_for_cognition=0.75,
+        preferred_topics=["climate_science", "public_health"],
     )
-
-
-@pytest.fixture
-def record_factory():
-    """Return a factory building a concise `RoundRecord` fixture with sensible defaults."""
-
-    def _build(
-        *,
-        condition_id: str,
-        round_idx: int,
-        agent_id: str,
-        model_assigned: str,
-        model_family: str,
-        topics: list[str],
-        stance_prob: float,
-        text: str,
-        overlap: float,
-    ) -> RoundRecord:
-        return RoundRecord(
-            run_id="run_test",
-            condition_id=condition_id,
-            seed=42,
-            task_id="od_sovereign_ai",
-            task_kind=TaskKind.OPEN_DEBATE,
-            round_idx=round_idx,
-            agent_id=agent_id,
-            agent_region="east_asia",
-            model_assigned=model_assigned,
-            model_family=model_family,
-            assistant_response_text="",
-            agent_response_text=text,
-            extracted_topics=topics,
-            stance_prob=stance_prob,
-            confidence=max(stance_prob, 1.0 - stance_prob),
-            stated_answer=1 if stance_prob >= 0.5 else 0,
-            goldman_source_overlap=overlap,
-            persuasion_bias_exposure=overlap * 2.0,
-        )
-
-    return _build
-
-
-@pytest.fixture
-def core_suite_config() -> ExperimentSuiteConfig:
-    """Return a compact Track 4 config spanning decoding, origin, and personalization."""
-    return ExperimentSuiteConfig(
-        suite_name="Compact Verification Suite",
-        seed=42,
-        num_agents=12,
-        num_rounds=3,
-        peer_degree=2,
-        tasks_per_track=2,
-        conditions=[
-            ConditionConfig(
-                condition_id="no_ai",
-                label="No AI",
-                heterogeneity_type=HeterogeneityType.NO_AI,
-                nationality_type=NationalityType.NONE,
-                num_models=0,
-                group="baseline",
-            ),
-            ConditionConfig(
-                condition_id="us_k1_greedy",
-                label="US K1 T=0",
-                heterogeneity_type=HeterogeneityType.MONOLITHIC_SHARED,
-                nationality_type=NationalityType.US_ONLY,
-                num_models=1,
-                temperature=0.0,
-                top_p=0.0,
-                group="decoding_ablation",
-            ),
-            ConditionConfig(
-                condition_id="us_k1",
-                label="US K1 T=0.8",
-                heterogeneity_type=HeterogeneityType.MONOLITHIC_SHARED,
-                nationality_type=NationalityType.US_ONLY,
-                num_models=1,
-                group="k_sweep",
-            ),
-            ConditionConfig(
-                condition_id="cross_national_k4",
-                label="Cross-National K4",
-                heterogeneity_type=HeterogeneityType.CULTURAL_REGIONAL_MIX,
-                nationality_type=NationalityType.CROSS_NATIONAL,
-                num_models=4,
-                group="nationality",
-            ),
-            ConditionConfig(
-                condition_id="personalized_advisor",
-                label="Advisor",
-                heterogeneity_type=HeterogeneityType.PERSONALIZED_ADVISOR,
-                nationality_type=NationalityType.CROSS_NATIONAL,
-                num_models=12,
-                group="personalization",
-            ),
-            ConditionConfig(
-                condition_id="personalized_peer",
-                label="Peer",
-                heterogeneity_type=HeterogeneityType.PERSONALIZED_PEER,
-                nationality_type=NationalityType.US_ONLY,
-                num_models=12,
-                group="personalization",
-            ),
-        ],
-    )
-
-
-@pytest.fixture
-def mini_demo_bundle(
-    tmp_path: Path, core_suite_config: ExperimentSuiteConfig
-) -> tuple[dict[str, Any], dict[str, Any], list[Any]]:
-    """Run both Track 4 and Numeric Core on compact fixtures for downstream report tests."""
-    backend = SyntheticEpistemicBackend(seed=42)
-    suite_res = run_suite(core_suite_config, backend=backend, out_dir=tmp_path / "suite")
-    num_tasks = build_numeric_core_tasks()[:2]
-    num_recs = run_numeric_core(
-        tasks=num_tasks,
-        conditions=["C1", "C2", "C3"],
-        n_agents=6,
-        n_rounds=2,
-        replicates=1,
-        runs_path=tmp_path / "numeric_runs.jsonl",
-        backend=backend,
-        seed=42,
-    )
-    num_analysis = analyze_numeric_core(num_recs, num_tasks)
-    return suite_res, num_analysis, num_recs

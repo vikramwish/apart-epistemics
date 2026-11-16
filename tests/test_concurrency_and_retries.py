@@ -10,16 +10,15 @@ from pathlib import Path
 from typing import Any
 
 import pytest
+from conftest import StubNumericBackend, sample_numeric_tasks
 
 from apart_epistemics.backends import (
     BudgetExceededError,
     OpenRouterBackend,
-    SyntheticEpistemicBackend,
     TransientBackendError,
 )
 from apart_epistemics.backends.base import post_json
 from apart_epistemics.cli import build_parser, main
-from apart_epistemics.datasets import build_numeric_core_tasks
 from apart_epistemics.engine import run_numeric_core
 from apart_epistemics.run_state import BudgetLedger
 
@@ -28,7 +27,7 @@ N_AGENTS = 6
 
 def _run(tmp_path: Path, name: str, backend: Any, **kwargs: Any) -> Any:
     params: dict[str, Any] = {
-        "tasks": build_numeric_core_tasks()[:1],
+        "tasks": sample_numeric_tasks(1),
         "conditions": ["C1", "C2", "C3"],
         "n_agents": N_AGENTS,
         "n_rounds": 2,
@@ -44,8 +43,8 @@ def _run(tmp_path: Path, name: str, backend: Any, **kwargs: Any) -> Any:
 
 
 def test_parallel_run_matches_sequential_run_exactly(tmp_path: Path) -> None:
-    seq = _run(tmp_path, "seq.jsonl", SyntheticEpistemicBackend(seed=3), workers=1)
-    par = _run(tmp_path, "par.jsonl", SyntheticEpistemicBackend(seed=3), workers=4)
+    seq = _run(tmp_path, "seq.jsonl", StubNumericBackend(seed=3), workers=1)
+    par = _run(tmp_path, "par.jsonl", StubNumericBackend(seed=3), workers=4)
     assert [r.model_dump() for r in seq] == [r.model_dump() for r in par]
     assert (tmp_path / "seq.jsonl").read_text() == (tmp_path / "par.jsonl").read_text()
 
@@ -54,7 +53,7 @@ def test_calls_really_overlap_but_output_stays_in_agent_order(tmp_path: Path) ->
     lock = threading.Lock()
     state = {"active": 0, "peak": 0}
 
-    class SlowEarlyAgents(SyntheticEpistemicBackend):
+    class SlowEarlyAgents(StubNumericBackend):
         def generate_numeric_reply(self, **kwargs: Any) -> dict[str, Any]:
             with lock:
                 state["active"] += 1
@@ -73,7 +72,7 @@ def test_calls_really_overlap_but_output_stays_in_agent_order(tmp_path: Path) ->
     ids = [r.agent_id for r in recs]
     assert ids[:N_AGENTS] == [f"agent_{i:02d}" for i in range(N_AGENTS)]
     sequential = _run(
-        tmp_path, "seq.jsonl", SyntheticEpistemicBackend(seed=3), conditions=["C1"], n_rounds=1
+        tmp_path, "seq.jsonl", StubNumericBackend(seed=3), conditions=["C1"], n_rounds=1
     )
     assert ids == [r.agent_id for r in sequential]
     lines = (tmp_path / "par.jsonl").read_text().splitlines()
@@ -82,7 +81,7 @@ def test_calls_really_overlap_but_output_stays_in_agent_order(tmp_path: Path) ->
 
 
 def test_failure_in_one_agent_keeps_finished_calls_and_resume_completes(tmp_path: Path) -> None:
-    class FailsOnce(SyntheticEpistemicBackend):
+    class FailsOnce(StubNumericBackend):
         def __init__(self, target: str) -> None:
             super().__init__(seed=3)
             self.target = target
@@ -95,7 +94,7 @@ def test_failure_in_one_agent_keeps_finished_calls_and_resume_completes(tmp_path
                 raise RuntimeError("network down")
             return super().generate_numeric_reply(**kwargs)
 
-    reference = _run(tmp_path, "ref.jsonl", SyntheticEpistemicBackend(seed=3), workers=1)
+    reference = _run(tmp_path, "ref.jsonl", StubNumericBackend(seed=3), workers=1)
 
     with pytest.raises(RuntimeError, match="network down"):
         _run(tmp_path, "run.jsonl", FailsOnce("agent_02"), workers=N_AGENTS)
@@ -112,9 +111,10 @@ def test_failure_in_one_agent_keeps_finished_calls_and_resume_completes(tmp_path
 
 
 def test_budget_cap_holds_under_concurrency(tmp_path: Path) -> None:
-    class Costly(SyntheticEpistemicBackend):
+    class Costly(StubNumericBackend):
         def generate_numeric_reply(self, **kwargs: Any) -> dict[str, Any]:
             out = super().generate_numeric_reply(**kwargs)
+            out["cost_usd"] = None
             out["input_tokens"], out["output_tokens"] = 1_000_000, 0
             return out
 
@@ -130,14 +130,14 @@ def test_workers_must_be_positive(tmp_path: Path) -> None:
     from apart_epistemics.backends import BackendConfigError
 
     with pytest.raises(BackendConfigError, match="workers"):
-        _run(tmp_path, "w.jsonl", SyntheticEpistemicBackend(seed=3), workers=0)
+        _run(tmp_path, "w.jsonl", StubNumericBackend(seed=3), workers=0)
 
 
 def test_cli_workers_flag_defaults_to_eight_and_rejects_zero(
     tmp_path: Path, capsys: pytest.CaptureFixture[str]
 ) -> None:
     assert build_parser().parse_args(["run"]).workers == 8
-    assert main(["run", "--workers", "0", "--out", str(tmp_path)]) == 2
+    assert main(["run", "--dry-run", "--workers", "0", "--out", str(tmp_path)]) == 2
     assert "--workers" in capsys.readouterr().err
 
 

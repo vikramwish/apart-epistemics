@@ -10,9 +10,9 @@ from pathlib import Path
 from typing import Any
 
 import pytest
+from conftest import StubNumericBackend, sample_numeric_tasks
 
-from apart_epistemics.backends import BudgetExceededError, SyntheticEpistemicBackend
-from apart_epistemics.datasets import build_numeric_core_tasks
+from apart_epistemics.backends import BudgetExceededError
 from apart_epistemics.engine import (
     TokenPricing,
     analyze_numeric_core,
@@ -77,10 +77,10 @@ def test_numeric_prompt_asks_for_best_estimate_in_task_unit(sample_agent: AgentP
 
 
 def test_runner_passes_task_unit_into_prompt(tmp_path: Path) -> None:
-    task = build_numeric_core_tasks()[0]
+    task = sample_numeric_tasks()[0]
     seen: list[str] = []
 
-    class Spy(SyntheticEpistemicBackend):
+    class Spy(StubNumericBackend):
         def generate_numeric_reply(self, **kwargs: Any) -> dict[str, Any]:
             seen.append(kwargs["user_prompt"])
             return super().generate_numeric_reply(**kwargs)
@@ -113,11 +113,12 @@ def test_prices_are_configurable_and_drive_the_budget_guard(tmp_path: Path) -> N
     assert _estimate_call_cost_usd(resp, TokenPricing(0.1, 0.5)) == pytest.approx(0.1)
     assert _estimate_call_cost_usd(resp, TokenPricing(4.0, 0.5)) == pytest.approx(4.0)
 
-    task = build_numeric_core_tasks()[0]
+    task = sample_numeric_tasks()[0]
 
-    class Costly(SyntheticEpistemicBackend):
+    class Costly(StubNumericBackend):
         def generate_numeric_reply(self, **kwargs: Any) -> dict[str, Any]:
             out = super().generate_numeric_reply(**kwargs)
+            out["cost_usd"] = None
             out["input_tokens"], out["output_tokens"] = 1_000_000, 0
             return out
 
@@ -140,10 +141,10 @@ def test_prices_are_configurable_and_drive_the_budget_guard(tmp_path: Path) -> N
 
 
 def test_runner_records_finish_reason_and_forwards_max_tokens(tmp_path: Path) -> None:
-    task = build_numeric_core_tasks()[0]
+    task = sample_numeric_tasks()[0]
     seen_max_tokens: list[int] = []
 
-    class Backend(SyntheticEpistemicBackend):
+    class Backend(StubNumericBackend):
         def generate_numeric_reply(self, **kwargs: Any) -> dict[str, Any]:
             seen_max_tokens.append(kwargs["max_tokens"])
             out = super().generate_numeric_reply(**kwargs)
@@ -179,7 +180,7 @@ def test_runner_records_finish_reason_and_forwards_max_tokens(tmp_path: Path) ->
 
 
 def test_changing_max_tokens_requires_a_new_output_folder(tmp_path: Path) -> None:
-    task = build_numeric_core_tasks()[0]
+    task = sample_numeric_tasks()[0]
     kwargs: dict[str, Any] = {
         "tasks": [task],
         "conditions": ["C1"],
@@ -187,7 +188,7 @@ def test_changing_max_tokens_requires_a_new_output_folder(tmp_path: Path) -> Non
         "n_rounds": 1,
         "replicates": 1,
         "runs_path": tmp_path / "runs.jsonl",
-        "backend": SyntheticEpistemicBackend(seed=1),
+        "backend": StubNumericBackend(seed=1),
     }
     run_numeric_core(**kwargs, max_tokens=1024)
     run_numeric_core(**kwargs, max_tokens=1024)  # same settings resume fine
@@ -196,7 +197,7 @@ def test_changing_max_tokens_requires_a_new_output_folder(tmp_path: Path) -> Non
 
 
 def _priced_backend(cost: float | None, per_attempt: list[float | None] | None = None) -> Any:
-    class Priced(SyntheticEpistemicBackend):
+    class Priced(StubNumericBackend):
         calls = 0
 
         def generate_numeric_reply(self, **kwargs: Any) -> dict[str, Any]:
@@ -221,7 +222,7 @@ def test_records_store_the_providers_real_cost(tmp_path: Path) -> None:
 
 def _run_priced(tmp_path: Path, name: str, backend: Any, **kwargs: Any) -> Any:
     params: dict[str, Any] = {
-        "tasks": build_numeric_core_tasks()[:1],
+        "tasks": sample_numeric_tasks()[:1],
         "conditions": ["C1"],
         "n_agents": 3,
         "n_rounds": 1,
@@ -251,7 +252,7 @@ def test_estimate_prefers_real_cost_and_falls_back_to_tokens() -> None:
 
 
 def test_row_cost_covers_the_format_retry_too(tmp_path: Path) -> None:
-    class RetryOnce(SyntheticEpistemicBackend):
+    class RetryOnce(StubNumericBackend):
         calls = 0
 
         def generate_numeric_reply(self, **kwargs: Any) -> dict[str, Any]:
@@ -284,10 +285,10 @@ def test_resume_counts_saved_real_costs_against_the_budget(tmp_path: Path) -> No
 
 
 def test_runner_treats_values_over_three_log_units_away_as_misses(tmp_path: Path) -> None:
-    task = build_numeric_core_tasks()[0]
+    task = sample_numeric_tasks()[0]
     prompts: list[str] = []
 
-    class UnitSlipBackend(SyntheticEpistemicBackend):
+    class UnitSlipBackend(StubNumericBackend):
         def generate_numeric_reply(self, **kwargs: Any) -> dict[str, Any]:
             prompts.append(kwargs["user_prompt"])
             # A metres-read-as-millions style slip: roughly 1e9 times the true size.
@@ -354,10 +355,10 @@ def test_numeric_prompt_builder_and_crash_resumable_runner(
     assert "1500" not in sys_c3
     assert "1800" in usr_c3
 
-    tasks = build_numeric_core_tasks()[:2]
+    tasks = sample_numeric_tasks()[:2]
     runs_file = tmp_path / "numeric_runs.jsonl"
 
-    class FlakyBackend(SyntheticEpistemicBackend):
+    class FlakyBackend(StubNumericBackend):
         def __init__(self) -> None:
             super().__init__(seed=7)
             self.calls = 0
@@ -421,7 +422,7 @@ def test_numeric_prompt_builder_and_crash_resumable_runner(
             n_rounds=2,
             replicates=1,
             runs_path=tmp_path / "budget_runs.jsonl",
-            backend=SyntheticEpistemicBackend(seed=7),
+            backend=StubNumericBackend(seed=7),
             budget_usd=0.0,
             seed=7,
         )
@@ -431,13 +432,14 @@ def test_cross_process_determinism_and_truncated_jsonl_resume(tmp_path: Path) ->
     outs = []
     for hseed in ("111", "999"):
         sub_out = tmp_path / f"det_{hseed}.jsonl"
+        tests_dir = str(Path(__file__).resolve().parent)
         code = (
-            "import json; from pathlib import Path; "
-            "from apart_epistemics import ("
-            "SyntheticEpistemicBackend, build_numeric_core_tasks, run_numeric_core"
-            "); "
-            f"recs = run_numeric_core(build_numeric_core_tasks()[:1], ['C3'], 4, 2, 1, "
-            f"Path({str(sub_out)!r}), SyntheticEpistemicBackend(seed=42), seed=42); "
+            "import json, sys; from pathlib import Path; "
+            f"sys.path.insert(0, {tests_dir!r}); "
+            "from conftest import StubNumericBackend, sample_numeric_tasks; "
+            "from apart_epistemics import run_numeric_core; "
+            f"recs = run_numeric_core(sample_numeric_tasks(1), ['C3'], 4, 2, 1, "
+            f"Path({str(sub_out)!r}), StubNumericBackend(seed=42), seed=42); "
             "print(json.dumps([round(r.agent_log10_after, 6) for r in recs]))"
         )
         env = dict(os.environ, PYTHONHASHSEED=hseed)
@@ -452,8 +454,8 @@ def test_cross_process_determinism_and_truncated_jsonl_resume(tmp_path: Path) ->
     assert outs[0] == outs[1]
 
     trunc_path = tmp_path / "trunc.jsonl"
-    tasks = build_numeric_core_tasks()[:1]
-    backend = SyntheticEpistemicBackend(seed=42)
+    tasks = sample_numeric_tasks()[:1]
+    backend = StubNumericBackend(seed=42)
     full = run_numeric_core(tasks, ["C3"], 4, 2, 1, trunc_path, backend, seed=42)
     lines = trunc_path.read_text(encoding="utf-8").splitlines()
     trunc_path.write_text(
@@ -520,7 +522,7 @@ def test_prompts_round_estimates_crowd_and_c3_history_while_keeping_exact_state(
     )
     seen_prompts: list[str] = []
 
-    class SpyBackend(SyntheticEpistemicBackend):
+    class SpyBackend(StubNumericBackend):
         def generate_numeric_reply(self, **kwargs: Any) -> dict[str, Any]:
             seen_prompts.append(kwargs["user_prompt"])
             return {
@@ -565,7 +567,7 @@ def test_tightened_sanity_check_catches_thousand_and_million_unit_slips(tmp_path
         source_note="The Numbers daily chart, 2 Aug 2026: $186,004,506",
     )
 
-    class PlannedBackend(SyntheticEpistemicBackend):
+    class PlannedBackend(StubNumericBackend):
         def __init__(self, replies: list[str]) -> None:
             super().__init__(seed=1)
             self.replies = replies
@@ -611,7 +613,7 @@ def test_tightened_sanity_check_catches_thousand_and_million_unit_slips(tmp_path
 
 
 def test_run_numeric_core_parallel_trajectories_match_sequential(tmp_path: Path) -> None:
-    tasks = build_numeric_core_tasks()[:3]
+    tasks = sample_numeric_tasks()[:3]
     seq = run_numeric_core(
         tasks=tasks,
         conditions=["C1", "C2", "C3"],
@@ -619,7 +621,7 @@ def test_run_numeric_core_parallel_trajectories_match_sequential(tmp_path: Path)
         n_rounds=3,
         replicates=2,
         runs_path=tmp_path / "seq.jsonl",
-        backend=SyntheticEpistemicBackend(seed=11),
+        backend=StubNumericBackend(seed=11),
         seed=11,
         workers=1,
     )
@@ -631,7 +633,7 @@ def test_run_numeric_core_parallel_trajectories_match_sequential(tmp_path: Path)
         n_rounds=3,
         replicates=2,
         runs_path=par_path,
-        backend=SyntheticEpistemicBackend(seed=11),
+        backend=StubNumericBackend(seed=11),
         seed=11,
         workers=8,
     )
@@ -646,7 +648,7 @@ def test_run_numeric_core_parallel_trajectories_match_sequential(tmp_path: Path)
         n_rounds=3,
         replicates=2,
         runs_path=par_path,
-        backend=SyntheticEpistemicBackend(seed=11),
+        backend=StubNumericBackend(seed=11),
         seed=11,
         workers=8,
     )
@@ -739,13 +741,13 @@ def test_c1_through_c6_prompt_symmetry_and_social_routing(
     # Runner passes pop_stats into prompts for C2, C3, C4, C5, and C6 (never C1).
     seen_by_cond: dict[str, list[str]] = {}
 
-    class PromptSpy(SyntheticEpistemicBackend):
+    class PromptSpy(StubNumericBackend):
         def generate_numeric_reply(self, **kwargs: Any) -> dict[str, Any]:
             seen_by_cond.setdefault(kwargs["condition_id"], []).append(kwargs["user_prompt"])
             return super().generate_numeric_reply(**kwargs)
 
     run_numeric_core(
-        tasks=build_numeric_core_tasks()[:1],
+        tasks=sample_numeric_tasks()[:1],
         conditions=["C1", "C2", "C3", "C4", "C5", "C6"],
         n_agents=4,
         n_rounds=1,
@@ -769,8 +771,8 @@ def test_polyphony_validation_routing_manifest_and_backward_compatibility(tmp_pa
     assert cfg_default.numeric_conditions == ["C1", "C2", "C3"]
     assert cfg_default.numeric_models == []
 
-    task = build_numeric_core_tasks()[:1]
-    backend = SyntheticEpistemicBackend(seed=5)
+    task = sample_numeric_tasks()[:1]
+    backend = StubNumericBackend(seed=5)
 
     with pytest.raises(BackendConfigError, match="drawn from"):
         run_numeric_core(task, ["C7"], 4, 1, 1, tmp_path / "bad_c.jsonl", backend)
@@ -823,7 +825,7 @@ def test_c1_through_c6_analysis_evrr_nan_guard_contrasts_and_interaction(tmp_pat
     from apart_epistemics.cli import _execute_numeric_track, _serialize_numeric_analysis
     from apart_epistemics.models import ExperimentSuiteConfig
 
-    tasks = build_numeric_core_tasks()[:4]
+    tasks = sample_numeric_tasks(4)
     models = ["gemma-4-26b-a4b-it", "deepseek-v4-flash", "qwen3.8-27b", "glm-5.2"]
     cfg = ExperimentSuiteConfig(
         seed=42,
@@ -831,6 +833,7 @@ def test_c1_through_c6_analysis_evrr_nan_guard_contrasts_and_interaction(tmp_pat
         num_rounds=2,
         tasks_per_track=4,
         numeric_tasks=4,
+        numeric_tasks_file="configs/polyphony_benchmark_tasks.json",
         numeric_replicates=1,
         numeric_conditions=["C1", "C2", "C3", "C4", "C5", "C6"],
         numeric_models=models,
@@ -838,7 +841,7 @@ def test_c1_through_c6_analysis_evrr_nan_guard_contrasts_and_interaction(tmp_pat
     )
     analysis, recs = _execute_numeric_track(
         cfg,
-        SyntheticEpistemicBackend(seed=42),
+        StubNumericBackend(seed=42),
         tmp_path / "cli_out",
         n_agents=cfg.num_agents,
         budget_usd=50.0,
@@ -890,7 +893,7 @@ def test_c1_through_c6_analysis_evrr_nan_guard_contrasts_and_interaction(tmp_pat
         n_rounds=1,
         replicates=1,
         runs_path=tmp_path / "alpha1.jsonl",
-        backend=SyntheticEpistemicBackend(seed=9),
+        backend=StubNumericBackend(seed=9),
         alpha=1.0,
         models=models[:2],
     )
@@ -1049,8 +1052,8 @@ def test_p_series_prompts_prior_symmetry_and_model_routing(tmp_path: Path) -> No
     assert "Question: Q?" in usr_c1
 
     # Validation & K=4 routing on P3/P4 vs K=1 on P0..P2, plus identical R1 agent priors.
-    backend = SyntheticEpistemicBackend(seed=11)
-    task = build_numeric_core_tasks()[:1]
+    backend = StubNumericBackend(seed=11)
+    task = sample_numeric_tasks()[:1]
     with pytest.raises(BackendConfigError):
         run_numeric_core(task, ["P3"], 4, 1, 1, tmp_path / "bad_p3.jsonl", backend, models=["m1"])
     models = ["gemma-4-26b-a4b-it", "deepseek-v4-flash", "qwen3.8-27b", "glm-5.2"]
@@ -1086,18 +1089,12 @@ def test_p_series_analysis_matrix_did_h4_and_benchmark_disjointness(tmp_path: Pa
     from apart_epistemics.models import ExperimentSuiteConfig
 
     bench_path = Path("configs/polyphony_benchmark_tasks.json")
-    v3_path = Path("configs/numeric_final_tasks.json")
     cfg_path = Path("configs/polyphony_p0_p4.yaml")
     bench = [TaskItem.model_validate(item) for item in json.loads(bench_path.read_text())]
-    v3 = [TaskItem.model_validate(item) for item in json.loads(v3_path.read_text())]
-    legacy = build_numeric_core_tasks()
 
     assert len(bench) == 16
     assert len({t.id for t in bench}) == 16
-    assert {t.id for t in bench}.isdisjoint({t.id for t in v3} | {t.id for t in legacy})
-    assert {t.question.strip().lower() for t in bench}.isdisjoint(
-        {t.question.strip().lower() for t in v3} | {t.question.strip().lower() for t in legacy}
-    )
+    assert len({t.question.strip().lower() for t in bench}) == 16
     assert all((t.numeric_truth or 0.0) >= 100.0 for t in bench)
     by_stratum = {
         s: [t for t in bench if t.selection_stratum == s]
@@ -1124,6 +1121,7 @@ def test_p_series_analysis_matrix_did_h4_and_benchmark_disjointness(tmp_path: Pa
         num_rounds=2,
         tasks_per_track=4,
         numeric_tasks=4,
+        numeric_tasks_file="configs/polyphony_benchmark_tasks.json",
         numeric_replicates=1,
         alpha=0.4,
         numeric_conditions=["P0", "P1", "P2", "P3", "P4"],
@@ -1132,7 +1130,7 @@ def test_p_series_analysis_matrix_did_h4_and_benchmark_disjointness(tmp_path: Pa
     )
     analysis, recs = _execute_numeric_track(
         sub_cfg,
-        SyntheticEpistemicBackend(seed=42),
+        StubNumericBackend(seed=42),
         tmp_path / "p_out",
         n_agents=8,
         budget_usd=50.0,
@@ -1191,7 +1189,7 @@ def test_p_series_analysis_matrix_did_h4_and_benchmark_disjointness(tmp_path: Pa
 
     # Confirm empty assistant estimates cleanly yield None (never NaN).
     no_asst = [r.model_copy(update={"assistant_log10": None}) for r in recs]
-    no_asst_analysis = analyze_numeric_core(no_asst, legacy[:4])
+    no_asst_analysis = analyze_numeric_core(no_asst, bench[:4])
     assert no_asst_analysis["by_condition_final"]["P4"]["assistant_crowd_error"] is None
     assert no_asst_analysis["polyphony_contrast_matrix"]["assistant_crowd_error"] == []
     assert "assistant_crowd_error" not in no_asst_analysis["interaction_2x2"]
@@ -1212,34 +1210,34 @@ def test_p_series_analysis_matrix_did_h4_and_benchmark_disjointness(tmp_path: Pa
     json.dumps(_serialize_numeric_analysis(analysis), allow_nan=False)
 
     # Incomplete run and alpha=1.0 zero-EVRR guard keep polyphony_contrast_matrix safe.
-    assert analyze_numeric_core(recs[:-1], legacy[:4])["polyphony_contrast_matrix"] == {}
+    assert analyze_numeric_core(recs[:-1], bench[:4])["polyphony_contrast_matrix"] == {}
     z_recs = run_numeric_core(
-        legacy[:2],
+        bench[:2],
         ["P0", "P1", "P2", "P3", "P4"],
         4,
         1,
         1,
         tmp_path / "pz.jsonl",
-        SyntheticEpistemicBackend(seed=7),
+        StubNumericBackend(seed=7),
         alpha=1.0,
         models=models[:2],
     )
-    z_analysis = analyze_numeric_core(z_recs, legacy[:2])
+    z_analysis = analyze_numeric_core(z_recs, bench[:2])
     assert z_analysis["polyphony_contrast_matrix"]["evrr"] == []
     assert "evrr" not in z_analysis["interaction_2x2"]
     json.dumps(_serialize_numeric_analysis(z_analysis), allow_nan=False)
 
     # Legacy C-series runs emit empty polyphony_contrast_matrix.
     c_recs = run_numeric_core(
-        legacy[:1],
+        bench[:1],
         ["C1", "C2", "C3"],
         4,
         1,
         1,
         tmp_path / "c_only.jsonl",
-        SyntheticEpistemicBackend(seed=5),
+        StubNumericBackend(seed=5),
     )
-    assert analyze_numeric_core(c_recs, legacy[:1])["polyphony_contrast_matrix"] == {}
+    assert analyze_numeric_core(c_recs, bench[:1])["polyphony_contrast_matrix"] == {}
 
 
 def test_polyphony_control_arms_config_routing_prompts_and_contrasts(tmp_path: Path) -> None:
@@ -1251,7 +1249,7 @@ def test_polyphony_control_arms_config_routing_prompts_and_contrasts(tmp_path: P
         _load_config,
         _serialize_numeric_analysis,
     )
-    from apart_epistemics.datasets import build_numeric_core_tasks, generate_agent_population
+    from apart_epistemics.datasets import generate_agent_population
     from apart_epistemics.engine.numeric_core import (
         _P_COUNTER_ANCHOR_TEXT,
         _P_GENERIC_REFLECT_TEXT,
@@ -1314,6 +1312,7 @@ def test_polyphony_control_arms_config_routing_prompts_and_contrasts(tmp_path: P
         num_rounds=2,
         tasks_per_track=2,
         numeric_tasks=2,
+        numeric_tasks_file="configs/polyphony_benchmark_tasks.json",
         numeric_replicates=1,
         alpha=0.4,
         numeric_conditions=["P0", "P1", "P2", "P3", "P4", *ctrl_cfg.numeric_conditions],
@@ -1322,7 +1321,7 @@ def test_polyphony_control_arms_config_routing_prompts_and_contrasts(tmp_path: P
     )
     analysis, recs = _execute_numeric_track(
         all_cfg,
-        SyntheticEpistemicBackend(seed=42),
+        StubNumericBackend(seed=42),
         tmp_path / "ctrl_out",
         n_agents=8,
         budget_usd=50.0,
@@ -1373,19 +1372,19 @@ def test_polyphony_control_arms_config_routing_prompts_and_contrasts(tmp_path: P
     ctrl_only_cfg = all_cfg.model_copy(update={"numeric_conditions": ctrl_cfg.numeric_conditions})
     _, base_recs = _execute_numeric_track(
         base_cfg,
-        SyntheticEpistemicBackend(seed=42),
+        StubNumericBackend(seed=42),
         tmp_path / "split_base",
         n_agents=8,
         budget_usd=50.0,
     )
     _, ctrl_recs = _execute_numeric_track(
         ctrl_only_cfg,
-        SyntheticEpistemicBackend(seed=42),
+        StubNumericBackend(seed=42),
         tmp_path / "split_ctrl",
         n_agents=8,
         budget_usd=50.0,
     )
-    tasks_2 = build_numeric_core_tasks()[:2]
+    tasks_2 = sample_numeric_tasks()[:2]
     merged_analysis = analyze_numeric_core([*base_recs, *ctrl_recs], tasks_2)
     assert merged_analysis["completion_status"] == "complete"
     assert len(merged_analysis["control_contrasts"]) == 8

@@ -7,9 +7,8 @@ import random
 from pathlib import Path
 
 import pytest
+from conftest import StubNumericBackend, sample_numeric_tasks
 
-from apart_epistemics.backends import SyntheticEpistemicBackend
-from apart_epistemics.datasets import build_numeric_core_tasks
 from apart_epistemics.engine import analyze_numeric_core, run_numeric_core
 from apart_epistemics.engine.h4 import compute_h4_slopes, ols
 from apart_epistemics.metrics import pearson_corr
@@ -151,7 +150,7 @@ def test_bootstrap_is_deterministic() -> None:
 
 
 def test_runner_stores_population_median_and_analysis_reports_slopes(tmp_path: Path) -> None:
-    tasks = build_numeric_core_tasks()[:3]
+    tasks = sample_numeric_tasks(3)
     recs = run_numeric_core(
         tasks=tasks,
         conditions=["C1", "C2", "C3"],
@@ -159,7 +158,7 @@ def test_runner_stores_population_median_and_analysis_reports_slopes(tmp_path: P
         n_rounds=2,
         replicates=2,
         runs_path=tmp_path / "runs.jsonl",
-        backend=SyntheticEpistemicBackend(seed=5),
+        backend=StubNumericBackend(seed=5),
     )
     assert all(r.pop_median_log10 is not None for r in recs)
     r1 = [
