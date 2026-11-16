@@ -2,10 +2,11 @@
 
 from __future__ import annotations
 
-from apart_epistemics.report.figures import generate_figures
+from apart_epistemics.report.figures import generate_figures, generate_polyphony_figures
 from apart_epistemics.report.site import build_static_site
 
 __all__ = [
     "build_static_site",
     "generate_figures",
+    "generate_polyphony_figures",
 ]

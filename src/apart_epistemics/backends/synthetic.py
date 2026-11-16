@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import copy
 import math
 import random
 import zlib
@@ -81,6 +82,12 @@ class SyntheticEpistemicBackend:
 
     def __init__(self, seed: int = 42) -> None:
         self.seed = seed
+
+    def for_model(self, model: str) -> SyntheticEpistemicBackend:
+        """Clone simulator settings while pinning an explicit model slug."""
+        routed = copy.copy(self)
+        routed.model = model
+        return routed
 
     def _task_truth_target(self, task: TaskItem) -> float:
         if task.kind == TaskKind.GROUND_TRUTH and task.ground_truth is not None:
@@ -542,7 +549,7 @@ class SyntheticEpistemicBackend:
         temperature: float = 0.8,
         **_: Any,
     ) -> dict[str, Any]:
-        """Simulate Kevin's C1/C2/C3 numeric epistemic responses around log10 ground truth."""
+        """Simulate numeric epistemic estimation responses around log10 ground truth."""
         del system_prompt, user_prompt
         truth = task.numeric_truth if (task and task.numeric_truth) else max(current_x, 1.0)
         log_truth = math.log10(truth)
@@ -557,11 +564,27 @@ class SyntheticEpistemicBackend:
         )
         rng = random.Random(seed_val)
         shared_bias = 0.16 if (task and abs(task.popular_misconception_bias) > 0.15) else 0.10
+        active_model = getattr(self, "model", None)
+        resolved_slug = active_model or model_slug
+        model_shift = (
+            (((zlib.crc32(active_model.encode("utf-8")) % 9) - 4) * 0.05) if active_model else 0.0
+        )
 
-        if condition_id == "C2" and pop_stats is not None:
+        if (
+            condition_id in ("C2", "C5", "P1", "P3", "P1_REFLECT", "P1_DS", "P1_QWEN", "P1_GLM")
+            and pop_stats is not None
+        ):
             pop_med = math.log10(max(pop_stats[0], 1e-6))
             target_log = 0.65 * pop_med + 0.25 * (log_truth + shared_bias) + 0.10 * log_cur
             noise = rng.gauss(0.0, 0.03 * max(0.3, temperature))
+        elif condition_id in ("C4", "C6", "P2", "P4"):
+            reduced_bias = shared_bias * 0.25
+            if pop_stats is not None:
+                pop_med = math.log10(max(pop_stats[0], 1e-6))
+                target_log = 0.20 * pop_med + 0.65 * (log_truth + reduced_bias) + 0.15 * log_cur
+            else:
+                target_log = 0.80 * (log_truth + reduced_bias) + 0.20 * log_cur
+            noise = rng.gauss(0.0, 0.08 * max(0.3, temperature))
         elif condition_id == "C3" and agent is not None:
             persona_shift = ((zlib.crc32(agent.profession.encode("utf-8")) % 7) - 3) * 0.06
             target_log = 0.55 * (log_truth + persona_shift) + 0.45 * log_cur
@@ -570,6 +593,9 @@ class SyntheticEpistemicBackend:
             target_log = 0.50 * (log_truth + shared_bias * 0.7) + 0.50 * log_cur
             noise = rng.gauss(0.0, 0.11 * max(0.4, temperature))
 
+        if active_model:
+            target_log += model_shift
+
         pred_val = 10.0 ** (target_log + noise)
         formatted = f"{round(pred_val, 1):.1f}" if pred_val >= 100.0 else f"{pred_val:.3g}"
         return {
@@ -577,7 +603,7 @@ class SyntheticEpistemicBackend:
                 f"Considering the reference scaling and plausible mechanisms, "
                 f"my reasoned Final estimate: {formatted}"
             ),
-            "model_slug": model_slug,
+            "model_slug": resolved_slug,
             "provider": "synthetic_sim",
             "reasoning_tokens": rng.randint(12, 64),
             "input_tokens": rng.randint(180, 320),

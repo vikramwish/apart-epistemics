@@ -63,6 +63,62 @@ def compute_page_decomposition(log_estimates: list[float], log_truth: float) -> 
     }
 
 
+def compute_hierarchical_page_decomposition(
+    log_estimates: list[float],
+    model_slugs: list[str],
+    log_truth: float,
+) -> dict[str, float]:
+    """Decompose Page diversity into between-model and within-model ANOVA components."""
+    if len(log_estimates) != len(model_slugs):
+        raise ValueError("log_estimates and model_slugs must have identical length.")
+    n = len(log_estimates)
+    if n == 0:
+        return {
+            "crowd_error": 0.0,
+            "avg_individual_error": 0.0,
+            "diversity": 0.0,
+            "between_model_diversity": 0.0,
+            "within_model_diversity": 0.0,
+            "excess_between_model_diversity": 0.0,
+            "between_share": 0.0,
+            "num_models": 0.0,
+            "identity_residual": 0.0,
+            "hierarchical_identity_residual": 0.0,
+            "iqr": 0.0,
+            "crowd_mean": 0.0,
+        }
+
+    base = compute_page_decomposition(log_estimates, log_truth)
+    clusters: dict[str, list[float]] = {}
+    for est, slug in zip(log_estimates, model_slugs, strict=True):
+        clusters.setdefault(slug, []).append(est)
+
+    mean_g = base["crowd_mean"]
+    between = 0.0
+    within = 0.0
+    for vals in clusters.values():
+        nk = len(vals)
+        mk = sum(vals) / nk
+        between += nk * (mk - mean_g) ** 2
+        within += sum((g - mk) ** 2 for g in vals)
+    between /= n
+    within /= n
+
+    k = len(clusters)
+    excess_between = between - ((k - 1) / (n - k)) * within if 1 < k < n else 0.0
+    between_share = between / base["diversity"] if base["diversity"] > 1e-15 else 0.0
+    hier_resid = abs(base["crowd_error"] - (base["avg_individual_error"] - between - within))
+    return {
+        **base,
+        "between_model_diversity": between,
+        "within_model_diversity": within,
+        "excess_between_model_diversity": excess_between,
+        "between_share": between_share,
+        "num_models": float(k),
+        "hierarchical_identity_residual": hier_resid,
+    }
+
+
 def pearson_corr(xs: list[float], ys: list[float]) -> float:
     """Compute Pearson correlation safely, returning 0.0 on constant inputs."""
     if len(xs) != len(ys) or len(xs) < 2:

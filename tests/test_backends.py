@@ -3,17 +3,20 @@
 from __future__ import annotations
 
 import json
+import os
 from typing import Any
 
 import pytest
 
 from apart_epistemics.backends import (
+    AdaptionBackend,
     AnthropicBackend,
     BackendConfigError,
     GeminiBackend,
     OllamaBackend,
     OpenAICompatibleBackend,
     OpenRouterBackend,
+    TransientBackendError,
     create_backend,
 )
 
@@ -57,7 +60,11 @@ def test_openrouter_backend_enforces_pinning_no_online_and_safe_errors(
     assert resp["provider"] == "OpenAI"
     assert resp["reasoning_tokens"] == 8
     assert ":online" not in captured["payload"]["model"]
-    assert captured["payload"]["provider"] == {"order": ["OpenAI"], "allow_fallbacks": False}
+    assert captured["payload"]["provider"] == {
+        "order": ["OpenAI"],
+        "allow_fallbacks": False,
+        "require_parameters": True,  # sampling was set explicitly, so it must be honoured
+    }
     assert captured["payload"]["reasoning"] == {"effort": "low"}
     assert captured["payload"]["temperature"] == pytest.approx(0.8)
     assert captured["payload"]["top_p"] == pytest.approx(0.95)
@@ -71,6 +78,7 @@ def test_openrouter_backend_enforces_pinning_no_online_and_safe_errors(
         ("openai", "OPENAI_API_KEY", "oa-secret-xyz-123"),
         ("anthropic", "ANTHROPIC_API_KEY", "ant-secret-xyz-123"),
         ("gemini", "GEMINI_API_KEY", "gem-secret-xyz-123"),
+        ("adaption", "ADAPTION_API_KEY", "adapt-secret-xyz-123"),
     ],
 )
 def test_http_adapters_redact_secrets_from_transport_errors(
@@ -164,3 +172,408 @@ def test_direct_vendor_adapters_and_factory_validation(monkeypatch: pytest.Monke
         .generate_numeric_reply(system_prompt="s", user_prompt="u")["raw_reply"]
         .endswith("144")
     )
+
+
+def _capturing_backend(monkeypatch: pytest.MonkeyPatch, name: str, captured: dict[str, Any]) -> Any:
+    for env_var in ("OPENROUTER_API_KEY", "OPENAI_API_KEY", "ANTHROPIC_API_KEY", "GEMINI_API_KEY"):
+        monkeypatch.setenv(env_var, "dummy-value")
+
+    def tx(_u: str, _h: dict[str, str], payload: dict[str, Any]) -> dict[str, Any]:
+        captured["payload"] = payload
+        return {
+            "choices": [{"message": {"content": "Final estimate: 5"}}],
+            "message": {"content": "Final estimate: 5"},
+            "content": [{"text": "Final estimate: 5"}],
+            "candidates": [{"content": {"parts": [{"text": "Final estimate: 5"}]}}],
+        }
+
+    return create_backend(name, transport=tx)
+
+
+def _sampling_keys(name: str, payload: dict[str, Any]) -> dict[str, Any]:
+    if name == "ollama":
+        return payload["options"]
+    if name == "gemini":
+        return payload["generationConfig"]
+    return payload
+
+
+@pytest.mark.parametrize("name", ["openrouter", "openai", "anthropic", "gemini", "ollama"])
+def test_sampling_params_are_omitted_unless_set(monkeypatch: pytest.MonkeyPatch, name: str) -> None:
+    captured: dict[str, Any] = {}
+    backend = _capturing_backend(monkeypatch, name, captured)
+    sampling = ("temperature", "top_p", "topP")
+
+    # Numeric path with defaults: nothing about sampling may be sent.
+    backend.generate_numeric_reply(system_prompt="s", user_prompt="u")
+    assert not any(k in _sampling_keys(name, captured["payload"]) for k in sampling)
+
+    # Explicit settings (e.g. the T=0 ablation) are sent, including zero.
+    backend.generate_chat("s", "u", temperature=0.0, top_p=0.9)
+    sent = _sampling_keys(name, captured["payload"])
+    assert sent["temperature"] == 0.0
+    assert sent["topP" if name == "gemini" else "top_p"] == pytest.approx(0.9)
+
+    # Only one of the two set: the other stays out.
+    backend.generate_chat("s", "u", temperature=0.3)
+    sent = _sampling_keys(name, captured["payload"])
+    assert sent["temperature"] == pytest.approx(0.3)
+    assert "top_p" not in sent
+    assert "topP" not in sent
+
+
+def test_openrouter_requires_parameters_only_when_sampling_is_set(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("OPENROUTER_API_KEY", "dummy-value")
+    captured: dict[str, Any] = {}
+
+    def tx(_u: str, _h: dict[str, str], payload: dict[str, Any]) -> dict[str, Any]:
+        captured["payload"] = payload
+        return {"choices": [{"message": {"content": "Final estimate: 5"}}]}
+
+    pinned = OpenRouterBackend(model="m", pin_provider="OpenAI", transport=tx)
+    pinned.generate_numeric_reply(system_prompt="s", user_prompt="u")
+    assert captured["payload"]["provider"] == {"order": ["OpenAI"], "allow_fallbacks": False}
+
+    pinned.generate_chat("s", "u", temperature=0.0)
+    assert captured["payload"]["provider"] == {
+        "order": ["OpenAI"],
+        "allow_fallbacks": False,
+        "require_parameters": True,
+    }
+
+    unpinned = OpenRouterBackend(model="m", reasoning_effort="", transport=tx)
+    unpinned.generate_numeric_reply(system_prompt="s", user_prompt="u")
+    assert "provider" not in captured["payload"]
+    unpinned.generate_chat("s", "u", top_p=0.9)
+    assert captured["payload"]["provider"] == {"require_parameters": True}
+
+
+def test_numeric_reply_defaults_to_1024_max_tokens_and_is_configurable(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    captured: dict[str, Any] = {}
+    backend = _capturing_backend(monkeypatch, "openrouter", captured)
+    backend.generate_numeric_reply(system_prompt="s", user_prompt="u")
+    assert captured["payload"]["max_tokens"] == 1024
+    backend.generate_numeric_reply(system_prompt="s", user_prompt="u", max_tokens=2048)
+    assert captured["payload"]["max_tokens"] == 2048
+
+
+@pytest.mark.parametrize(
+    ("name", "response", "expected"),
+    [
+        (
+            "openrouter",
+            {"choices": [{"message": {"content": "x"}, "finish_reason": "length"}]},
+            "length",
+        ),
+        ("openai", {"choices": [{"message": {"content": "x"}, "finish_reason": "stop"}]}, "stop"),
+        ("anthropic", {"content": [{"text": "x"}], "stop_reason": "max_tokens"}, "max_tokens"),
+        (
+            "gemini",
+            {"candidates": [{"content": {"parts": [{"text": "x"}]}, "finishReason": "MAX_TOKENS"}]},
+            "MAX_TOKENS",
+        ),
+        ("ollama", {"message": {"content": "x"}, "done_reason": "length"}, "length"),
+        ("openai", {"choices": [{"message": {"content": "x"}}]}, ""),
+    ],
+)
+def test_finish_reason_is_reported_by_every_adapter(
+    monkeypatch: pytest.MonkeyPatch, name: str, response: dict[str, Any], expected: str
+) -> None:
+    for env_var in ("OPENROUTER_API_KEY", "OPENAI_API_KEY", "ANTHROPIC_API_KEY", "GEMINI_API_KEY"):
+        monkeypatch.setenv(env_var, "dummy-value")
+    backend = create_backend(name, transport=lambda _u, _h, _p: response)
+    assert backend.generate_chat("s", "u")["finish_reason"] == expected
+    assert backend.generate_numeric_reply(system_prompt="s", user_prompt="u")["finish_reason"] == (
+        expected
+    )
+
+
+def test_create_backend_passes_pin_provider_to_openrouter(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("OPENROUTER_API_KEY", "dummy-value")
+    captured: dict[str, Any] = {}
+
+    def tx(_u: str, _h: dict[str, str], payload: dict[str, Any]) -> dict[str, Any]:
+        captured["payload"] = payload
+        return {"choices": [{"message": {"content": "Final estimate: 5"}}]}
+
+    backend = create_backend("openrouter", pin_provider="OpenAI", transport=tx)
+    backend.generate_numeric_reply(system_prompt="s", user_prompt="u")
+    assert captured["payload"]["provider"] == {"order": ["OpenAI"], "allow_fallbacks": False}
+
+
+@pytest.mark.parametrize(
+    ("usage", "expected_reasoning"),
+    [
+        ({"completion_tokens_details": {"reasoning_tokens": 40}}, 40),  # OpenAI format
+        ({"reasoning_tokens": 8}, 8),  # flat fallback
+        ({"completion_tokens_details": {"reasoning_tokens": 40}, "reasoning_tokens": 8}, 40),
+        ({"completion_tokens_details": {"reasoning_tokens": 0}, "reasoning_tokens": 8}, 0),
+        ({"completion_tokens_details": None}, 0),
+        ({}, 0),
+    ],
+)
+def test_reasoning_tokens_read_from_nested_usage_with_flat_fallback(
+    usage: dict[str, Any], expected_reasoning: int
+) -> None:
+    from apart_epistemics.backends.base import extract_openai_chat_fields
+
+    data = {
+        "choices": [{"message": {"content": "x"}}],
+        "usage": {"prompt_tokens": 10, "completion_tokens": 100, **usage},
+    }
+    out = extract_openai_chat_fields(data, "p", "m")
+    assert out["reasoning_tokens"] == expected_reasoning
+    assert out["output_tokens"] == 100
+
+
+@pytest.mark.parametrize(
+    ("usage", "expected"),
+    [
+        ({"cost": 9.47e-05}, 9.47e-05),
+        ({"cost": 0}, 0.0),  # a free call is a real, known cost of zero
+        ({"cost": None}, None),
+        ({"cost": "n/a"}, None),
+        ({"cost": -1}, None),
+        ({}, None),
+    ],
+)
+def test_provider_reported_cost_is_extracted_when_valid(
+    usage: dict[str, Any], expected: float | None
+) -> None:
+    from apart_epistemics.backends.base import extract_openai_chat_fields
+
+    data = {"choices": [{"message": {"content": "x"}}], "usage": {"prompt_tokens": 1, **usage}}
+    assert extract_openai_chat_fields(data, "p", "m")["cost_usd"] == expected
+
+
+def test_numeric_reply_passes_cost_through_and_other_adapters_report_none(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    for env_var in ("OPENROUTER_API_KEY", "ANTHROPIC_API_KEY"):
+        monkeypatch.setenv(env_var, "dummy-value")
+    router = create_backend(
+        "openrouter",
+        transport=lambda _u, _h, _p: {
+            "choices": [{"message": {"content": "Final estimate: 5"}}],
+            "usage": {"cost": 0.0123},
+        },
+    )
+    assert router.generate_numeric_reply(system_prompt="s", user_prompt="u")["cost_usd"] == 0.0123
+
+    claude = create_backend(
+        "anthropic",
+        transport=lambda _u, _h, _p: {
+            "content": [{"text": "Final estimate: 5"}],
+            "usage": {"input_tokens": 1, "output_tokens": 1},
+        },
+    )
+    assert claude.generate_numeric_reply(system_prompt="s", user_prompt="u")["cost_usd"] is None
+
+
+def test_adaption_backend_payload_sampling_and_usage_extraction(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.delenv("ADAPTION_API_KEY", raising=False)
+    with pytest.raises(BackendConfigError, match="ADAPTION_API_KEY"):
+        AdaptionBackend(model="deepseek-v4-flash")
+
+    monkeypatch.setenv("ADAPTION_API_KEY", '  "dummy-adaption-key"  ')
+    calls: list[dict[str, Any]] = []
+
+    def fake_transport(
+        url: str, headers: dict[str, str], payload: dict[str, Any]
+    ) -> dict[str, Any]:
+        calls.append({"url": url, "headers": headers, "payload": payload})
+        if payload["instructions"] == "fallback-output":
+            return {
+                "model": "deepseek-v4-flash",
+                "status": "incomplete",
+                "output": [
+                    {
+                        "type": "message",
+                        "content": [{"type": "output_text", "text": "Final estimate: 120"}],
+                    }
+                ],
+                "usage": {
+                    "input_tokens": 20,
+                    "output_tokens": 2048,
+                    "output_tokens_details": {"reasoning_tokens": 1800},
+                    "cost": 0.00042,
+                },
+            }
+        return {
+            "model": "deepseek-v4-flash",
+            "status": "completed",
+            "output_text": "Final estimate: 107",
+            "usage": {
+                "input_tokens": 15,
+                "output_tokens": 45,
+                "output_tokens_details": {"reasoning_tokens": 30},
+                "cost": 0.00012,
+            },
+        }
+
+    backend = create_backend("adaption", model="deepseek-v4-flash", transport=fake_transport)
+    assert isinstance(backend, AdaptionBackend)
+    assert backend.max_retries == 25
+
+    reply = backend.generate_numeric_reply(system_prompt="sys", user_prompt="usr", max_tokens=512)
+    assert reply["raw_reply"] == "Final estimate: 107"
+    assert reply["provider"] == "adaption"
+    assert reply["model_slug"] == "deepseek-v4-flash"
+    assert reply["finish_reason"] == "stop"
+    assert reply["reasoning_tokens"] == 30
+    assert reply["cost_usd"] == pytest.approx(0.00012)
+    assert calls[0]["url"] == "https://api.prod.adaptionlabs.ai/api/v1/responses"
+    assert calls[0]["headers"]["Authorization"] == "Bearer dummy-adaption-key"
+    assert calls[0]["payload"]["max_output_tokens"] == 8192
+    assert "temperature" not in calls[0]["payload"]
+    assert "top_p" not in calls[0]["payload"]
+
+    # top_p=0.0 is omitted while temperature=0.0 is kept; top_p>0.0 is forwarded.
+    out_greedy = backend.generate_chat(
+        "fallback-output", "usr", temperature=0.0, top_p=0.0, max_tokens=9000
+    )
+    assert out_greedy["finish_reason"] == "length"
+    assert out_greedy["text"] == "Final estimate: 120"
+    assert out_greedy["reasoning_tokens"] == 1800
+    assert calls[1]["payload"]["max_output_tokens"] == 9000
+    assert calls[1]["payload"]["temperature"] == 0.0
+    assert "top_p" not in calls[1]["payload"]
+
+    backend.generate_chat("sys", "usr", temperature=0.8, top_p=0.95)
+    assert calls[2]["payload"]["temperature"] == pytest.approx(0.8)
+    assert calls[2]["payload"]["top_p"] == pytest.approx(0.95)
+    assert "dummy-adaption-key" not in json.dumps(reply)
+
+    # Short Track 4 turns cap max_output_tokens at 1024 and disable hidden thinking on qwen models.
+    qwen = backend.for_model("qwen3.8-27b")
+    qwen.generate_chat("sys", "short prompt", max_tokens=180)
+    assert calls[3]["payload"]["max_output_tokens"] == 1024
+    assert calls[3]["payload"]["reasoning"] == {"effort": "none"}
+
+    from apart_epistemics.backends.base import extract_adaption_response_fields
+
+    with pytest.raises(TransientBackendError, match="upstream"):
+        extract_adaption_response_fields({"error": {"message": "overloaded"}}, "deepseek-v4-flash")
+
+
+def test_adaption_live_roundtrip_when_key_present() -> None:
+    if not os.environ.get("ADAPTION_API_KEY", "").strip():
+        pytest.skip("ADAPTION_API_KEY not set")
+    from apart_epistemics.engine.numeric_core import format_prompt_number
+    from apart_epistemics.parsers import parse_numeric_estimate
+
+    backend = create_backend("adaption", model="gemma-4-26b-a4b-it")
+    est = format_prompt_number(104.317)
+    assert est == "104"
+    reply = backend.generate_numeric_reply(
+        system_prompt="You are helping an analyst refine a numeric estimate.",
+        user_prompt=(
+            "Question: How many medals did India win at the 2022 Asian Games?\n"
+            f"My current estimate is {est} medals. "
+            "End with 'Final estimate: <plain number in medals>' and nothing after the number."
+        ),
+    )
+    assert reply["provider"] == "adaption"
+    assert reply["input_tokens"] > 0
+    assert reply["output_tokens"] > 0
+    assert reply["cost_usd"] is not None
+    parsed = parse_numeric_estimate(str(reply["raw_reply"]), require_positive=True)
+    assert not parsed.miss
+    assert parsed.value is not None
+    assert parsed.value > 0
+
+
+def test_adaption_disables_hidden_reasoning_for_qwen_glm_deepseek_only(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("ADAPTION_API_KEY", "dummy-adaption-key")
+    payloads: list[dict[str, Any]] = []
+
+    def tx(_url: str, _headers: dict[str, str], payload: dict[str, Any]) -> dict[str, Any]:
+        payloads.append(payload)
+        return {
+            "model": payload["model"],
+            "status": "completed",
+            "output_text": "Final estimate: 5",
+        }
+
+    base = create_backend("adaption", model="gemma-4-26b-a4b-it", transport=tx)
+    for model_name in ("deepseek-v4-flash", "qwen3.8-27b", "glm-5.2"):
+        base.for_model(model_name).generate_chat("sys", "usr")
+        assert payloads[-1]["model"] == model_name
+        assert payloads[-1]["reasoning"] == {"effort": "none"}
+
+    for gemma_name in ("gemma-4-26b-a4b-it", "gemma-4-31b-it"):
+        base.for_model(gemma_name).generate_chat("sys", "usr")
+        assert payloads[-1]["model"] == gemma_name
+        assert "reasoning" not in payloads[-1]
+
+
+def test_synthetic_for_model_preserves_unrouted_defaults_and_supports_c4_c5_c6() -> None:
+    from apart_epistemics.datasets import build_numeric_core_tasks, generate_agent_population
+    from apart_epistemics.models import ConditionConfig
+
+    del ConditionConfig
+    base = create_backend("synthetic", seed=42)
+    task = build_numeric_core_tasks()[0]
+    agent = generate_agent_population(num_agents=1, seed=42)[0]
+
+    # Unrouted C1..C3 stays clean without setting `model` on the base backend.
+    assert not hasattr(base, "model")
+    c2_reply = base.generate_numeric_reply(
+        system_prompt="s",
+        user_prompt="u",
+        condition_id="C2",
+        task=task,
+        round_idx=1,
+        current_x=100.0,
+        pop_stats=(150.0, 90.0, 200.0),
+        agent=agent,
+    )
+    assert c2_reply["model_slug"] == "openai/gpt-frontier"
+
+    routed_qwen = base.for_model("qwen3.8-27b")
+    routed_glm = base.for_model("glm-5.2")
+    assert not hasattr(base, "model")
+    c5_qwen = routed_qwen.generate_numeric_reply(
+        system_prompt="s",
+        user_prompt="u",
+        condition_id="C5",
+        task=task,
+        round_idx=1,
+        current_x=100.0,
+        pop_stats=(150.0, 90.0, 200.0),
+        agent=agent,
+    )
+    c5_glm = routed_glm.generate_numeric_reply(
+        system_prompt="s",
+        user_prompt="u",
+        condition_id="C5",
+        task=task,
+        round_idx=1,
+        current_x=100.0,
+        pop_stats=(150.0, 90.0, 200.0),
+        agent=agent,
+    )
+    assert c5_qwen["model_slug"] == "qwen3.8-27b"
+    assert c5_glm["model_slug"] == "glm-5.2"
+    assert c5_qwen["raw_reply"] != c5_glm["raw_reply"]
+
+    c4_reply = base.generate_numeric_reply(
+        system_prompt="s",
+        user_prompt="u",
+        condition_id="C4",
+        task=task,
+        round_idx=1,
+        current_x=100.0,
+        pop_stats=(150.0, 90.0, 200.0),
+        agent=agent,
+    )
+    assert c4_reply["model_slug"] == "openai/gpt-frontier"
+    assert "Final estimate:" in c4_reply["raw_reply"]
