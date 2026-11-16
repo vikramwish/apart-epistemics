@@ -80,8 +80,10 @@ def _humanize_topic(slug: str) -> str:
 class SyntheticEpistemicBackend:
     """Grounded stochastic mechanism engine modeling decoding, origin, and personalization."""
 
-    def __init__(self, seed: int = 42) -> None:
+    def __init__(self, seed: int = 42, model: str | None = None) -> None:
         self.seed = seed
+        if model is not None:
+            self.model = model
 
     def for_model(self, model: str) -> SyntheticEpistemicBackend:
         """Clone simulator settings while pinning an explicit model slug."""

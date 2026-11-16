@@ -27,7 +27,10 @@ def create_backend(name: str, **kwargs: Any) -> Any:
     """Return the configured backend adapter for `name`."""
     norm = name.strip().lower()
     if norm == "synthetic":
-        return SyntheticEpistemicBackend(seed=int(kwargs.get("seed", 42)))
+        return SyntheticEpistemicBackend(
+            seed=int(kwargs.get("seed", 42)),
+            model=str(kwargs["model"]) if kwargs.get("model") else None,
+        )
     if norm == "replay":
         path = kwargs.get("jsonl_path") or kwargs.get("path")
         if not path:
