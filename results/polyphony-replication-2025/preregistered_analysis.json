@@ -1,0 +1,1057 @@
+{
+  "preregistered_constants": {
+    "DELTA_REFLECT": 0.00277025,
+    "DELTA_SANITY": 0.002986,
+    "alpha": 0.05,
+    "n_boot": 2000,
+    "seed": 42
+  },
+  "spec_audit": {
+    "n_distinct_specs": 1,
+    "differing_keys": {},
+    "pipeline_merge_will_succeed": true,
+    "note": "If differing_keys is non-empty, numeric_core._merge_compatible_run_specs returns {} and analyze_numeric_core silently reports 'incomplete_or_unverified' with no control contrasts. A differing current_date also changes the system prompt."
+  },
+  "final_round": 2,
+  "conditions_found": [
+    "P0",
+    "P0_DS",
+    "P0_GLM",
+    "P0_POLY",
+    "P0_QWEN",
+    "P1",
+    "P1_DS",
+    "P1_GLM",
+    "P1_QWEN",
+    "P1_REFLECT",
+    "P2",
+    "P3",
+    "P4"
+  ],
+  "n_tasks_per_condition": {
+    "P0": 40,
+    "P0_DS": 40,
+    "P0_GLM": 40,
+    "P0_POLY": 40,
+    "P0_QWEN": 40,
+    "P1": 40,
+    "P1_DS": 40,
+    "P1_GLM": 40,
+    "P1_QWEN": 40,
+    "P1_REFLECT": 40,
+    "P2": 40,
+    "P3": 40,
+    "P4": 40,
+    "VIRTUAL_SOCIAL": 40,
+    "VIRTUAL_SILENT": 40,
+    "POOLED_K1_SOCIAL_JENSEN_BOUND": 40,
+    "BEST_K1_SOCIAL": 40
+  },
+  "replicate_counts": {
+    "P0": {
+      "tasks": 40,
+      "complete_task_replicates": 120
+    },
+    "P0_DS": {
+      "tasks": 40,
+      "complete_task_replicates": 120
+    },
+    "P0_GLM": {
+      "tasks": 40,
+      "complete_task_replicates": 120
+    },
+    "P0_POLY": {
+      "tasks": 40,
+      "complete_task_replicates": 120
+    },
+    "P0_QWEN": {
+      "tasks": 40,
+      "complete_task_replicates": 120
+    },
+    "P1": {
+      "tasks": 40,
+      "complete_task_replicates": 120
+    },
+    "P1_DS": {
+      "tasks": 40,
+      "complete_task_replicates": 120
+    },
+    "P1_GLM": {
+      "tasks": 40,
+      "complete_task_replicates": 120
+    },
+    "P1_QWEN": {
+      "tasks": 40,
+      "complete_task_replicates": 120
+    },
+    "P1_REFLECT": {
+      "tasks": 40,
+      "complete_task_replicates": 120
+    },
+    "P2": {
+      "tasks": 40,
+      "complete_task_replicates": 120
+    },
+    "P3": {
+      "tasks": 40,
+      "complete_task_replicates": 120
+    },
+    "P4": {
+      "tasks": 40,
+      "complete_task_replicates": 120
+    },
+    "VIRTUAL_SOCIAL": {
+      "tasks": 40,
+      "complete_task_replicates": 120
+    },
+    "VIRTUAL_SILENT": {
+      "tasks": 40,
+      "complete_task_replicates": 120
+    }
+  },
+  "mean_crowd_error": {
+    "P0": 0.014872,
+    "P0_DS": 0.007916,
+    "P0_GLM": 0.009774,
+    "P0_POLY": 0.009488,
+    "P0_QWEN": 0.009033,
+    "P1": 0.031906,
+    "P1_DS": 0.016267,
+    "P1_GLM": 0.012114,
+    "P1_QWEN": 0.011671,
+    "P1_REFLECT": 0.027173,
+    "P2": 0.023431,
+    "P3": 0.015563,
+    "P4": 0.013343,
+    "VIRTUAL_SOCIAL": 0.016976,
+    "VIRTUAL_SILENT": 0.009425,
+    "POOLED_K1_SOCIAL_JENSEN_BOUND": 0.017989,
+    "BEST_K1_SOCIAL": 0.016267
+  },
+  "best_single_model_by_silent_arm": "deepseek",
+  "silent_arm_means": {
+    "gemma": 0.014872,
+    "deepseek": 0.007916,
+    "qwen": 0.009033,
+    "glm": 0.009774
+  },
+  "virtual_panel_problems": {
+    "social": [],
+    "silent": []
+  },
+  "mean_output_tokens": {
+    "P0": 390.5,
+    "P0_DS": 178.1,
+    "P0_GLM": 152.3,
+    "P0_POLY": 534.8,
+    "P0_QWEN": 1419.1,
+    "P1": 357.4,
+    "P1_DS": 213.3,
+    "P1_GLM": 220.2,
+    "P1_QWEN": 1812.5,
+    "P1_REFLECT": 289.7,
+    "P2": 293.6,
+    "P3": 639.1,
+    "P4": 526.0
+  },
+  "confirmatory_holm_m8": [
+    {
+      "name": "herding_ds",
+      "a": "P0_DS",
+      "b": "P1_DS",
+      "n_tasks": 40,
+      "n_nonzero": 40,
+      "mean_a": 0.007916,
+      "mean_b": 0.016267,
+      "mean_diff_b_minus_a": 0.00835,
+      "relative_change": 1.0548,
+      "ci95": [
+        0.006056,
+        0.010732
+      ],
+      "ci90": [
+        0.006468,
+        0.010394
+      ],
+      "b_better_worse_tied": [
+        1,
+        39,
+        0
+      ],
+      "p_exact": 0.0,
+      "p_holm": 0.0
+    },
+    {
+      "name": "herding_qwen",
+      "a": "P0_QWEN",
+      "b": "P1_QWEN",
+      "n_tasks": 40,
+      "n_nonzero": 40,
+      "mean_a": 0.009033,
+      "mean_b": 0.011671,
+      "mean_diff_b_minus_a": 0.002638,
+      "relative_change": 0.292,
+      "ci95": [
+        0.001613,
+        0.003752
+      ],
+      "ci90": [
+        0.001761,
+        0.003592
+      ],
+      "b_better_worse_tied": [
+        8,
+        32,
+        0
+      ],
+      "p_exact": 5e-06,
+      "p_holm": 2e-05
+    },
+    {
+      "name": "herding_glm",
+      "a": "P0_GLM",
+      "b": "P1_GLM",
+      "n_tasks": 40,
+      "n_nonzero": 40,
+      "mean_a": 0.009774,
+      "mean_b": 0.012114,
+      "mean_diff_b_minus_a": 0.00234,
+      "relative_change": 0.2394,
+      "ci95": [
+        0.000824,
+        0.004146
+      ],
+      "ci90": [
+        0.001057,
+        0.003807
+      ],
+      "b_better_worse_tied": [
+        9,
+        31,
+        0
+      ],
+      "p_exact": 0.001231,
+      "p_holm": 0.002462
+    },
+    {
+      "name": "reflect_vs_p1",
+      "a": "P1",
+      "b": "P1_REFLECT",
+      "n_tasks": 40,
+      "n_nonzero": 40,
+      "mean_a": 0.031906,
+      "mean_b": 0.027173,
+      "mean_diff_b_minus_a": -0.004733,
+      "relative_change": -0.1483,
+      "ci95": [
+        -0.006537,
+        -0.003025
+      ],
+      "ci90": [
+        -0.006217,
+        -0.003236
+      ],
+      "b_better_worse_tied": [
+        32,
+        8,
+        0
+      ],
+      "p_exact": 0.0,
+      "p_holm": 0.0
+    },
+    {
+      "name": "critique_vs_reflect",
+      "a": "P1_REFLECT",
+      "b": "P2",
+      "n_tasks": 40,
+      "n_nonzero": 40,
+      "mean_a": 0.027173,
+      "mean_b": 0.023431,
+      "mean_diff_b_minus_a": -0.003743,
+      "relative_change": -0.1377,
+      "ci95": [
+        -0.005708,
+        -0.001863
+      ],
+      "ci90": [
+        -0.005317,
+        -0.002193
+      ],
+      "b_better_worse_tied": [
+        30,
+        10,
+        0
+      ],
+      "p_exact": 0.00016,
+      "p_holm": 0.00048
+    },
+    {
+      "name": "p3_vs_silent_poly",
+      "a": "P0_POLY",
+      "b": "P3",
+      "n_tasks": 40,
+      "n_nonzero": 40,
+      "mean_a": 0.009488,
+      "mean_b": 0.015563,
+      "mean_diff_b_minus_a": 0.006075,
+      "relative_change": 0.6403,
+      "ci95": [
+        0.004649,
+        0.007668
+      ],
+      "ci90": [
+        0.004817,
+        0.00741
+      ],
+      "b_better_worse_tied": [
+        4,
+        36,
+        0
+      ],
+      "p_exact": 0.0,
+      "p_holm": 0.0
+    },
+    {
+      "name": "p4_vs_silent_poly",
+      "a": "P0_POLY",
+      "b": "P4",
+      "n_tasks": 40,
+      "n_nonzero": 40,
+      "mean_a": 0.009488,
+      "mean_b": 0.013343,
+      "mean_diff_b_minus_a": 0.003855,
+      "relative_change": 0.4064,
+      "ci95": [
+        0.002302,
+        0.005675
+      ],
+      "ci90": [
+        0.002441,
+        0.005419
+      ],
+      "b_better_worse_tied": [
+        6,
+        34,
+        0
+      ],
+      "p_exact": 3e-06,
+      "p_holm": 1.5e-05
+    },
+    {
+      "name": "p3_vs_virtual_social",
+      "a": "VIRTUAL_SOCIAL",
+      "b": "P3",
+      "n_tasks": 40,
+      "n_nonzero": 40,
+      "mean_a": 0.016976,
+      "mean_b": 0.015563,
+      "mean_diff_b_minus_a": -0.001413,
+      "relative_change": -0.0833,
+      "ci95": [
+        -0.002404,
+        -0.000505
+      ],
+      "ci90": [
+        -0.00224,
+        -0.000655
+      ],
+      "b_better_worse_tied": [
+        26,
+        14,
+        0
+      ],
+      "p_exact": 0.011074,
+      "p_holm": 0.011074
+    }
+  ],
+  "secondary_holm_m2": [
+    {
+      "name": "p3_vs_best_single_model_social",
+      "a": "BEST_K1_SOCIAL",
+      "b": "P3",
+      "n_tasks": 40,
+      "n_nonzero": 40,
+      "mean_a": 0.016267,
+      "mean_b": 0.015563,
+      "mean_diff_b_minus_a": -0.000704,
+      "relative_change": -0.0433,
+      "ci95": [
+        -0.002438,
+        0.000888
+      ],
+      "ci90": [
+        -0.002177,
+        0.000711
+      ],
+      "b_better_worse_tied": [
+        19,
+        21,
+        0
+      ],
+      "p_exact": 0.785203,
+      "p_holm": 0.785203
+    },
+    {
+      "name": "p4_vs_best_single_model_social",
+      "a": "BEST_K1_SOCIAL",
+      "b": "P4",
+      "n_tasks": 40,
+      "n_nonzero": 40,
+      "mean_a": 0.016267,
+      "mean_b": 0.013343,
+      "mean_diff_b_minus_a": -0.002923,
+      "relative_change": -0.1797,
+      "ci95": [
+        -0.004951,
+        -0.001084
+      ],
+      "ci90": [
+        -0.004657,
+        -0.001354
+      ],
+      "b_better_worse_tied": [
+        23,
+        17,
+        0
+      ],
+      "p_exact": 0.012016,
+      "p_holm": 0.024032
+    }
+  ],
+  "descriptive": [
+    {
+      "name": "p3_vs_pooled_jensen_bound",
+      "a": "POOLED_K1_SOCIAL_JENSEN_BOUND",
+      "b": "P3",
+      "n_tasks": 40,
+      "n_nonzero": 40,
+      "mean_a": 0.017989,
+      "mean_b": 0.015563,
+      "mean_diff_b_minus_a": -0.002427,
+      "relative_change": -0.1349,
+      "ci95": [
+        -0.003509,
+        -0.001425
+      ],
+      "ci90": [
+        -0.003331,
+        -0.001574
+      ],
+      "b_better_worse_tied": [
+        29,
+        11,
+        0
+      ],
+      "p_exact": 3.1e-05
+    },
+    {
+      "name": "silent_poly_vs_virtual_silent",
+      "a": "VIRTUAL_SILENT",
+      "b": "P0_POLY",
+      "n_tasks": 40,
+      "n_nonzero": 40,
+      "mean_a": 0.009425,
+      "mean_b": 0.009488,
+      "mean_diff_b_minus_a": 6.3e-05,
+      "relative_change": 0.0067,
+      "ci95": [
+        -0.000639,
+        0.000725
+      ],
+      "ci90": [
+        -0.000513,
+        0.000621
+      ],
+      "b_better_worse_tied": [
+        19,
+        21,
+        0
+      ],
+      "p_exact": 0.734557
+    }
+  ],
+  "replication_p_series_holm_m4": [
+    {
+      "name": "p1_vs_p0",
+      "a": "P0",
+      "b": "P1",
+      "n_tasks": 40,
+      "n_nonzero": 40,
+      "mean_a": 0.014872,
+      "mean_b": 0.031906,
+      "mean_diff_b_minus_a": 0.017035,
+      "relative_change": 1.1454,
+      "ci95": [
+        0.012324,
+        0.021786
+      ],
+      "ci90": [
+        0.013088,
+        0.021027
+      ],
+      "b_better_worse_tied": [
+        4,
+        36,
+        0
+      ],
+      "p_exact": 0.0,
+      "p_holm": 0.0
+    },
+    {
+      "name": "p2_vs_p1",
+      "a": "P1",
+      "b": "P2",
+      "n_tasks": 40,
+      "n_nonzero": 40,
+      "mean_a": 0.031906,
+      "mean_b": 0.023431,
+      "mean_diff_b_minus_a": -0.008476,
+      "relative_change": -0.2656,
+      "ci95": [
+        -0.011339,
+        -0.005842
+      ],
+      "ci90": [
+        -0.010933,
+        -0.006136
+      ],
+      "b_better_worse_tied": [
+        35,
+        5,
+        0
+      ],
+      "p_exact": 0.0,
+      "p_holm": 0.0
+    },
+    {
+      "name": "p4_vs_p3",
+      "a": "P3",
+      "b": "P4",
+      "n_tasks": 40,
+      "n_nonzero": 40,
+      "mean_a": 0.015563,
+      "mean_b": 0.013343,
+      "mean_diff_b_minus_a": -0.002219,
+      "relative_change": -0.1426,
+      "ci95": [
+        -0.003719,
+        -0.000545
+      ],
+      "ci90": [
+        -0.003514,
+        -0.000881
+      ],
+      "b_better_worse_tied": [
+        30,
+        10,
+        0
+      ],
+      "p_exact": 0.000452,
+      "p_holm": 0.000904
+    },
+    {
+      "name": "p4_vs_p0",
+      "a": "P0",
+      "b": "P4",
+      "n_tasks": 40,
+      "n_nonzero": 40,
+      "mean_a": 0.014872,
+      "mean_b": 0.013343,
+      "mean_diff_b_minus_a": -0.001528,
+      "relative_change": -0.1028,
+      "ci95": [
+        -0.005596,
+        0.002288
+      ],
+      "ci90": [
+        -0.004938,
+        0.00173
+      ],
+      "b_better_worse_tied": [
+        20,
+        20,
+        0
+      ],
+      "p_exact": 0.636765,
+      "p_holm": 0.636765
+    }
+  ],
+  "interpretation": {
+    "herding_generalises": "Telemetry significantly worsens crowd error in 3/3 additional models (herding_ds, herding_qwen, herding_glm), plus Gemma from P0-P4.",
+    "critique_mechanism": "Two-sided critique beats length-matched generic reflection: 'dialectical' is supported.",
+    "cross_model_social_benefit": "A heterogeneous median herds less than a homogeneous one: genuine cross-architecture social benefit.",
+    "social_vs_silent_mixed_panel": "P3 vs P0_POLY: worse (significant, p_holm=0.0); P4 vs P0_POLY: worse (significant, p_holm=1.5e-05)",
+    "harness_sanity": "PASS: silent mixed panel matches its seat-matched virtual panel.",
+    "practical": "P3 vs the best single model's social arm: diff -0.000704, p_holm=0.785203."
+  },
+  "secondary_metric_abs_log_error": {
+    "metric_definition": "|xbar_2 - y*|",
+    "n_tasks_per_condition": {
+      "P0": 40,
+      "P0_DS": 40,
+      "P0_GLM": 40,
+      "P0_POLY": 40,
+      "P0_QWEN": 40,
+      "P1": 40,
+      "P1_DS": 40,
+      "P1_GLM": 40,
+      "P1_QWEN": 40,
+      "P1_REFLECT": 40,
+      "P2": 40,
+      "P3": 40,
+      "P4": 40,
+      "VIRTUAL_SOCIAL": 40,
+      "VIRTUAL_SILENT": 40,
+      "POOLED_K1_SOCIAL_JENSEN_BOUND": 40,
+      "BEST_K1_SOCIAL": 40
+    },
+    "mean_by_condition": {
+      "P0": 0.103885,
+      "P0_DS": 0.077528,
+      "P0_GLM": 0.084557,
+      "P0_POLY": 0.084171,
+      "P0_QWEN": 0.080022,
+      "P1": 0.159964,
+      "P1_DS": 0.112331,
+      "P1_GLM": 0.095665,
+      "P1_QWEN": 0.092289,
+      "P1_REFLECT": 0.146522,
+      "P2": 0.134915,
+      "P3": 0.110974,
+      "P4": 0.102137,
+      "VIRTUAL_SOCIAL": 0.116,
+      "VIRTUAL_SILENT": 0.08385,
+      "POOLED_K1_SOCIAL_JENSEN_BOUND": 0.115062,
+      "BEST_K1_SOCIAL": 0.112331
+    },
+    "best_single_model_by_silent_arm": "deepseek",
+    "silent_arm_means": {
+      "gemma": 0.103885,
+      "deepseek": 0.077528,
+      "qwen": 0.080022,
+      "glm": 0.084557
+    },
+    "confirmatory_holm_m8": [
+      {
+        "name": "herding_ds",
+        "a": "P0_DS",
+        "b": "P1_DS",
+        "n_tasks": 40,
+        "n_nonzero": 40,
+        "mean_a": 0.077528,
+        "mean_b": 0.112331,
+        "mean_diff_b_minus_a": 0.034803,
+        "relative_change": 0.4489,
+        "ci95": [
+          0.026857,
+          0.043634
+        ],
+        "ci90": [
+          0.028208,
+          0.042315
+        ],
+        "b_better_worse_tied": [
+          1,
+          39,
+          0
+        ],
+        "p_exact": 0.0,
+        "p_holm": 0.0
+      },
+      {
+        "name": "herding_qwen",
+        "a": "P0_QWEN",
+        "b": "P1_QWEN",
+        "n_tasks": 40,
+        "n_nonzero": 40,
+        "mean_a": 0.080022,
+        "mean_b": 0.092289,
+        "mean_diff_b_minus_a": 0.012267,
+        "relative_change": 0.1533,
+        "ci95": [
+          0.00744,
+          0.017241
+        ],
+        "ci90": [
+          0.00817,
+          0.016597
+        ],
+        "b_better_worse_tied": [
+          7,
+          33,
+          0
+        ],
+        "p_exact": 9e-06,
+        "p_holm": 3.6e-05
+      },
+      {
+        "name": "herding_glm",
+        "a": "P0_GLM",
+        "b": "P1_GLM",
+        "n_tasks": 40,
+        "n_nonzero": 40,
+        "mean_a": 0.084557,
+        "mean_b": 0.095665,
+        "mean_diff_b_minus_a": 0.011108,
+        "relative_change": 0.1314,
+        "ci95": [
+          0.003927,
+          0.019729
+        ],
+        "ci90": [
+          0.005061,
+          0.018197
+        ],
+        "b_better_worse_tied": [
+          9,
+          31,
+          0
+        ],
+        "p_exact": 0.001298,
+        "p_holm": 0.002596
+      },
+      {
+        "name": "reflect_vs_p1",
+        "a": "P1",
+        "b": "P1_REFLECT",
+        "n_tasks": 40,
+        "n_nonzero": 40,
+        "mean_a": 0.159964,
+        "mean_b": 0.146522,
+        "mean_diff_b_minus_a": -0.013441,
+        "relative_change": -0.084,
+        "ci95": [
+          -0.018707,
+          -0.008594
+        ],
+        "ci90": [
+          -0.017755,
+          -0.009292
+        ],
+        "b_better_worse_tied": [
+          33,
+          7,
+          0
+        ],
+        "p_exact": 0.0,
+        "p_holm": 0.0
+      },
+      {
+        "name": "critique_vs_reflect",
+        "a": "P1_REFLECT",
+        "b": "P2",
+        "n_tasks": 40,
+        "n_nonzero": 40,
+        "mean_a": 0.146522,
+        "mean_b": 0.134915,
+        "mean_diff_b_minus_a": -0.011607,
+        "relative_change": -0.0792,
+        "ci95": [
+          -0.017541,
+          -0.006126
+        ],
+        "ci90": [
+          -0.016344,
+          -0.007096
+        ],
+        "b_better_worse_tied": [
+          30,
+          10,
+          0
+        ],
+        "p_exact": 0.00016,
+        "p_holm": 0.00048
+      },
+      {
+        "name": "p3_vs_silent_poly",
+        "a": "P0_POLY",
+        "b": "P3",
+        "n_tasks": 40,
+        "n_nonzero": 40,
+        "mean_a": 0.084171,
+        "mean_b": 0.110974,
+        "mean_diff_b_minus_a": 0.026803,
+        "relative_change": 0.3184,
+        "ci95": [
+          0.020883,
+          0.033521
+        ],
+        "ci90": [
+          0.021785,
+          0.032433
+        ],
+        "b_better_worse_tied": [
+          2,
+          38,
+          0
+        ],
+        "p_exact": 0.0,
+        "p_holm": 0.0
+      },
+      {
+        "name": "p4_vs_silent_poly",
+        "a": "P0_POLY",
+        "b": "P4",
+        "n_tasks": 40,
+        "n_nonzero": 40,
+        "mean_a": 0.084171,
+        "mean_b": 0.102137,
+        "mean_diff_b_minus_a": 0.017966,
+        "relative_change": 0.2134,
+        "ci95": [
+          0.012035,
+          0.023928
+        ],
+        "ci90": [
+          0.012891,
+          0.02305
+        ],
+        "b_better_worse_tied": [
+          5,
+          35,
+          0
+        ],
+        "p_exact": 0.0,
+        "p_holm": 0.0
+      },
+      {
+        "name": "p3_vs_virtual_social",
+        "a": "VIRTUAL_SOCIAL",
+        "b": "P3",
+        "n_tasks": 40,
+        "n_nonzero": 40,
+        "mean_a": 0.116,
+        "mean_b": 0.110974,
+        "mean_diff_b_minus_a": -0.005026,
+        "relative_change": -0.0433,
+        "ci95": [
+          -0.008082,
+          -0.002261
+        ],
+        "ci90": [
+          -0.007675,
+          -0.002702
+        ],
+        "b_better_worse_tied": [
+          28,
+          12,
+          0
+        ],
+        "p_exact": 0.003358,
+        "p_holm": 0.003358
+      }
+    ],
+    "secondary_holm_m2": [
+      {
+        "name": "p3_vs_best_single_model_social",
+        "a": "BEST_K1_SOCIAL",
+        "b": "P3",
+        "n_tasks": 40,
+        "n_nonzero": 40,
+        "mean_a": 0.112331,
+        "mean_b": 0.110974,
+        "mean_diff_b_minus_a": -0.001357,
+        "relative_change": -0.0121,
+        "ci95": [
+          -0.006823,
+          0.00377
+        ],
+        "ci90": [
+          -0.005872,
+          0.00297
+        ],
+        "b_better_worse_tied": [
+          21,
+          19,
+          0
+        ],
+        "p_exact": 0.795448,
+        "p_holm": 0.795448
+      },
+      {
+        "name": "p4_vs_best_single_model_social",
+        "a": "BEST_K1_SOCIAL",
+        "b": "P4",
+        "n_tasks": 40,
+        "n_nonzero": 40,
+        "mean_a": 0.112331,
+        "mean_b": 0.102137,
+        "mean_diff_b_minus_a": -0.010194,
+        "relative_change": -0.0908,
+        "ci95": [
+          -0.017411,
+          -0.003617
+        ],
+        "ci90": [
+          -0.016238,
+          -0.004591
+        ],
+        "b_better_worse_tied": [
+          23,
+          17,
+          0
+        ],
+        "p_exact": 0.024076,
+        "p_holm": 0.048152
+      }
+    ],
+    "descriptive": [
+      {
+        "name": "p3_vs_pooled_jensen_bound",
+        "a": "POOLED_K1_SOCIAL_JENSEN_BOUND",
+        "b": "P3",
+        "n_tasks": 40,
+        "n_nonzero": 40,
+        "mean_a": 0.115062,
+        "mean_b": 0.110974,
+        "mean_diff_b_minus_a": -0.004088,
+        "relative_change": -0.0355,
+        "ci95": [
+          -0.006722,
+          -0.001741
+        ],
+        "ci90": [
+          -0.006256,
+          -0.002076
+        ],
+        "b_better_worse_tied": [
+          25,
+          15,
+          0
+        ],
+        "p_exact": 0.008264
+      },
+      {
+        "name": "silent_poly_vs_virtual_silent",
+        "a": "VIRTUAL_SILENT",
+        "b": "P0_POLY",
+        "n_tasks": 40,
+        "n_nonzero": 40,
+        "mean_a": 0.08385,
+        "mean_b": 0.084171,
+        "mean_diff_b_minus_a": 0.000321,
+        "relative_change": 0.0038,
+        "ci95": [
+          -0.002493,
+          0.003153
+        ],
+        "ci90": [
+          -0.002028,
+          0.002717
+        ],
+        "b_better_worse_tied": [
+          20,
+          20,
+          0
+        ],
+        "p_exact": 0.931152
+      }
+    ],
+    "replication_p_series_holm_m4": [
+      {
+        "name": "p1_vs_p0",
+        "a": "P0",
+        "b": "P1",
+        "n_tasks": 40,
+        "n_nonzero": 40,
+        "mean_a": 0.103885,
+        "mean_b": 0.159964,
+        "mean_diff_b_minus_a": 0.056078,
+        "relative_change": 0.5398,
+        "ci95": [
+          0.039417,
+          0.0725
+        ],
+        "ci90": [
+          0.042216,
+          0.070359
+        ],
+        "b_better_worse_tied": [
+          4,
+          36,
+          0
+        ],
+        "p_exact": 0.0,
+        "p_holm": 0.0
+      },
+      {
+        "name": "p2_vs_p1",
+        "a": "P1",
+        "b": "P2",
+        "n_tasks": 40,
+        "n_nonzero": 40,
+        "mean_a": 0.159964,
+        "mean_b": 0.134915,
+        "mean_diff_b_minus_a": -0.025049,
+        "relative_change": -0.1566,
+        "ci95": [
+          -0.033532,
+          -0.017222
+        ],
+        "ci90": [
+          -0.032284,
+          -0.018419
+        ],
+        "b_better_worse_tied": [
+          36,
+          4,
+          0
+        ],
+        "p_exact": 0.0,
+        "p_holm": 0.0
+      },
+      {
+        "name": "p4_vs_p3",
+        "a": "P3",
+        "b": "P4",
+        "n_tasks": 40,
+        "n_nonzero": 40,
+        "mean_a": 0.110974,
+        "mean_b": 0.102137,
+        "mean_diff_b_minus_a": -0.008837,
+        "relative_change": -0.0796,
+        "ci95": [
+          -0.013845,
+          -0.003576
+        ],
+        "ci90": [
+          -0.013084,
+          -0.004654
+        ],
+        "b_better_worse_tied": [
+          31,
+          9,
+          0
+        ],
+        "p_exact": 0.000538,
+        "p_holm": 0.001076
+      },
+      {
+        "name": "p4_vs_p0",
+        "a": "P0",
+        "b": "P4",
+        "n_tasks": 40,
+        "n_nonzero": 40,
+        "mean_a": 0.103885,
+        "mean_b": 0.102137,
+        "mean_diff_b_minus_a": -0.001748,
+        "relative_change": -0.0168,
+        "ci95": [
+          -0.015015,
+          0.011187
+        ],
+        "ci90": [
+          -0.013245,
+          0.009216
+        ],
+        "b_better_worse_tied": [
+          21,
+          19,
+          0
+        ],
+        "p_exact": 0.795448,
+        "p_holm": 0.795448
+      }
+    ]
+  }
+}
