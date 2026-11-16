@@ -1,0 +1,133 @@
+This is the README for the OldStandard package, version 2.7b,
+release 2026-05-06.
+
+This package provides the Old Standard family of fonts
+designed by Alexey Kryukov and revised by Robert Alessi and
+Antonis Tsolomitis, in both OpenType and Type1 formats, with
+support for both traditional and modern LaTeX processors.
+
+Old Standard reproduces a specific type of Modern
+(classicist) style of serif typefaces, very commonly used in
+various editions of the late 19th and early 20th century,
+but almost completely abandoned later. However, this
+lettertype still has at least two advantages:
+
+  + it can be considered a good choice for typesetting
+    scientific papers, especially in social and humanitarian
+    sciences, as its specific features are closely
+    associated in people's eyes with old books they learned
+    on;
+
+ +  the most beautiful examples of Greek and Cyrillic
+    lettertypes were all based on the classicist style,
+    so for those scripts, "Modern" fonts are much more
+    appropriate than any contemporary (e.g. Times-based)
+    designs.
+
+In comparison to the previous releases of Old Standard, it
+includes new letters and some corrections:
+
+1. Small capitals for Roman, Greek and Cyrillic letters, in all three
+   styles, Regular, Italic and Bold have been added. Small capitals,
+   which were missing from *Old Standard*, were already in use a
+   century ago in fine books which used font faces very similar to
+   *Old Standard*. Typical use cases of small capitals were headers,
+   current headings and in some books proper names.
+2. A bold italic shape was first auto-generated in 2019. Of course,
+   auto-generating shapes was not a satisfactory solution. Since then,
+   the characters have been reworked manually.
+3. The letter G with caron above, that is: Ǧ (`U+01E6`, uppercase) and
+   ǧ (`U+01E7`, lowercase) has been added. It is the only character
+   missing from *Old Standard* that is needed in some of the accepted
+   standards of romanization of classical Arabic.[^2]
+4. Additionally, this release corrects the `+ss06` feature provided by
+   *Old Standard*. This feature is supposed to distinguish between
+   regular and ‘curled’ beta (β/ϐ) and to print ‘curled’ beta
+   (`U+03D0`) in medial position. This feature worked in most cases
+   with the previous release of *Old Standard*. However, it failed if
+   the beta is preceded by a vowel with an acute accent taken from the
+   *Greek extended* Unicode block.
+5. Open theta has been replaced with closed theta in slot 03B8 and
+  rules ss05 and ss06 have been adjusted accordingly.
+6. **Oldstyle numerals**: These have been designed by Antonis
+  Tsolomitis for regular and bold series and can be selected by
+  `RawFeature=onum`.
+7. **Math Font**: This is a major and long-awaited enhancement
+  to Old Standard. The math font has been designed by Antonis
+  Tsolomitis from an old French book published by Gauthier-Villars
+  that used a font similar to Old Standard for Greek and a Bodoni font
+  for Latin. As both Bodoni and Old Standard were “romantic”
+  faces, it is hoped that they match up nicely, even if this remains
+  to be proven...<br/>
+  Two integrals are provided: a romantic one, which is selected by
+  default, and an upright version, which can be selected with
+  `StylisticSet=2`.
+
+
+To install this package on a TDS-compliant
+TeX system download the file
+"tex-archive"/install/fonts/oldstandard.tds.zip where the
+preferred URL for "tex-archive" is http://mirrors.ctan.org.
+Unzip the archive at the root of an appropriate texmf tree,
+likely a personal or local tree. If necessary, update the
+file-name database (e.g., texhash). Update the font-map
+files by enabling the Map file OldStandard.map.
+
+To use, add
+
+\usepackage{OldStandard}
+
+to the preamble of your document. This will activate
+OldStandard as the main (serifed) text font. Regular,
+Italic, Bold and BoldItalic styles are available. Font
+encodings supported are OT1, T1, TS1, LY1, LGR and T2A/B/C.
+
+Options include:
+
+oldstyle,osf old-style figures
+lining,lf    lining figures
+
+proportional,p  varying-width figures
+tabular,t       fixed-width figures
+
+The defaults now are oldstyle and proportional.
+
+Commands \oldstylenums{...} and \liningnums{...} are defined
+to allow for local use of old-style figures or lining
+figures, respectively. Similarly, \tabularnums{...} and
+\proportionalnums{...} allow for local use of monospaced or
+varying-width figures, respectively.
+
+Superior numbers (for footnote markers) are available
+using \sufigures or \textsu{...}. Inferior numbers (for
+subscripts) are available using \infigures or \textinf{...}.
+
+
+LuaLaTeX and xeLaTeX users may also use OldStandard.sty but
+should read the oldstand-manual document for information
+on taking advantage of OpenType features. If they prefer
+type1 fonts or wish to avoid fontspec they may use the type1
+option.
+
+Options scaled=<number> or scale=<number> may be used to
+scale the fonts.
+
+To use OldStandard-Math, see oldstandard-mathtest.tex in the doc directory.
+
+The text fonts are licensed under the SIL Open Font License,
+version 1.1; the text may be found in the doc directory.
+The Math font is released under the GUST Font License;
+see http://tug.org/fonts/licenses/GUST-FONT-LICENSE.txt
+The type1 versions were created using cfftot1. The LaTeX
+support files were created using autoinst and are licensed
+under the terms of the LaTeX Project Public License.
+The maintainers of this package are Bob Tennent (rdtennent at
+gmail dot com), Nikola Lecic and Robert Alessi.
+
+Please send error reports and suggestions for improvements
+to Robert Alessi or Antonis Tsolomitis:
+
+  * email: <alessi@robertalessi.net> / <atsol@aegean.gr>
+  * website: <https://sr.ht/~ralessi/oldstandard/>
+  * development: <https://git.sr.ht/~ralessi/oldstandard>
+  * comments, feature requests, bug reports: <https://todo.sr.ht/~ralessi/oldstandard>

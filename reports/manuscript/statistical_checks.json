@@ -1,0 +1,392 @@
+{
+  "source_sha256": "041a8170379b3be671de2aa6a1e1017b8cc64c950f8511b5e71c59968fef272a",
+  "n_tasks": 40,
+  "n_domains": 15,
+  "bootstrap_seed": 20261116,
+  "bootstrap_resamples": 10000,
+  "scope": "post hoc; task estimates conditional on fixed benchmark and model runs",
+  "contrasts": [
+    {
+      "family": "pseries",
+      "a": "P0",
+      "b": "P1",
+      "mean": 0.01703464507774463,
+      "p": 1.3860699255019426e-09,
+      "p_global_holm": 1.663283910602331e-08,
+      "task_omission": {
+        "subsets": 40,
+        "same_direction": 40,
+        "p_holm_range": [
+          1.2005330063402653e-09,
+          1.1088559404015541e-08
+        ],
+        "significant_subsets": 40
+      },
+      "domain_omission": {
+        "subsets": 15,
+        "same_direction": 15,
+        "p_holm_range": [
+          2.2118911147117615e-09,
+          1.2957025319337845e-07
+        ],
+        "significant_subsets": 15
+      }
+    },
+    {
+      "family": "pseries",
+      "a": "P1",
+      "b": "P2",
+      "mean": -0.008475635473435255,
+      "p": 1.9444996723905206e-09,
+      "p_global_holm": 2.1389496396295726e-08,
+      "task_omission": {
+        "subsets": 40,
+        "same_direction": 40,
+        "p_holm_range": [
+          1.0186340659856796e-09,
+          1.1666998034343123e-08
+        ],
+        "significant_subsets": 40
+      },
+      "domain_omission": {
+        "subsets": 15,
+        "same_direction": 15,
+        "p_holm_range": [
+          2.2118911147117615e-09,
+          9.333598427474499e-08
+        ],
+        "significant_subsets": 15
+      }
+    },
+    {
+      "family": "pseries",
+      "a": "P3",
+      "b": "P4",
+      "mean": -0.002219439141149612,
+      "p": 0.0004523318730207393,
+      "p_global_holm": 0.0027139912381244358,
+      "task_omission": {
+        "subsets": 40,
+        "same_direction": 40,
+        "p_holm_range": [
+          0.00012721864914055914,
+          0.0015881470826570876
+        ],
+        "significant_subsets": 40
+      },
+      "domain_omission": {
+        "subsets": 15,
+        "same_direction": 15,
+        "p_holm_range": [
+          7.943838136270642e-05,
+          0.005567710381001234
+        ],
+        "significant_subsets": 15
+      }
+    },
+    {
+      "family": "pseries",
+      "a": "P0",
+      "b": "P4",
+      "mean": -0.0015284942876415616,
+      "p": 0.6367651425298391,
+      "p_global_holm": 1.0,
+      "task_omission": {
+        "subsets": 40,
+        "same_direction": 40,
+        "p_holm_range": [
+          0.4511742132890504,
+          0.8306541132660641
+        ],
+        "significant_subsets": 0
+      },
+      "domain_omission": {
+        "subsets": 15,
+        "same_direction": 15,
+        "p_holm_range": [
+          0.42841404819046147,
+          0.9566913228773046
+        ],
+        "significant_subsets": 0
+      }
+    },
+    {
+      "family": "controls",
+      "a": "P0_DS",
+      "b": "P1_DS",
+      "mean": 0.008350061531643159,
+      "p": 2.546585164964199e-11,
+      "p_global_holm": 3.5652192309498787e-10,
+      "task_omission": {
+        "subsets": 40,
+        "same_direction": 40,
+        "p_holm_range": [
+          2.9103830456733704e-11,
+          4.0745362639427185e-10
+        ],
+        "significant_subsets": 40
+      },
+      "domain_omission": {
+        "subsets": 15,
+        "same_direction": 15,
+        "p_holm_range": [
+          2.3283064365386963e-10,
+          9.313225746154785e-09
+        ],
+        "significant_subsets": 15
+      }
+    },
+    {
+      "family": "controls",
+      "a": "P0_QWEN",
+      "b": "P1_QWEN",
+      "mean": 0.002637764199335631,
+      "p": 4.9328082241117954e-06,
+      "p_global_holm": 3.9462465792894363e-05,
+      "task_omission": {
+        "subsets": 40,
+        "same_direction": 40,
+        "p_holm_range": [
+          4.622685082722455e-06,
+          3.8725920603610575e-05
+        ],
+        "significant_subsets": 40
+      },
+      "domain_omission": {
+        "subsets": 15,
+        "same_direction": 15,
+        "p_holm_range": [
+          8.550705388188362e-06,
+          0.0002647398505359888
+        ],
+        "significant_subsets": 15
+      }
+    },
+    {
+      "family": "controls",
+      "a": "P0_GLM",
+      "b": "P1_GLM",
+      "mean": 0.0023400739280617284,
+      "p": 0.0012308068326092325,
+      "p_global_holm": 0.006154034163046163,
+      "task_omission": {
+        "subsets": 40,
+        "same_direction": 40,
+        "p_holm_range": [
+          0.000748683847632492,
+          0.004484711913391948
+        ],
+        "significant_subsets": 40
+      },
+      "domain_omission": {
+        "subsets": 15,
+        "same_direction": 15,
+        "p_holm_range": [
+          0.0006475742266047746,
+          0.014553519897162914
+        ],
+        "significant_subsets": 15
+      }
+    },
+    {
+      "family": "controls",
+      "a": "P0_POLY",
+      "b": "P3",
+      "mean": 0.006074787048167539,
+      "p": 5.584297468885779e-10,
+      "p_global_holm": 7.259586709551513e-09,
+      "task_omission": {
+        "subsets": 40,
+        "same_direction": 40,
+        "p_holm_range": [
+          8.403731044381857e-10,
+          7.818016456440091e-09
+        ],
+        "significant_subsets": 40
+      },
+      "domain_omission": {
+        "subsets": 15,
+        "same_direction": 15,
+        "p_holm_range": [
+          8.403731044381857e-10,
+          1.1164229363203049e-07
+        ],
+        "significant_subsets": 15
+      }
+    },
+    {
+      "family": "controls",
+      "a": "P0_POLY",
+      "b": "P4",
+      "mean": 0.0038553479070179268,
+      "p": 2.9234961402835324e-06,
+      "p_global_holm": 2.6311465262551792e-05,
+      "task_omission": {
+        "subsets": 40,
+        "same_direction": 40,
+        "p_holm_range": [
+          1.2410455383360386e-06,
+          2.878794475691393e-05
+        ],
+        "significant_subsets": 40
+      },
+      "domain_omission": {
+        "subsets": 15,
+        "same_direction": 15,
+        "p_holm_range": [
+          1.2410455383360386e-06,
+          0.00011634692782536149
+        ],
+        "significant_subsets": 15
+      }
+    },
+    {
+      "family": "controls",
+      "a": "P1",
+      "b": "P1_REFLECT",
+      "mean": -0.004732911744949253,
+      "p": 4.765788617078215e-07,
+      "p_global_holm": 4.765788617078215e-06,
+      "task_omission": {
+        "subsets": 40,
+        "same_direction": 40,
+        "p_holm_range": [
+          8.725692168809474e-07,
+          5.680987669620663e-06
+        ],
+        "significant_subsets": 40
+      },
+      "domain_omission": {
+        "subsets": 15,
+        "same_direction": 15,
+        "p_holm_range": [
+          4.470348358154297e-07,
+          3.994029248133302e-05
+        ],
+        "significant_subsets": 15
+      }
+    },
+    {
+      "family": "controls",
+      "a": "P1_REFLECT",
+      "b": "P2",
+      "mean": -0.003742723728486002,
+      "p": 0.0001597403588675661,
+      "p_global_holm": 0.0011181825120729627,
+      "task_omission": {
+        "subsets": 40,
+        "same_direction": 40,
+        "p_holm_range": [
+          9.74545328062959e-05,
+          0.0009065730810107198
+        ],
+        "significant_subsets": 40
+      },
+      "domain_omission": {
+        "subsets": 15,
+        "same_direction": 15,
+        "p_holm_range": [
+          9.74545328062959e-05,
+          0.0024819831596687436
+        ],
+        "significant_subsets": 15
+      }
+    },
+    {
+      "family": "controls",
+      "a": "VIRTUAL_SOCIAL",
+      "b": "P3",
+      "mean": -0.0014134372871647252,
+      "p": 0.011074391617512447,
+      "p_global_holm": 0.04429756647004979,
+      "task_omission": {
+        "subsets": 40,
+        "same_direction": 40,
+        "p_holm_range": [
+          0.005187311820918694,
+          0.018950322508317186
+        ],
+        "significant_subsets": 40
+      },
+      "domain_omission": {
+        "subsets": 15,
+        "same_direction": 15,
+        "p_holm_range": [
+          0.005187311820918694,
+          0.04387893014063593
+        ],
+        "significant_subsets": 15
+      }
+    },
+    {
+      "family": "secondary",
+      "a": "P1_DS",
+      "b": "P3",
+      "mean": -0.0007040105309077125,
+      "p": 0.7852034492480016,
+      "p_global_holm": 1.0,
+      "task_omission": {
+        "subsets": 40,
+        "same_direction": 40,
+        "p_holm_range": [
+          0.5949446441882174,
+          0.9944965508257155
+        ],
+        "significant_subsets": 0
+      },
+      "domain_omission": {
+        "subsets": 15,
+        "same_direction": 15,
+        "p_holm_range": [
+          0.4461299913964467,
+          1.0
+        ],
+        "significant_subsets": 0
+      }
+    },
+    {
+      "family": "secondary",
+      "a": "P1_DS",
+      "b": "P4",
+      "mean": -0.0029234496720573246,
+      "p": 0.012015921452984912,
+      "p_global_holm": 0.04429756647004979,
+      "task_omission": {
+        "subsets": 40,
+        "same_direction": 40,
+        "p_holm_range": [
+          0.008999463258078322,
+          0.04100167933211196
+        ],
+        "significant_subsets": 40
+      },
+      "domain_omission": {
+        "subsets": 15,
+        "same_direction": 15,
+        "p_holm_range": [
+          0.011391018684662413,
+          0.08844242914346978
+        ],
+        "significant_subsets": 11
+      }
+    }
+  ],
+  "recovery": {
+    "Gemma": {
+      "fraction": 0.4975528069268949,
+      "ci": [
+        0.3690068824631575,
+        0.6693982362323271
+      ],
+      "nonpositive_denominator_resamples": 0
+    },
+    "Mix": {
+      "fraction": 0.36535258331715614,
+      "ci": [
+        0.08471808149419499,
+        0.5795201014230198
+      ],
+      "nonpositive_denominator_resamples": 0
+    }
+  }
+}

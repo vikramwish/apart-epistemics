@@ -46,7 +46,31 @@ paper/*.fls
 paper/*.fdb_latexmk
 paper/*.synctex.gz
 
-# Large raw Study 2 logs (hosted on GitHub Release data-v1; fetched by `make data`)
-results/polyphony-replication-2025/numeric_runs.jsonl
-results/polyphony-replication-2025/provider_requests.jsonl
-results/polyphony-replication-2025/dry_run/
+# New run output and local design/agent artifacts are not submission evidence.
+/results/*
+!/results/README.md
+!/results/polyphony-p0-p4/
+!/results/polyphony-p0-p4-12task-alpha03/
+!/results/polyphony-controls/
+!/results/polyphony-replication-2025/
+/_local_archive/
+/.assets/
+/.designs/
+/output/
+
+# Large raw replication logs are available separately; hashes are in PROVENANCE.md.
+/results/polyphony-replication-2025/numeric_runs.jsonl
+/results/polyphony-replication-2025/provider_requests.jsonl
+/results/polyphony-replication-2025/dry_run/
+
+# Keep manuscript source, figures, fonts and final PDF; exclude build intermediates.
+reports/**/*.aux
+reports/**/*.bbl
+reports/**/*.blg
+reports/**/*.log
+reports/**/*.out
+reports/**/*.toc
+reports/**/*.fls
+reports/**/*.fdb_latexmk
+reports/**/*.synctex.gz
+reports/**/*.xdv

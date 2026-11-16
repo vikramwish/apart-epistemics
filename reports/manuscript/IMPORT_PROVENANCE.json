@@ -1,0 +1,26 @@
+{
+  "source_folder": "paper_v4_source",
+  "source_sha256": {
+    "fig0.pdf": "78c336d08703c2dd06452831cbd130b58873f6539ae7ce583e1ea25ea156be64",
+    "fig0.py": "9336fd05a6a583aa3b1401c3c79ded687f917ffceeb244aa1df5207ad0283cc2",
+    "fig1.pdf": "861e393e992e65153570b47aed92b38d01903075554710d7ce53ff0b8c2b1071",
+    "fig2.pdf": "d80594eb9df625865b5300e7c432c54ad0dcdfe95b0d72177f3aedb5df996722",
+    "fig3.pdf": "5b6652b0f6eb9e332121e7630028978ccc27becf5f9abcdc9b904ceaeeac3076",
+    "fig4.pdf": "f255c27a1884501963d5a8784e77853de04921688034407fd59df200a05f0531",
+    "fig5.pdf": "f9e1762be909c34033b4220eceb499cf0636e5e51bd4bf50882039dc12f4617f",
+    "fig_main_v3.py": "e05b8f9e223d9d97ec784ea87c072bb47bf537b91681dee4466e626b292d5835",
+    "fig_replication.py": "f9d8293d5f3ef7e9e3011536fecfd10f5267e6e4a45bb4a2a09d30b31960c137",
+    "figs.py": "1b5d04d86f375ae4ba07a9ec33eba0543a3d68ffa113dac2166459784ad5107a",
+    "fonts/OldStandard-Bold.otf": "685dfdf9e75cd57f902a076456d4ed15de16e5dbf1cbc5cb5f6edd725edcec36",
+    "fonts/OldStandard-BoldItalic.otf": "2b0b18fd7880c710026f23c734b16dde24840081b129753f154bf7f743809ac7",
+    "fonts/OldStandard-Italic.otf": "84ab8c42c80c007db029e4c5366f474c17f482d1fb0642da5910bd5415143340",
+    "fonts/OldStandard-Math.otf": "57d3c12f13e0a66bdf1a054d580a7f308867fa8fc4a48a78285afd67ab7f26af",
+    "fonts/OldStandard-Regular.otf": "841664e0c2414e8c67028423a990a41deec7877fc14d26b20ca4f06d23617663",
+    "paper_v4.tex": "831c24d0977fa41c2784aece5d34bdf58a954c4d62edcb4ec31e23686b17b530",
+    "s2_analysis.py": "51f8d6d7ee0d59b60d59ca2f23d07b1e88ba56efa90ae70f4e61dcde80caac3f",
+    "s2_extra.json": "6ea5b17a6ee4409fe93bd59ad52b41e08634c861a5f50df034cf35cc49024f61",
+    "s2_extra.py": "248a55c16a4e2548c12f18302185feb45b63de0b4cf3b119574a534976f4a742",
+    "s2_results.json": "40e4f95d6898fd05891c939097e25046d3a750ab1546b4dfa2ba1d9646f891fc",
+    "verify.py": "dad502bdd218e80abd074893c9da445b8f8ef98f2a44ad3f0c369226db50a20b"
+  }
+}

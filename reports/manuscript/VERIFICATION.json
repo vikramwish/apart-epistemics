@@ -1,0 +1,71 @@
+{
+  "scope": "Offline reproduction of supplied summaries and parity with frozen preregistered results",
+  "import_parity": {
+    "s2_results.json": {
+      "matches_within_tolerance": true,
+      "max_absolute_difference": 3.552713678800501e-14
+    },
+    "s2_extra.json": {
+      "matches_within_tolerance": true,
+      "max_absolute_difference": 2.42861286636753e-17
+    }
+  },
+  "frozen_analysis_parity": {
+    "conditions": 13,
+    "contrasts": 14,
+    "point_estimates_match_at_saved_precision": true,
+    "raw_p_values_match_at_saved_precision": true,
+    "all_adjusted_significance_decisions_match": true,
+    "adjusted_p_rounding_note": "Frozen analysis rounds raw p to six decimals before Holm; independent supplement adjusts full-precision p. Absolute adjusted differences are below 4.1e-6."
+  },
+  "study2_integrity": {
+    "n_cells": 24960,
+    "n_tasks": 40,
+    "n_task_reps_with_miss": 4,
+    "max_identity_residual": 7.91033905045424e-16
+  },
+  "input_sha256": {
+    "results/polyphony-p0-p4/numeric_runs.jsonl": "76dd08b9d8c227e5b36a6d119835bfadff0208a9f45f8029c9eec04597033ecd",
+    "results/polyphony-replication-2025/numeric_runs.jsonl": "041a8170379b3be671de2aa6a1e1017b8cc64c950f8511b5e71c59968fef272a",
+    "results/polyphony-replication-2025/cold_probe/cold_probe_records.jsonl": "e60d5f2cbbeabf212ebf214730e89a4b350ac1a9d77aa02e0c98904cd5c8e40e"
+  },
+  "revision_checks": {
+    "scope": "Offline mathematical verification, post hoc statistical sensitivity, PDF rendering; no new model calls",
+    "exact_arithmetic": {
+      "arithmetic": "exact rational; no floating-point tolerance",
+      "pairings": 105,
+      "quadratic_coefficient_vectors": 36,
+      "partition_checks": 3780,
+      "update_checks": 54,
+      "weighted_jensen_checks": 162,
+      "evrr_nonconvergence_counterexample": "passed",
+      "status": "passed"
+    },
+    "study1_diversity_identity": {
+      "panels": 160,
+      "max_absolute_residual": 1.8735013540549517e-16
+    },
+    "compact_task_statistics": {
+      "tasks": 40,
+      "domains": 15,
+      "arms_including_virtual": 15,
+      "contrasts_reproduced": 14,
+      "comparison_absolute_tolerance": 1e-12
+    },
+    "sensitivity": "statistical_checks.json; global Holm, leave-one-task/domain, paired recovery bootstrap",
+    "removed_claim": "Unreproduced 20-dataset null simulation; numerical claims removed, not replaced by a calibration claim",
+    "sources": "Six selected primary-source records checked; see SOURCE_CHECKS.md. Not a full bibliography or task-truth audit.",
+    "limitations": [
+      "No new live experiments or one-sided critique ablation",
+      "Human users and judge-panel transfer remain untested",
+      "Raw replication transcripts remain necessary to audit extraction and virtual-panel construction"
+    ],
+    "pdf": {
+      "pages": 22,
+      "compile": "latexmk -xelatex; no warnings, overfull/underfull boxes, undefined references or missing glyphs",
+      "render": "All 22 pages rendered and contact-sheet inspected; detailed checks of results figure, both full proofs, mathematical appendix and sensitivity table",
+      "fonts": "All fonts embedded; pdffonts and pdftoppm report no embedding warnings",
+      "sha256": "dff46e75e1a78245dc9e5be9fed8807bd0bd875f2c9612f9c910f155d1ac6a79"
+    }
+  }
+}

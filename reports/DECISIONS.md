@@ -1,0 +1,103 @@
+# Architectural & Research Decisions Log
+
+## 2026-11-13 — Initial Architecture & Design Decisions
+
+1. **Repo Name & Branding (`Epistemic Prism` / `apart-epistemics`)**
+   - **Decision:** Name the toolkit and dashboard **Epistemic Prism** under repository `apart-epistemics`.
+   - **Why:** Signals the core measurement contribution—splitting apparently uniform AI discourse into distinct dimensions (surface phrasing vs. conceptual topic breadth vs. calibration vs. source independence).
+   - **Alternatives rejected:** Generic names like `llm-diversity-sim` (too narrow; ignores calibration and Goldman source independence).
+
+2. **Two-Axis IV + Dual-Track DV Experimental Design**
+   - **Decision:** Separate **Model Count ($K$)** from **Heterogeneity Type** (`no_ai`, `monolithic_shared`, `multi_lab_mix`, `cultural_regional_mix`, `personalized_advisor`, `personalized_peer`), add **Decoding Regime** (`T=0.0, top_p=0.0` vs. `T=0.8, top_p=0.95`) as a targeted ablation, and evaluate on **Ground-Truth Calibration Tasks** + **Open-Ended Debate Tasks**.
+   - **Why:** Reconciles Oscar's voice-note IVs and topic-diversity DV with `dewlegz` / `musif-80`'s calibration & Goldman source-independence requirements and `dewlegz`'s `temperature=0, top_p=0` finding.
+   - **Alternatives rejected:** Testing only cosine embedding similarity (already refuted by Qiu et al. 2026 and Oscar) or only 1-model vs. 5-US-labs (overlaps with Kim et al. 2026 *Argument Collapse*).
+
+3. **Backend Architecture (`synthetic`, `ollama`, `live_http`, `replay`)**
+   - **Decision:** Build a protocol-clean multi-backend abstraction with a deterministic, mathematically grounded `synthetic` backend as default for tests/CI/offline demos, plus `ollama` (tested with local `llama3.1:8b`), stdlib HTTP cloud adapters, and JSONL `replay`.
+   - **Why:** Allows full end-to-end execution, TDD, CI, and interactive visualization without requiring paid cloud API keys, while remaining drop-in ready for multi-provider live API runs when keys are supplied in `.env`.
+   - **Alternatives rejected:** Hard-coding `openai` SDK calls everywhere (impossible to test offline or run cleanly in GitHub Actions without secrets).
+
+4. **Zero-CDN Self-Contained Interactive Dashboard + SVG Figures**
+   - **Decision:** Generate `docs/index.html` as a self-contained static web explorer using inline SVGs, local/system editorial typography stacks, and vanilla JS, alongside standalone SVG charts in `reports/figures/`.
+   - **Why:** Deployable directly to GitHub Pages with zero build-step fragility, instant load speed, offline reproducibility, and reliable Playwright verification at `1440px` and `390px`.
+   - **Alternatives rejected:** Heavy React/Next frontend or external CDN chart libraries (breaks offline snapshots and adds needless Node build complexity to a Python research package).
+
+5. **License Choice**
+   - **Decision:** MIT License.
+   - **Why:** Standard permissive open-source license for research benchmarks and portfolio repositories.
+
+## 2026-11-13 — Implementation & Verification Refinements
+
+6. **Per-Task Normalized Topic Entropy & Hill $N_1$ Aggregation**
+   - **Decision:** Compute `compute_topic_entropy_and_hill` per task against that task's canonical codebook, then average across tasks per condition.
+   - **Why:** Makes normalized Shannon entropy and Hill effective topic counts (`[1.0, ~6.5]`) invariant to `tasks_per_track` rather than conflating cross-question vocabulary growth with genuine multi-perspective depth.
+   - **Alternatives rejected:** Pooling raw topic tokens across all tasks into one global histogram (artificially inflates $N_1$ proportionally to prompt count).
+
+7. **Git-Ignore Large Raw JSONL Traces While Tracking Compact Summaries & Explorer Artifacts**
+   - **Decision:** Ignore `reports/results/*.jsonl` (~20 MB generated on each deterministic `demo` invocation) in `.gitignore`, while committing `summary.csv`, `summary.json`, `numeric_analysis.json`, `audit_human_check.csv`, `selection_audit.json`, `reports/figures/*.svg`, and `docs/`.
+   - **Why:** Keeps repository clone size lightweight and diffs readable; `apart-epistemics demo` deterministically regenerates `runs.jsonl` and `numeric_runs.jsonl` in ~5 seconds.
+   - **Alternatives rejected:** Committing 20 MB of deterministic synthetic JSONL lines into Git history.
+
+8. **Playwright Visual Collision & Table-Width Regression Gates**
+   - **Decision:** Added deterministic per-condition quadrant label offsets in both `report.py` and `dashboard.html`, widened SVG right-margin padding for `1.00` labels, wrapped `.cond-label-cell` cleanly, and added automated bounding-box assertions in `tests/e2e/test_dashboard_playwright.py` for unclipped `Inspect` buttons at `1440px` and zero horizontal scroll overflow at `390px`.
+   - **Why:** First visual screenshot inspection revealed overlapping top-right quadrant labels and a slightly clipped table button at 1440px despite DOM assertions passing.
+   - **Alternatives rejected:** Relying solely on HTML existence checks without rendering pixels.
+
+## 2026-11-13: Modularity, Performance & Developer Testing Refactor
+
+9. **Split Monolithic Modules into Cohesive Subpackages (`backends/`, `datasets/`, `engine/`, `report/`)**
+   - **Decision:** Decomposed 500-1100 line modules into focused single-responsibility subpackages while re-exporting all public API symbols from each subpackage's `__init__.py` and top-level `apart_epistemics/__init__.py` plus PEP 561 `py.typed`.
+   - **Why:** Reduces file length, isolates transport/simulator/reporting concerns for human readers and contributors, and keeps backward compatibility intact for callers.
+   - **Alternatives rejected:** Keeping single monolithic files over 1,000 lines or breaking top-level import paths.
+
+10. **Shared HTTP Transport Base, Contrast Statistics Helper, and Package-Safe Template Loading**
+    - **Decision:** Extracted `_HTTPChatBackend` in `backends/base.py`, exported shared `clamp` and `quantile_sorted` in `metrics.py`, consolidated paired Wilcoxon + bootstrap CI + Holm-Bonferroni into `engine/contrasts.py`, and switched dashboard template reading in `report/site.py` to `importlib.resources`.
+    - **Why:** Eliminates duplicated boilerplate across 5 HTTP providers and both experiment tracks, guarantees safe non-finite handling (`NaN`/`inf` fallback and `1e9999` overflow guard in `parsers.py`), and ensures installed wheels find `templates/dashboard.html`.
+    - **Alternatives rejected:** Maintaining parallel copies of HTTP error masking and contrast loops, or hardcoding `Path(__file__).parents` assumptions.
+
+11. **O(U^2) Frequency-Weighted Lexical Diversity & Pre-Grouped Task Metric Aggregation**
+    - **Decision:** Updated `compute_lexical_diversity` to deduplicate responses into counted `frozenset[str]` token bags, pre-extracted correlation tuples in `compute_goldman_effective_sources`, and pre-grouped Track 4 records by `(round_idx, task_id)` instead of O(N * T * R) nested scanning.
+    - **Why:** Produces bit-for-bit identical metrics while avoiding redundant inner loops on repeated greedy replies and large multi-round sweeps.
+    - **Alternatives rejected:** Approximate lexical sketching that alters reported `pairwise_jaccard_distance`.
+
+12. **Developer-First Testing Harness (`Makefile`, `CONTRIBUTING.md`, `conftest.py`, Branch Coverage, Strict CI)**
+    - **Decision:** Split tests into focused per-module files with shared `tests/conftest.py` fixtures, registered strict `e2e` pytest markers (`make test-fast` runs unit/integration tests in ~2s), enabled Ruff complexity/pytest/RUF rules (`C90 <= 16`) + `ruff format --check` in CI, enabled branch coverage, and added `tabindex`/`aria-label`/`aria-sort` keyboard accessibility to `dashboard.html`.
+    - **Why:** Makes running fast feedback loops effortless for contributors while keeping UI accessibility and full E2E browser checks enforced in CI.
+    - **Alternatives rejected:** Coupling all backend and engine tests into a single 700-line file without marker separation or CI format enforcement.
+
+## 2026-11-14 / 2026-11-15 — V3 Question Selection, Prompt Rounding, and Adaption Live Runs
+
+13. **Prompt Number Formatting (`format_prompt_number`) & Tightened Unit-Slip Guard (`MAX_LOG10_JUMP = 2.0`)**
+    - **Decision:** Format all numbers shown in numeric prompts (`current_x`, `pop_stats` median/IQR in C2/C3, and C3 prior user estimates) to 3 significant figures rounded to whole integers with comma separators and no scientific notation (e.g. `104.317` -> `104`, `2.51804e+08` -> `252,000,000`) while preserving exact `log10` values internally; tighten `MAX_LOG10_JUMP` from `3.0` to `2.0`.
+    - **Why:** Prevents unrealistic decimal/e-notation artifacts from priming AI deference and rejects 1,000x/1,000,000x unit slips (like `235,000` vs `186,004,506`) before state updates. Also preserves `results/numeric-main/` (unrounded C1) alongside `results/numeric-main-luna-rounded-c1/` (rounded C1) to measure formatting effects directly on `openai/gpt-6-luna`.
+    - **Alternatives rejected:** Rounding internal `agent_log10_before`/`after` state (would corrupt Page decomposition precision).
+
+14. **V3 Per-Family Selection Validation (`selection.py`)**
+    - **Decision:** Enforce `max_per_family` capacity preflight checks before running paid selection calls, and check `len(selected) < keep` when `rule="error"` while still saving partial `selection.json` diagnostics on `SelectionError`.
+    - **Why:** Avoids spending API credits on an unsatisfiable family cap and prevents undersized `selected_tasks.json` outputs.
+    - **Alternatives rejected:** Quietly returning fewer than `keep` selected tasks or discovering exhaustion only after cold queries.
+
+15. **Adaption Backend Integration (`AdaptionBackend`) & Trajectory Concurrency**
+    - **Decision:** Add `AdaptionBackend` (`--backend adaption`) targeting Adaption's Responses API (`/api/v1/responses`), using `min_output_tokens=8192` for numeric estimation, capping short Track 4 chat turns at `1024` tokens, passing `reasoning={"effort": "none"}` on `qwen*` models (replacing `" /no_think"` suffix because `qwen3.5-397b` ignored `" /no_think"` and hit AWS ALB 60s `HTTP 504` timeouts under `"effort": "low"`/`"minimal"` while `effort="none"` completes in ~7–12s with visible Fermi CoT), omitting `top_p=0.0` (rejected by Adaption with HTTP 400 while `temperature=0.0` stays greedy), adding jittered backoff (`max_retries=25`) for Adaption's 60s user RPM window, and adding cross-trajectory concurrency in `run_numeric_core` when `workers > n_agents`.
+    - **Why:** OpenRouter exhausted account credits (`HTTP 402`) during the rounded C1 run after `1,670` `openai/gpt-6-luna` rows; Adaption provides funded inference across `deepseek-v4-flash`, `gemma-4-26b-a4b-it`, `gemma-4-31b-it`, `qwen3.8-27b`, and `qwen3.5-397b`. Note `openai/gpt-6-luna` is unavailable on Adaption (`HTTP 404`), so full cross-condition V3 and multi-model runs ran on Adaption models while `live-smoke-3` and the 1,670-row C1 comparison document `openai/gpt-6-luna`.
+    - **Alternatives rejected:** Leaving OpenRouter as the only cloud gateway, running `qwen3.5-397b` under hidden reasoning `"effort": "low"` (caused 113 gateway timeouts/retries across 65 partial rows before switching cleanly to `effort="none"`), or routing `workers <= n_agents` across trajectories (which would break sequential byte-identical JSONL invariants tested in `test_concurrency_and_retries.py`).
+
+16. **C1–C6 Cross-Architecture Polyphony & Dialectical Counter-Anchoring (`2x2 + Baselines`)**
+    - **Decision:** Extended `ExperimentSuiteConfig` with backward-compatible `numeric_conditions` (default `["C1", "C2", "C3"]`) and `numeric_models` (default `[]`), adding `C4` (homogeneous dialectical counter-anchoring), `C5` (4-model equal-count polyphony + crowd median/IQR via `backend.for_model(...)`), and `C6` (4-model polyphony + dialectical counter-anchoring). Added `compute_hierarchical_page_decomposition` in `metrics.py` (`diversity = between_model_diversity + within_model_diversity`, `excess_between_model_diversity`, `between_share`), `evrr`/`evrr_between`/`evrr_within`/`evrr_cumulative` with strict `None` null-guards when `denom <= 1e-15` (so `write_json_atomic` with `allow_nan=False` never fails), H4 user-echo estimators (`_CROWD_CONDITIONS = {C2..C6}`, `slope_user_round1`, `slope_user_model_fe`, and `crowd_pull_vs_c1_r1`), and `AdaptionBackend.generate_chat` disabling hidden reasoning (`payload["reasoning"] = {"effort": "none"}`) for `qwen*`, `glm*`, and `deepseek*` while leaving `gemma*` untouched.
+    - **Why:** Prior homogeneous single-model social runs (`C2`/`C3`) exhibited severe crowd collapse on `gemma-4-26b-a4b-it` (`C1 = 0.021548` -> `C2 = 0.039766` in the 8-agent live run). Crossing cross-architecture polyphony (`C5`) with symmetric dialectical counter-anchoring (`C4`) tests both main effects and their interaction (`C6`) cleanly, while `reasoning={"effort": "none"}` eliminates hidden-thinking timeouts across all four Adaption families (`0/1,056` misses, `0` truncated, `0` reasoning tokens).
+    - **Alternatives rejected:** Putting polyphony on `C1..C4` (conflates architecture diversity with baseline social collapse), omitting `reasoning={"effort": "none"}` on `deepseek`/`glm` (causes slow responses/token-budget truncation), or returning `float("nan")` for zero-variance EVRR cells (breaks strict JSON serialization).
+
+17. **Clean-Room `P0`–`P4` Polyphony Benchmark, `polyphony_contrast_matrix`, and `alpha=0.3` Parity**
+    - **Decision:** Implemented a standalone `P0`–`P4` protocol (`p_series_system_prompt`, `_P_COUNTER_ANCHOR_TEXT`, generalized `2x2` DiD, two-tier Holm-adjusted `polyphony_contrast_matrix` over 9 contrasts $\times$ 5 metrics, H4 `P0 -> P1/P2` support, `allow_nan=False` numeric analysis JSON export, and synthetic `P0`–`P4` parity) paired with a zero-overlap 12-question Scientific, Engineering & Earth-Systems benchmark (`configs/polyphony_benchmark_tasks.json`, `configs/polyphony_p0_p4.yaml`, `alpha=0.3`, `seed=42`, `8` agents, `2` rounds), keeping all `C1`–`C6` code/tests untouched. During `polyphony-p0-p4/` post-run QA, three `gemma-4-26b-a4b-it` rows hit `finish_reason="length"` post-answer token repetition at `8192` tokens (`P1 sci_hoover_dam_capacity_mw` Round 1 `agent_02`, `P2 sci_kola_borehole_depth_m` Round 1 `agent_01`, `P1 sci_tungsten_melting_c` Round 2 `agent_07`); those 3 rows plus their 2 downstream Round-2 trajectories (19 rows total) were dropped and re-sampled via crash-resume to achieve `0/960` truncations and intact Round-2 peer telemetry.
+    - **Why:** Isolating `P0`–`P4` on pre-2026 physical/scientific constants removes unsettled-event noise and prompt confounds from Phase 1 while holding `alpha=0.3`, `num_agents=8`, `num_rounds=2` identical for clean cross-benchmark comparison (`P4` assistant MSE `-92.4%` vs `P3`; `P3` social-herding error vs `P0`, `p=0.007812`; `C6` `-47.6%` crowd error vs `C2` in `numeric-polyphony-c1-c6/`). Dropping the downstream Round-2 cells of the two Round-1 `length` rows prevented stale `pop_stats` leaks on crash-resume.
+    - **Alternatives rejected:** Pooling `P0`–`P4` into `configs/numeric_final_tasks.json` (breaks disjointness and earlier baseline parity), modifying only 3 lines in place without re-running their Round-2 dependencies (leaves Round-2 `pop_stats` coupled to stale Round-1 samples), or omitting `polyphony_contrast_matrix` two-tier Holm control.
+
+18. **Phase-3 Neutral `P0`–`P4` Prompt Isolation, `alpha=0.4`, & Cold-Probed 16-Task Benchmark Selection**
+    - **Decision:** Neutralized `p_series_system_prompt` (`"You are a quantitative scientific estimator. Answer without web lookup and end with 'Final estimate: <number>'."`) and `_build_p_series_prompts` tail (`"What is your best estimate of the true quantity?..."`), isolating `"independent physical principles and reference scales"` strictly inside `_P_COUNTER_ANCHOR_TEXT` (`P2`/`P4` only); increased belief-update weight to `alpha = 0.4` (`(1 - alpha)^2 = 0.36`); and probed 24 audited non-overlapping pre-2026 tasks (`5` calls each: `4` cold calls across `gemma-4-26b-a4b-it`, `deepseek-v4-flash`, `qwen3.8-27b`, `glm-5.2` plus `1` `P0` biased-prior call on `gemma-4-26b-a4b-it` shifted $\pm 0.30$ $\log_{10}$ units; `4` `qwen3.8-27b` cold calls that hit `1024` tokens or `0` were re-probed at `min_output_tokens=8192` matching the production backend, yielding `24/24` with `0` misses and `max(|c_m - log_truth|) <= 0.957 <= 1.7`). Ranked the `12` non-ceiling items + top `4` ceiling-with-signal items by $S = D_{\text{cold}} + E_{\text{cold}} + 0.25 \cdot |y_{\text{biased}} - c_{\text{gemma}}|$ descending (`16` tasks total) and partitioned objectively by $D_{\text{cold}}$ into `6 high_spread`, `6 low_spread`, and `4 control`, deterministically balancing $\pm 0.8$ bias (`4` sign flips: `nrg_us_hydro_2023_twh` -> `-0.8`, `nrg_france_nuclear_2022_twh` -> `-0.8`, `nrg_us_wind_2023_twh` -> `+0.8`, `nrg_us_nuclear_2023_twh` -> `+0.8`). Selected top-6 `high_spread`: `nrg_us_hydro_2023_twh` (`E=0.22977, D=0.18163, pull=1.2571, S=0.72568`), `sci_lhc_dipole_magnets_count` (`0.17224, 0.12918, 0.0000, 0.30142`), `hyd_paijanne_tunnel_km` (`0.13570, 0.10178, 0.0000, 0.23748`), `inf_gbt_height_m` (`0.06369, 0.04013, 0.2833, 0.17464`), `hyd_delaware_aqueduct_km` (`0.02628, 0.02550, 0.0333, 0.06009`), `nrg_france_nuclear_2022_twh` (`0.00292, 0.00255, 0.0149, 0.00921`); middle-6 `low_spread`: `inf_elt_collecting_area_m2` (`0.00163, 0.00135, 0.0073, 0.00481`), `mat_molybdenum_melting_c` (`0.00057, 0.00043, 0.0477, 0.01293`), `nrg_us_wind_2023_twh` (`0.00059, 0.00041, 0.0179, 0.00547`), `nrg_norway_hydro_2023_twh` (`0.00026, 0.00020, 0.0031, 0.00123`), `hyd_murray_darling_area_km2` (`0.00017, 0.00012, 0.0000, 0.00029`), `env_ipcc_1750_ch4_ppb` (`0.00009, 0.00007, 0.0000, 0.00016`); bottom-4 `control`: `nrg_us_nuclear_2023_twh` (`0.00007, 0.00006, 0.0101, 0.00267`), `hyd_lake_superior_vol_km3` (`0.00009, 0.00005, 0.2820, 0.07064`), `inf_snolab_depth_m` (`0.00013, 0.00004, 0.0085, 0.00229`), `inf_north_sea_link_km` (`0.00000, 0.00000, 0.2888, 0.07220`). Dropped memorized zero-signal items (`inf_ktb_borehole_depth_m`, `env_gisp2_ice_depth_m`, `hyd_gbr_marine_park_km2`, `sci_ecoli_mg1655_genome_bp`, `nrg_churchill_falls_mw`, `nrg_itaipu_capacity_mw`, `inf_seamewe3_cable_km`, `env_icecube_bottom_depth_m`).
+    - **Why:** Removing textbook-lookup ceiling tasks (`P0`–`P4` Phase-2 `0.0099` flat plateau) and prompt-level independence leakage revealed strong causal effects (`P1` herding damage `p_Holm=0.0496`, `P2`/`P3`/`P4` crowd rescue `p_Holm=0.0080`/`0.0229`/`0.0229`, and `2x2` DiD `p_Holm=0.0055`).
+    - **Alternatives rejected:** Keeping memorized textbook constants or leaving `p_series_system_prompt` loaded with counter-anchoring hints across baseline `P0`/`P1`/`P3`.
+
+19. **Assistant-Level Hierarchical Page Metrics, Strict NaN Guard, Publication SVGs, & Causal Length Resampling**
+    - **Decision:** Added all 7 `assistant_*` hierarchical Page metrics (`assistant_crowd_error`, `assistant_avg_individual_error`, `assistant_diversity`, `assistant_between_model_diversity`, `assistant_within_model_diversity`, `assistant_excess_between_model_diversity`, `assistant_between_share`) to `_ROUND_METRIC_KEYS` and `_compute_cell_metrics`, extended `_P_MATRIX_METRICS` (`6x9=54`), `core_pairs` (`20` P-series contrasts), and `P1..P4` `_compute_interaction_2x2` (`5` metrics, keeping `C2,C4,C5,C6` at `4`), enforced `allow_nan=False` in `_cmd_analyze` (`cli.py:622`), and implemented `generate_polyphony_figures` emitting `polyphony_crowd_error.svg`, `polyphony_hierarchical_page.svg`, and `polyphony_2x2_factorial.svg`. During the 1,280-row run, pruned `5` initial Gemma `finish_reason="length"` rows + their Round-2 dependencies (`28` cells) and `1` Round-2 resample `length` row (`P2 env_ipcc_1750_ch4_ppb agent_00`) via causal crash-resume to achieve `0/1,280` final truncations and `max_identity_residual = 1.3878e-16`.
+    - **Why:** Measuring both agent-blended and raw direct-assistant hierarchical Page decompositions exposed the dual mechanism (`P3` minimizes raw assistant error at `0.002339`, while `P4` maximizes between-model diversity `0.009007` to attain the lowest blended `crowd_error = 0.007692`).
+    - **Alternatives rejected:** Leaving `_cmd_analyze` without `allow_nan=False` or leaving any `finish_reason="length"` repetition loops in `results/polyphony-p0-p4/numeric_runs.jsonl`.

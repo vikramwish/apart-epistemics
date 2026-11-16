@@ -1,0 +1,10 @@
+{
+  "arithmetic": "exact rational; no floating-point tolerance",
+  "pairings": 105,
+  "quadratic_coefficient_vectors": 36,
+  "partition_checks": 3780,
+  "update_checks": 54,
+  "weighted_jensen_checks": 162,
+  "evrr_nonconvergence_counterexample": "passed",
+  "status": "passed"
+}
