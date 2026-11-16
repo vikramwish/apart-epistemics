@@ -12,7 +12,7 @@ From the repository root, install the `paper` extra (`make install` also install
 it), then use:
 
 ```sh
-make paper              # regenerate figures and build reports/manuscript/main.pdf
+make paper              # regenerate figures and build research/manuscript/main.pdf
 make paper-reanalyze    # recompute Study 2 supplemental JSON from local raw logs
 make paper-audit        # exact math checks and statistical sensitivity
 ```
@@ -33,7 +33,7 @@ No model calls are made by these commands.
 
 ## Files and provenance
 
-- `main.tex` / `main.pdf`: revised manuscript and compiled output.
+- `main.tex`: retained earlier manuscript source; `main.pdf` is generated locally and ignored.
 - `IMPORT_PROVENANCE.json`: SHA-256 of every file in the supplied source bundle.
 - `verify.py`: Study 1 plotting inputs reconstructed from full-precision raw data;
   replaces the imported rounded table and checks the error identity.
@@ -108,3 +108,12 @@ primary squared-log-error outcome and paired effect intervals.
 All sensitivity analyses are post hoc. The compact dataset can reproduce task-level
 statistics; checking extraction, parse handling and construction of virtual panels
 still requires raw trajectories. No live experiments were run for this revision.
+
+## Submitted PDF
+
+The sole report is [`reports/Mad_in_Herds.pdf`](../../reports/Mad_in_Herds.pdf),
+copied unchanged from the author-supplied Downloads file (23 pages). It differs
+from the retained 22-page manuscript revision. `make paper` builds that retained
+source locally; it does not overwrite the submitted PDF. The PDF rendering record
+in `VERIFICATION.json` applies to the earlier revision, not this supplied file.
+See `REPORT_PROVENANCE.json` for the submitted PDF hash.

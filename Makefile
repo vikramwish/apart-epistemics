@@ -30,19 +30,19 @@ reproduce: ## Reproduce the discovery-study audit
 	$(PYTHON) scripts/audit_and_reproduce_p0_p4.py
 
 paper-audit: ## Check mathematics and task-level sensitivity
-	$(PYTHON) reports/manuscript/verify.py
-	$(PYTHON) reports/manuscript/audit_math.py
-	$(PYTHON) reports/manuscript/audit_statistics.py
+	$(PYTHON) research/manuscript/verify.py
+	$(PYTHON) research/manuscript/audit_math.py
+	$(PYTHON) research/manuscript/audit_statistics.py
 
 paper-figures: ## Regenerate manuscript figures
-	cd reports/manuscript && $(abspath $(PYTHON)) fig0.py
-	cd reports/manuscript && $(abspath $(PYTHON)) figs.py
-	cd reports/manuscript && $(abspath $(PYTHON)) fig_main_v3.py
-	cd reports/manuscript && $(abspath $(PYTHON)) fig_replication.py
+	cd research/manuscript && $(abspath $(PYTHON)) fig0.py
+	cd research/manuscript && $(abspath $(PYTHON)) figs.py
+	cd research/manuscript && $(abspath $(PYTHON)) fig_main_v3.py
+	cd research/manuscript && $(abspath $(PYTHON)) fig_replication.py
 
-paper: paper-figures ## Build the final manuscript
-	cd reports/manuscript && latexmk -xelatex -interaction=nonstopmode -halt-on-error main.tex
+paper: paper-figures ## Rebuild retained manuscript source without replacing the submitted PDF
+	cd research/manuscript && latexmk -xelatex -interaction=nonstopmode -halt-on-error main.tex
 
 paper-reanalyze: ## Recompute supplements from separately supplied raw logs
-	$(PYTHON) reports/manuscript/s2_analysis.py
-	$(PYTHON) reports/manuscript/s2_extra.py
+	$(PYTHON) research/manuscript/s2_analysis.py
+	$(PYTHON) research/manuscript/s2_extra.py

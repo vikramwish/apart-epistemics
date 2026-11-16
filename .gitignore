@@ -74,3 +74,16 @@ reports/**/*.fls
 reports/**/*.fdb_latexmk
 reports/**/*.synctex.gz
 reports/**/*.xdv
+
+# Retained manuscript build outputs; the supplied report is reports/Mad_in_Herds.pdf.
+research/manuscript/main.pdf
+research/**/*.aux
+research/**/*.bbl
+research/**/*.blg
+research/**/*.log
+research/**/*.out
+research/**/*.toc
+research/**/*.fls
+research/**/*.fdb_latexmk
+research/**/*.synctex.gz
+research/**/*.xdv

@@ -3,8 +3,8 @@
 **AI Assistants Amplify a Biased Crowd** — Vikram Viswanath, University of Sydney,
 with Apart Research. Kevin O’Shaughnessy contributed experiment-harness code.
 
-[Read the final paper](reports/manuscript/main.pdf) ·
-[Manuscript source and verification](reports/manuscript/README.md) ·
+[Read the final paper](reports/Mad_in_Herds.pdf) ·
+[Analysis code and retained manuscript source](research/manuscript/README.md) ·
 [Recorded evidence](results/README.md)
 
 ## Research
@@ -29,11 +29,11 @@ make install       # package, test and manuscript dependencies
 make check         # lint, tests and configuration dry runs
 make paper-audit   # exact algebra and task-level statistical checks
 make reproduce     # full Study 1 audit from retained records
-make paper         # figures and final PDF; requires XeLaTeX + latexmk
+make paper         # rebuild retained source; does not overwrite the supplied final PDF
 ```
 
 `make paper-reanalyze` additionally requires the two local replication inputs described
-in the [manuscript README](reports/manuscript/README.md). The large replication logs
+in the [manuscript README](research/manuscript/README.md). The large replication logs
 are not in Git; their hashes are recorded in
 [PROVENANCE.md](results/polyphony-replication-2025/PROVENANCE.md).
 The included compact task data reproduce the new task-level sensitivity analyses.
@@ -42,18 +42,19 @@ The included compact task data reproduce the new task-level sensitivity analyses
 
 | Path | Purpose |
 |---|---|
-| `reports/manuscript/` | Final PDF, TeX, figures, fonts, compact data and mathematical/statistical checks |
+| `reports/` | Only the supplied final `Mad_in_Herds.pdf` |
+| `research/manuscript/` | Retained TeX source, figures, fonts, compact data and verification scripts |
 | `results/` | Frozen discovery/control evidence, replication summaries and provenance |
 | `configs/` | Task banks and experimental configurations |
 | `docs/` | Committed analysis plans for controls and replication |
 | `scripts/` | Original statistical analyses, audits and task-screening script |
 | `src/` | Numeric experiment harness, parsers, metrics and provider adapters |
 | `tests/` | Offline regression tests |
-| `reports/DECISIONS.md` | Decision log cited by the paper’s resampling disclosure |
+| `docs/DECISIONS.md` | Decision log cited by the paper’s resampling disclosure |
 
 The superseded 12-task archive is retained only because the original audit reads it.
 Older manuscripts, dashboards, exploratory experiments and Study 3 remain in historical
-or development branches. There is one current manuscript in this submission.
+or development branches. The final report is the author-supplied PDF; the retained TeX is an earlier revision and does not reproduce that PDF exactly.
 
 ## New experiments
 
@@ -71,4 +72,4 @@ ignored `tmp/`. Request allowances are a conservative budget guard, not actual b
 ## License
 
 Code: [MIT](LICENSE). Bundled font notices are in
-[reports/manuscript/fonts/NOTICES.txt](reports/manuscript/fonts/NOTICES.txt).
+[research/manuscript/fonts/NOTICES.txt](research/manuscript/fonts/NOTICES.txt).

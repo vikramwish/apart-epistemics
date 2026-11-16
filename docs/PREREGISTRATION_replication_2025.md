@@ -15,12 +15,12 @@
 ## 2. Pre-Registered Task Filter (Step 5 Rules & Cold-Probe Thresholds)
 
 - **Cold probe calls:** Run the cold-probe procedure on the 43 post-Step-2 candidate tasks only (`1` cold call per model per task across `gemma-4-26b-a4b-it`, `deepseek-v4-flash`, `qwen3.8-27b`, `glm-5.2`; skip the extra `P0` biased-prior call), keeping `min_output_tokens = 8192` and the same per-model reasoning settings as the main run, plus the harness's single format-retry on parse failure.
-- **Cold-probe prompt (recorded operational deviation):** Because the verbatim cold-call prompt string from the original 24→16 probe is not saved in `reports/DECISIONS.md` or a saved probe request log, use `p_series_system_prompt("2026-11-15")` with a question-only user prompt (no prior estimate, no telemetry): `"{question}\nWhat is your best estimate of the true quantity? End with 'Final estimate: <plain number in {unit}>' and nothing after the number."`
+- **Cold-probe prompt (recorded operational deviation):** Because the verbatim cold-call prompt string from the original 24→16 probe is not saved in `docs/DECISIONS.md` or a saved probe request log, use `p_series_system_prompt("2026-11-15")` with a question-only user prompt (no prior estimate, no telemetry): `"{question}\nWhat is your best estimate of the true quantity? End with 'Final estimate: <plain number in {unit}>' and nothing after the number."`
 - **Exclusion rules, applied in this exact order:**
   - **(a)** any model fails to parse after the single retry → **drop**;
   - **(b)** recall check: all four models within 2% of truth (`|log10 error| < 0.0086`) → **drop**;
   - **(c)** apply fixed cutoffs on `D_cold` (cross-model variance `mean((c_m - mean(c))^2)` of the four models' cold `log10` estimates) to assign `selection_stratum`:
-    - Original 16-task benchmark `D_cold` bands (`configs/polyphony_benchmark_tasks.json`, `reports/DECISIONS.md:96`): `control` in `[0.00000, 0.00006]`, `low_spread` in `[0.00007, 0.00135]`, `high_spread` in `[0.00255, 0.18163]`.
+    - Original 16-task benchmark `D_cold` bands (`configs/polyphony_benchmark_tasks.json`, `docs/DECISIONS.md:96`): `control` in `[0.00000, 0.00006]`, `low_spread` in `[0.00007, 0.00135]`, `high_spread` in `[0.00255, 0.18163]`.
     - Fixed midpoint cutoffs for replication assignment:
       - `control`: `D_cold < 0.000065`
       - `low_spread`: `0.000065 <= D_cold < 0.00195`
