@@ -599,7 +599,7 @@ def _render_polyphony_crowd_error_svg(numeric_analysis: dict[str, Any]) -> str:
             f"{html.escape(d_lbl)}</text>"
         )
 
-    card_x, card_y, card_w, card_h = 598, 88, 260, 326
+    card_x, card_y, card_w, card_h = 598, 88, 260, 344
     lines.append(
         f'  <rect x="{card_x}" y="{card_y}" width="{card_w}" height="{card_h}" rx="6" '
         f'fill="{_PALETTE["surface"]}" stroke="{_PALETTE["grid"]}" stroke-width="1"/>'
@@ -607,12 +607,13 @@ def _render_polyphony_crowd_error_svg(numeric_analysis: dict[str, Any]) -> str:
     lines.append(
         f'  <text x="{card_x + 12}" y="{card_y + 22}" font-family="sans-serif" '
         f'font-size="12" font-weight="700" fill="{_PALETTE["ink"]}">'
-        "Confirmatory Holm Contrasts</text>"
+        "Holm Contrasts (m=9 within-metric)</text>"
     )
     contrast_specs = [
         (
             "Agent Crowd MSE (crowd_error)",
             [
+                ("P1 - P0", "p1_vs_p0_crowd_error"),
                 ("P4 - P1", "p4_vs_p1_crowd_error"),
                 ("P3 - P1", "p3_vs_p1_crowd_error"),
                 ("P2 - P1", "p2_vs_p1_crowd_error"),
@@ -695,7 +696,7 @@ def _render_polyphony_hierarchical_page_svg(numeric_analysis: dict[str, Any]) ->
 
     lines = _svg_header_lines(
         "Hierarchical Page Decomposition Across Architecture &amp; Counter-Anchoring",
-        "Identity E_ind = E_crowd + D_within + D_between at agent and direct-assistant levels",
+        "Identity E_ind = E_crowd + D_within + D_between; Btwn% = unweighted mean task ratio",
     )
 
     for i in range(5):
@@ -961,18 +962,57 @@ def _render_polyphony_2x2_factorial_svg(numeric_analysis: dict[str, Any]) -> str
                 f'  <line x1="{x0:.1f}" y1="{y2:.1f}" x2="{x1:.1f}" y2="{y4:.1f}" '
                 f'stroke="{_PALETTE["vermilion"]}" stroke-width="2.5"/>'
             )
-            for cx_pt, cy_pt, val, col, dy_off in (
-                (x0, y1, float(raw_pts["P1"]), _PALETTE["cerulean"], -9 if y1 <= y2 else 14),
-                (x1, y3, float(raw_pts["P3"]), _PALETTE["cerulean"], -9 if y3 <= y4 else 14),
-                (x0, y2, float(raw_pts["P2"]), _PALETTE["vermilion"], -9 if y2 < y1 else 14),
-                (x1, y4, float(raw_pts["P4"]), _PALETTE["vermilion"], -9 if y4 < y3 else 14),
+            ref_y_cmp = py_p(p0_val) if p0_val is not None else -999.0
+            sep_left = -5 if abs(y1 - y2) < 12 and y1 <= y2 else (11 if abs(y1 - y2) < 12 else 3)
+            sep_right = -5 if abs(y3 - y4) < 12 and y3 <= y4 else (11 if abs(y3 - y4) < 12 else 3)
+            p2_dy = (
+                13
+                if abs(y2 - ref_y_cmp) < 10
+                else (
+                    11
+                    if abs(y1 - y2) < 12 and y2 > y1
+                    else (-5 if abs(y1 - y2) < 12 and y2 < y1 else 3)
+                )
+            )
+            p4_dy = (
+                13
+                if abs(y4 - ref_y_cmp) < 10
+                else (
+                    11
+                    if abs(y3 - y4) < 12 and y4 > y3
+                    else (-5 if abs(y3 - y4) < 12 and y4 < y3 else 3)
+                )
+            )
+            for cx_pt, cy_pt, val, col, anchor, dx_off, dy_off in (
+                (
+                    x0,
+                    y1,
+                    float(raw_pts["P1"]),
+                    _PALETTE["cerulean"],
+                    "end",
+                    -8,
+                    sep_left if y1 <= y2 else 3,
+                ),
+                (
+                    x1,
+                    y3,
+                    float(raw_pts["P3"]),
+                    _PALETTE["cerulean"],
+                    "start",
+                    8,
+                    sep_right if y3 <= y4 else 3,
+                ),
+                (x0, y2, float(raw_pts["P2"]), _PALETTE["vermilion"], "end", -8, p2_dy),
+                (x1, y4, float(raw_pts["P4"]), _PALETTE["vermilion"], "start", 8, p4_dy),
             ):
                 lines.append(
                     f'  <circle cx="{cx_pt:.1f}" cy="{cy_pt:.1f}" r="4.2" fill="{col}" '
                     f'stroke="{_PALETTE["surface"]}" stroke-width="1"/>'
                 )
+                lbl_x = f"{cx_pt + dx_off:.1f}"
+                lbl_y = f"{cy_pt + dy_off:.1f}"
                 lines.append(
-                    f'  <text x="{cx_pt:.1f}" y="{cy_pt + dy_off:.1f}" text-anchor="middle" '
+                    f'  <text x="{lbl_x}" y="{lbl_y}" text-anchor="{anchor}" '
                     f'font-family="monospace" font-size="9.5" fill="{col}">{val:.4f}</text>'
                 )
 
@@ -1036,3 +1076,278 @@ def generate_polyphony_figures(numeric_analysis: dict[str, Any], out_dir: Path) 
         path.write_text(content, encoding="utf-8")
         written.append(path)
     return written
+
+
+def render_polyphony_loto_crossterm_svg(audit_report: dict[str, Any]) -> str:
+    """Render Figure 4: LOTO robustness intervals and R2 signed-error cross-term breakdown."""
+    w, h = 940, 445
+    lines = _svg_header_lines(
+        "Figure 4: Leave-One-Task-Out Robustness &amp; R2 Error Accounting (N = 16, alpha = 0.4)",
+        "Left: n=15 LOTO intervals &amp; Drop-Lake-Superior check | "
+        "Right: E_crowd(R2) = 0.36*E(R1) + 0.16*E(A2) + 0.48*Cross",
+    )
+    loto = audit_report["loto_summary"]
+    wil = {
+        f"{row['condition_b']}_vs_{row['condition_a']}": row
+        for row in audit_report["exact_vs_pipeline_wilcoxon_matrix"]["crowd_error"]
+    }
+    did = audit_report["exact_vs_pipeline_2x2_did"]["crowd_error"]
+    did_ls = audit_report["loto_drop_lake_superior_did"]
+    cterm = audit_report["r2_signed_error_cross_term_decomposition"]
+
+    px0, px1 = 108.0, 408.0
+    x_min, x_max = -0.020, 0.015
+
+    def sx(val: float) -> float:
+        return px0 + (val - x_min) / (x_max - x_min) * (px1 - px0)
+
+    paper, grid, ink, muted = (
+        _PALETTE["paper"],
+        _PALETTE["grid"],
+        _PALETTE["ink"],
+        _PALETTE["muted"],
+    )
+    surf = _PALETTE["surface"]
+    lines.append(
+        f'  <rect x="20" y="70" width="468" height="356" rx="6" fill="{paper}" stroke="{grid}"/>'
+    )
+    lines.append(
+        '  <text x="34" y="92" font-family="sans-serif" font-size="13" font-weight="700" '
+        f'fill="{ink}">A. LOTO (n=15) Range &amp; Task Survival (Log10 MSE Diff)</text>'
+    )
+
+    for tick in (-0.020, -0.015, -0.010, -0.005, 0.0, 0.005, 0.010, 0.015):
+        tx = sx(tick)
+        is_zero = abs(tick) < 1e-9
+        col = ink if is_zero else grid
+        sw = "1.4" if is_zero else "1"
+        dash = ' stroke-dasharray="4 3"' if is_zero else ""
+        lines.append(
+            f'  <line x1="{tx:.1f}" y1="108" x2="{tx:.1f}" y2="368" '
+            f'stroke="{col}" stroke-width="{sw}"{dash}/>'
+        )
+        lbl = "0" if is_zero else f"{tick:+.3f}"
+        lines.append(
+            f'  <text x="{tx:.1f}" y="384" text-anchor="middle" '
+            f'font-family="sans-serif" font-size="9.5" fill="{muted}">{lbl}</text>'
+        )
+
+    rows_spec = [
+        (
+            "P4 - P1",
+            wil["P4_vs_P1"]["mean_diff"],
+            loto["P4_vs_P1"]["diff_min_max"],
+            loto["P4_vs_P1"]["drop_lake_superior"]["mean_diff"],
+            f"H9: {loto['P4_vs_P1']['n_subsets_holm9_exact_lt_005']}/16",
+            _PALETTE["cerulean"],
+        ),
+        (
+            "P3 - P1",
+            wil["P3_vs_P1"]["mean_diff"],
+            loto["P3_vs_P1"]["diff_min_max"],
+            loto["P3_vs_P1"]["drop_lake_superior"]["mean_diff"],
+            f"H9: {loto['P3_vs_P1']['n_subsets_holm9_exact_lt_005']}/16",
+            _PALETTE["cerulean"],
+        ),
+        (
+            "P2 - P1",
+            wil["P2_vs_P1"]["mean_diff"],
+            loto["P2_vs_P1"]["diff_min_max"],
+            loto["P2_vs_P1"]["drop_lake_superior"]["mean_diff"],
+            f"H9: {loto['P2_vs_P1']['n_subsets_holm9_exact_lt_005']}/16",
+            _PALETTE["moss"],
+        ),
+        (
+            "P4 - P0",
+            wil["P4_vs_P0"]["mean_diff"],
+            loto["P4_vs_P0"]["diff_min_max"],
+            loto["P4_vs_P0"]["drop_lake_superior"]["mean_diff"],
+            f"H9: {loto['P4_vs_P0']['n_subsets_holm9_exact_lt_005']}/16",
+            "#7A7368",
+        ),
+        (
+            "P4 - P3",
+            wil["P4_vs_P3"]["mean_diff"],
+            loto["P4_vs_P3"]["diff_min_max"],
+            loto["P4_vs_P3"]["drop_lake_superior"]["mean_diff"],
+            f"H9: {loto['P4_vs_P3']['n_subsets_holm9_exact_lt_005']}/16",
+            _PALETTE["ochre"],
+        ),
+        (
+            "2x2 DiD",
+            did["mean_diff"],
+            [did_ls["mean_diff"], 0.009327191884895832],
+            did_ls["mean_diff"],
+            "H5: 16/16",
+            _PALETTE["plum"],
+        ),
+        (
+            "P1 - P0",
+            wil["P1_vs_P0"]["mean_diff"],
+            loto["P1_vs_P0"]["diff_min_max"],
+            loto["P1_vs_P0"]["drop_lake_superior"]["mean_diff"],
+            f"H9: {loto['P1_vs_P0']['n_subsets_holm9_exact_lt_005']}/16",
+            _PALETTE["vermilion"],
+        ),
+    ]
+
+    for idx, (label, full_v, (lo_v, hi_v), drop_v, badge, col) in enumerate(rows_spec):
+        ry = 124 + idx * 37
+        xf, xl, xh, xd = sx(full_v), sx(lo_v), sx(hi_v), sx(drop_v)
+        lines.append(
+            f'  <text x="98" y="{ry + 4}" text-anchor="end" font-family="sans-serif" '
+            f'font-size="11" font-weight="700" fill="{ink}">{html.escape(label)}</text>'
+        )
+        lines.append(
+            f'  <line x1="{xl:.1f}" y1="{ry}" x2="{xh:.1f}" y2="{ry}" '
+            f'stroke="{col}" stroke-width="4" stroke-linecap="round" opacity="0.45"/>'
+        )
+        lines.append(
+            f'  <line x1="{xl:.1f}" y1="{ry - 5}" x2="{xl:.1f}" y2="{ry + 5}" '
+            f'stroke="{col}" stroke-width="1.5"/>'
+        )
+        lines.append(
+            f'  <line x1="{xh:.1f}" y1="{ry - 5}" x2="{xh:.1f}" y2="{ry + 5}" '
+            f'stroke="{col}" stroke-width="1.5"/>'
+        )
+        lines.append(
+            f'  <circle cx="{xf:.1f}" cy="{ry}" r="4.8" fill="{col}" '
+            f'stroke="{surf}" stroke-width="1.2"/>'
+        )
+        pts = f"{xd:.1f},{ry - 5.2} {xd + 5.2:.1f},{ry} {xd:.1f},{ry + 5.2} {xd - 5.2:.1f},{ry}"
+        lines.append(f'  <polygon points="{pts}" fill="{surf}" stroke="{col}" stroke-width="1.8"/>')
+        lines.append(
+            f'  <text x="418" y="{ry + 4}" font-family="sans-serif" '
+            f'font-size="10.5" font-weight="600" fill="{col}">{html.escape(badge)}</text>'
+        )
+
+    lines.append(
+        f'  <rect x="112" y="298" width="174" height="54" rx="4" fill="{surf}" stroke="{grid}"/>'
+    )
+    lines.append(
+        '  <text x="120" y="314" font-family="sans-serif" font-size="9.5" '
+        f'font-weight="700" fill="{ink}">Lake Superior Net Share:</text>'
+    )
+    lines.append(
+        '  <text x="120" y="329" font-family="sans-serif" font-size="9.2" '
+        f'fill="{muted}">P4-P0: 65.4% | P4-P3: 38.4%</text>'
+    )
+    lines.append(
+        '  <text x="120" y="343" font-family="sans-serif" font-size="9.2" '
+        f'fill="{muted}">P4-P1: 34.9% | DiD: 38.4%</text>'
+    )
+
+    lines.append(f'  <circle cx="42" cy="408" r="4" fill="{ink}"/>')
+    lines.append(
+        '  <text x="51" y="411.5" font-family="sans-serif" font-size="10" '
+        f'fill="{ink}">Full (N=16)</text>'
+    )
+    lines.append(
+        f'  <line x1="126" y1="408" x2="148" y2="408" stroke="{ink}" '
+        'stroke-width="3.5" opacity="0.5"/>'
+    )
+    lines.append(
+        '  <text x="154" y="411.5" font-family="sans-serif" '
+        f'font-size="10" fill="{ink}">LOTO [min, max]</text>'
+    )
+    lines.append(
+        '  <polygon points="256,403 261,408 256,413 251,408" '
+        f'fill="{surf}" stroke="{ink}" stroke-width="1.6"/>'
+    )
+    lines.append(
+        '  <text x="266" y="411.5" font-family="sans-serif" '
+        f'font-size="10" fill="{ink}">Drop Lake Superior (n=15)</text>'
+    )
+
+    lines.append(
+        f'  <rect x="502" y="70" width="418" height="356" rx="6" fill="{paper}" stroke="{grid}"/>'
+    )
+    lines.append(
+        '  <text x="516" y="92" font-family="sans-serif" font-size="13" '
+        f'font-weight="700" fill="{ink}">B. Exact R2 Blended-Error Cross-Term Breakdown</text>'
+    )
+
+    py0, py1, y_max = 368.0, 124.0, 0.028
+
+    def sy(val: float) -> float:
+        return py0 - (val / y_max) * (py0 - py1)
+
+    for tick in (0.0, 0.005, 0.010, 0.015, 0.020, 0.025):
+        ty = sy(tick)
+        lines.append(
+            f'  <line x1="556" y1="{ty:.1f}" x2="904" y2="{ty:.1f}" '
+            f'stroke="{grid}" stroke-width="1"/>'
+        )
+        lines.append(
+            f'  <text x="550" y="{ty + 3.5:.1f}" text-anchor="end" '
+            f'font-family="sans-serif" font-size="9.5" fill="{muted}">{tick:.3f}</text>'
+        )
+
+    bar_w = 40.0
+    xs_b = [594.0, 666.0, 738.0, 810.0, 882.0]
+    for cid, cx in zip(("P0", "P1", "P2", "P3", "P4"), xs_b, strict=True):
+        comp = cterm[cid]
+        v_r1 = float(comp["0.36_E_crowd_R1"])
+        v_a2 = float(comp["0.16_E_asst_crowd_R2"])
+        v_cr = float(comp["0.48_signed_cross_term"])
+        tot = float(comp["E_crowd_R2_sum"])
+        y0, y1, y2, y3 = sy(0.0), sy(v_r1), sy(v_r1 + v_a2), sy(tot)
+        bx = cx - bar_w / 2.0
+        for yt, yb, bcol in (
+            (y1, y0, _PALETTE["cerulean"]),
+            (y2, y1, _PALETTE["ochre"]),
+            (y3, y2, _PALETTE["vermilion"]),
+        ):
+            lines.append(
+                f'  <rect x="{bx:.1f}" y="{yt:.1f}" width="{bar_w:.1f}" '
+                f'height="{max(yb - yt, 0.5):.1f}" fill="{bcol}"/>'
+            )
+        lines.append(
+            f'  <text x="{cx:.1f}" y="{y3 - 6:.1f}" text-anchor="middle" font-family="sans-serif" '
+            f'font-size="10.5" font-weight="700" fill="{ink}">{tot:.4f}</text>'
+        )
+        if cid in ("P1", "P3", "P4"):
+            lines.append(
+                f'  <text x="{cx:.1f}" y="{y3 - 19:.1f}" text-anchor="middle" '
+                f'font-family="sans-serif" font-size="9" '
+                f'fill="{_PALETTE["vermilion"]}">cross={v_cr:.4f}</text>'
+            )
+        lines.append(
+            f'  <text x="{cx:.1f}" y="384" text-anchor="middle" '
+            f'font-family="sans-serif" font-size="11" font-weight="700" fill="{ink}">{cid}</text>'
+        )
+
+    lines.append(
+        f'  <rect x="694" y="110" width="214" height="44" rx="4" fill="{surf}" stroke="{grid}"/>'
+    )
+    lines.append(
+        '  <text x="702" y="126" font-family="sans-serif" font-size="9.5" '
+        f'font-weight="700" fill="{ink}">Why P4 (0.0077) &lt; P3 (0.0101):</text>'
+    )
+    lines.append(
+        '  <text x="702" y="141" font-family="sans-serif" font-size="9.2" '
+        f'fill="{muted}">Lower R1 carry &amp; 3.1x smaller cross-term</text>'
+    )
+
+    _append_horizontal_legend(
+        lines,
+        514,
+        411,
+        [
+            ("0.36*E_crowd(R1)", _PALETTE["cerulean"]),
+            ("0.16*E_asst(R2)", _PALETTE["ochre"]),
+            ("0.48*Cross(eR1,eA2)", _PALETTE["vermilion"]),
+        ],
+        132,
+    )
+    return _svg_wrap(
+        w, h, "Figure 4: LOTO Robustness and Round-2 Cross-Term Accounting", "\n".join(lines)
+    )
+
+
+def write_polyphony_loto_crossterm_svg(audit_report: dict[str, Any], out_dir: Path) -> Path:
+    """Write Figure 4 SVG to out_dir/polyphony_loto_crossterm.svg."""
+    out_dir.mkdir(parents=True, exist_ok=True)
+    path = out_dir / "polyphony_loto_crossterm.svg"
+    path.write_text(render_polyphony_loto_crossterm_svg(audit_report), encoding="utf-8")
+    return path

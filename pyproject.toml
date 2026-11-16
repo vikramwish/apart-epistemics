@@ -54,3 +54,8 @@ select = ["E", "F", "I", "UP", "B", "SIM", "C90", "PT", "RUF"]
 
 [tool.ruff.lint.mccabe]
 max-complexity = 16
+
+[tool.ruff.lint.per-file-ignores]
+# One-shot audit/pre-registered analysis scripts are cited by commit in the paper;
+# keep their logic frozen rather than refactoring for style.
+"scripts/*" = ["E501", "E741", "F841", "B007", "B905", "C901", "SIM102", "RUF046", "RUF059"]

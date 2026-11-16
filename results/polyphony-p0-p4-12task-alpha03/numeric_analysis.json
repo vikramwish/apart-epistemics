@@ -1,0 +1,2841 @@
+{
+  "completion_status": "complete",
+  "missing_or_incomplete_cells": 0,
+  "max_identity_residual": 1.942890293094024e-16,
+  "h4_assistant_agent_corr": 0.9753,
+  "h4_slopes": {
+    "method": "Per condition and question: OLS of (assistant_log10 - log_truth) on (agent_log10_before - log_truth) [+ (pop_median_log10 - log_truth) for C2..C6/P1..P4]; slopes averaged over questions with a bootstrap 95% CI over questions.",
+    "interpretation": "slope_user ~0: the assistant answers from its own view; ~1: it echoes the user's guess. slope_crowd separates echoing the crowd median. Descriptive, not causal.",
+    "by_condition": {
+      "P0": {
+        "slope_user": {
+          "mean": 0.0125,
+          "ci95": [
+            -0.002,
+            0.0396
+          ],
+          "n_questions": 12
+        },
+        "slope_user_round1": {
+          "mean": 0.0085,
+          "ci95": [
+            0.0,
+            0.0256
+          ],
+          "n_questions": 12
+        },
+        "n_observations": 192,
+        "per_question": {
+          "sci_arecibo_diameter_m": {
+            "n": 16,
+            "slope_user": 0.0,
+            "slope_user_round1": 0.0
+          },
+          "sci_c14_half_life_yr": {
+            "n": 16,
+            "slope_user": 0.0,
+            "slope_user_round1": 0.0
+          },
+          "sci_canakkale_bridge_span_m": {
+            "n": 16,
+            "slope_user": 0.0,
+            "slope_user_round1": 0.0
+          },
+          "sci_earth_mean_radius_km": {
+            "n": 16,
+            "slope_user": 0.0,
+            "slope_user_round1": 0.0
+          },
+          "sci_earth_sidereal_day_s": {
+            "n": 16,
+            "slope_user": 0.0,
+            "slope_user_round1": 0.0
+          },
+          "sci_hoover_dam_capacity_mw": {
+            "n": 16,
+            "slope_user": 0.1585,
+            "slope_user_round1": 0.1024
+          },
+          "sci_kola_borehole_depth_m": {
+            "n": 16,
+            "slope_user": -0.0081,
+            "slope_user_round1": 0.0
+          },
+          "sci_moon_mean_distance_km": {
+            "n": 16,
+            "slope_user": 0.0,
+            "slope_user_round1": 0.0
+          },
+          "sci_prem_cmb_depth_km": {
+            "n": 16,
+            "slope_user": 0.0,
+            "slope_user_round1": 0.0
+          },
+          "sci_rcrs_mtdna_bp": {
+            "n": 16,
+            "slope_user": 0.0,
+            "slope_user_round1": 0.0
+          },
+          "sci_solar_effective_temp_k": {
+            "n": 16,
+            "slope_user": -0.0003,
+            "slope_user_round1": 0.0
+          },
+          "sci_tungsten_melting_c": {
+            "n": 16,
+            "slope_user": 0.0,
+            "slope_user_round1": 0.0
+          }
+        }
+      },
+      "P1": {
+        "slope_user": {
+          "mean": -0.0035,
+          "ci95": [
+            -0.0092,
+            0.0007
+          ],
+          "n_questions": 12
+        },
+        "slope_user_round1": {
+          "mean": -0.0015,
+          "ci95": [
+            -0.0038,
+            0.0
+          ],
+          "n_questions": 12
+        },
+        "n_observations": 192,
+        "per_question": {
+          "sci_arecibo_diameter_m": {
+            "n": 16,
+            "slope_user": 0.0,
+            "slope_crowd": 0.0,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.0
+          },
+          "sci_c14_half_life_yr": {
+            "n": 16,
+            "slope_user": 0.0,
+            "slope_crowd": 0.0,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.0
+          },
+          "sci_canakkale_bridge_span_m": {
+            "n": 16,
+            "slope_user": 0.0,
+            "slope_crowd": 0.0,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.0
+          },
+          "sci_earth_mean_radius_km": {
+            "n": 16,
+            "slope_user": 0.0,
+            "slope_crowd": 0.0,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.0
+          },
+          "sci_earth_sidereal_day_s": {
+            "n": 16,
+            "slope_user": 0.0,
+            "slope_crowd": 0.0,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.0
+          },
+          "sci_hoover_dam_capacity_mw": {
+            "n": 16,
+            "slope_user": 0.0045,
+            "slope_crowd": -0.4554,
+            "crowd_low_variance": true,
+            "slope_user_round1": -0.0113
+          },
+          "sci_kola_borehole_depth_m": {
+            "n": 16,
+            "slope_user": -0.03,
+            "slope_crowd": 8.3735,
+            "crowd_low_variance": true,
+            "slope_user_round1": -0.0066
+          },
+          "sci_moon_mean_distance_km": {
+            "n": 16,
+            "slope_user": 0.0,
+            "slope_crowd": 0.0,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.0
+          },
+          "sci_prem_cmb_depth_km": {
+            "n": 16,
+            "slope_user": 0.0,
+            "slope_crowd": 0.0,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.0
+          },
+          "sci_rcrs_mtdna_bp": {
+            "n": 16,
+            "slope_user": 0.0,
+            "slope_crowd": 0.0,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.0
+          },
+          "sci_solar_effective_temp_k": {
+            "n": 16,
+            "slope_user": 0.0,
+            "slope_crowd": -0.0008,
+            "crowd_low_variance": true,
+            "slope_user_round1": -0.0001
+          },
+          "sci_tungsten_melting_c": {
+            "n": 16,
+            "slope_user": -0.016,
+            "slope_crowd": -0.1206,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.0
+          }
+        },
+        "slope_crowd": {
+          "mean": 0.6497,
+          "ci95": [
+            -0.1139,
+            2.0833
+          ],
+          "n_questions": 12
+        }
+      },
+      "P2": {
+        "slope_user": {
+          "mean": 0.0018,
+          "ci95": [
+            0.0,
+            0.0046
+          ],
+          "n_questions": 12
+        },
+        "slope_user_round1": {
+          "mean": 0.0001,
+          "ci95": [
+            -0.0016,
+            0.0018
+          ],
+          "n_questions": 12
+        },
+        "n_observations": 192,
+        "per_question": {
+          "sci_arecibo_diameter_m": {
+            "n": 16,
+            "slope_user": 0.0,
+            "slope_crowd": 0.0,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.0
+          },
+          "sci_c14_half_life_yr": {
+            "n": 16,
+            "slope_user": 0.0,
+            "slope_crowd": 0.0,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.0
+          },
+          "sci_canakkale_bridge_span_m": {
+            "n": 16,
+            "slope_user": 0.0,
+            "slope_crowd": 0.0,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.0
+          },
+          "sci_earth_mean_radius_km": {
+            "n": 16,
+            "slope_user": 0.0,
+            "slope_crowd": 0.0,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.0
+          },
+          "sci_earth_sidereal_day_s": {
+            "n": 16,
+            "slope_user": 0.0,
+            "slope_crowd": 0.0,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.0
+          },
+          "sci_hoover_dam_capacity_mw": {
+            "n": 16,
+            "slope_user": 0.0048,
+            "slope_crowd": 1.0592,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.0072
+          },
+          "sci_kola_borehole_depth_m": {
+            "n": 16,
+            "slope_user": -0.0001,
+            "slope_crowd": 14.922,
+            "crowd_low_variance": true,
+            "slope_user_round1": -0.0067
+          },
+          "sci_moon_mean_distance_km": {
+            "n": 16,
+            "slope_user": 0.0,
+            "slope_crowd": 0.0,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.0
+          },
+          "sci_prem_cmb_depth_km": {
+            "n": 16,
+            "slope_user": 0.0166,
+            "slope_crowd": -0.5295,
+            "crowd_low_variance": true,
+            "slope_user_round1": -0.0
+          },
+          "sci_rcrs_mtdna_bp": {
+            "n": 16,
+            "slope_user": 0.0,
+            "slope_crowd": 0.0,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.0
+          },
+          "sci_solar_effective_temp_k": {
+            "n": 16,
+            "slope_user": 0.0004,
+            "slope_crowd": 0.0004,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.0006
+          },
+          "sci_tungsten_melting_c": {
+            "n": 16,
+            "slope_user": 0.0,
+            "slope_crowd": 0.0,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.0
+          }
+        },
+        "slope_crowd": {
+          "mean": 1.2877,
+          "ci95": [
+            -0.0882,
+            3.8188
+          ],
+          "n_questions": 12
+        }
+      },
+      "P3": {
+        "slope_user": {
+          "mean": 0.0132,
+          "ci95": [
+            -0.0011,
+            0.0395
+          ],
+          "n_questions": 12
+        },
+        "slope_user_round1": {
+          "mean": 0.0142,
+          "ci95": [
+            -0.0026,
+            0.0459
+          ],
+          "n_questions": 12
+        },
+        "n_observations": 192,
+        "per_question": {
+          "sci_arecibo_diameter_m": {
+            "n": 16,
+            "slope_user": 0.0,
+            "slope_crowd": 0.0,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.0,
+            "slope_user_model_fe": 0.0
+          },
+          "sci_c14_half_life_yr": {
+            "n": 16,
+            "slope_user": -0.0058,
+            "slope_crowd": 0.0436,
+            "crowd_low_variance": true,
+            "slope_user_round1": -0.0086,
+            "slope_user_model_fe": -0.0063
+          },
+          "sci_canakkale_bridge_span_m": {
+            "n": 16,
+            "slope_user": 0.152,
+            "slope_crowd": -0.1507,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.1853,
+            "slope_user_model_fe": -0.0261
+          },
+          "sci_earth_mean_radius_km": {
+            "n": 16,
+            "slope_user": 0.0,
+            "slope_crowd": 0.0,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.0,
+            "slope_user_model_fe": 0.0
+          },
+          "sci_earth_sidereal_day_s": {
+            "n": 16,
+            "slope_user": 0.0,
+            "slope_crowd": -0.0,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.0,
+            "slope_user_model_fe": 0.0
+          },
+          "sci_hoover_dam_capacity_mw": {
+            "n": 16,
+            "slope_user": -0.0041,
+            "slope_crowd": 0.4641,
+            "crowd_low_variance": true,
+            "slope_user_round1": -0.0054,
+            "slope_user_model_fe": -0.0007
+          },
+          "sci_kola_borehole_depth_m": {
+            "n": 16,
+            "slope_user": 0.0039,
+            "slope_crowd": 0.1176,
+            "crowd_low_variance": true,
+            "slope_user_round1": -0.0005,
+            "slope_user_model_fe": 0.08
+          },
+          "sci_moon_mean_distance_km": {
+            "n": 16,
+            "slope_user": 0.0,
+            "slope_crowd": 0.0,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.0,
+            "slope_user_model_fe": 0.0
+          },
+          "sci_prem_cmb_depth_km": {
+            "n": 16,
+            "slope_user": -0.0001,
+            "slope_crowd": 0.0042,
+            "crowd_low_variance": true,
+            "slope_user_round1": -0.0001,
+            "slope_user_model_fe": -0.0008
+          },
+          "sci_rcrs_mtdna_bp": {
+            "n": 16,
+            "slope_user": 0.0,
+            "slope_crowd": 0.0,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.0,
+            "slope_user_model_fe": 0.0
+          },
+          "sci_solar_effective_temp_k": {
+            "n": 16,
+            "slope_user": 0.0,
+            "slope_crowd": -0.0,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.0001,
+            "slope_user_model_fe": -0.0001
+          },
+          "sci_tungsten_melting_c": {
+            "n": 16,
+            "slope_user": 0.0125,
+            "slope_crowd": -0.0535,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.0,
+            "slope_user_model_fe": -0.0165
+          }
+        },
+        "slope_crowd": {
+          "mean": 0.0354,
+          "ci95": [
+            -0.0301,
+            0.1254
+          ],
+          "n_questions": 12
+        },
+        "slope_user_model_fe": {
+          "mean": 0.0025,
+          "ci95": [
+            -0.0084,
+            0.0184
+          ],
+          "n_questions": 12
+        }
+      },
+      "P4": {
+        "slope_user": {
+          "mean": 0.0102,
+          "ci95": [
+            -0.0009,
+            0.0309
+          ],
+          "n_questions": 12
+        },
+        "slope_user_round1": {
+          "mean": 0.0163,
+          "ci95": [
+            -0.0014,
+            0.0506
+          ],
+          "n_questions": 12
+        },
+        "n_observations": 192,
+        "per_question": {
+          "sci_arecibo_diameter_m": {
+            "n": 16,
+            "slope_user": 0.0,
+            "slope_crowd": 0.0,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.0,
+            "slope_user_model_fe": 0.0
+          },
+          "sci_c14_half_life_yr": {
+            "n": 16,
+            "slope_user": -0.0007,
+            "slope_crowd": -0.0055,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.0,
+            "slope_user_model_fe": -0.0003
+          },
+          "sci_canakkale_bridge_span_m": {
+            "n": 16,
+            "slope_user": -0.0019,
+            "slope_crowd": 0.0025,
+            "crowd_low_variance": true,
+            "slope_user_round1": -0.0018,
+            "slope_user_model_fe": -0.0009
+          },
+          "sci_earth_mean_radius_km": {
+            "n": 16,
+            "slope_user": 0.0,
+            "slope_crowd": -0.0002,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.0,
+            "slope_user_model_fe": 0.0
+          },
+          "sci_earth_sidereal_day_s": {
+            "n": 16,
+            "slope_user": 0.0,
+            "slope_crowd": 0.0,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.0,
+            "slope_user_model_fe": -0.0
+          },
+          "sci_hoover_dam_capacity_mw": {
+            "n": 16,
+            "slope_user": 0.1207,
+            "slope_crowd": -13.5104,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.2026,
+            "slope_user_model_fe": 0.1324
+          },
+          "sci_kola_borehole_depth_m": {
+            "n": 16,
+            "slope_user": -0.0037,
+            "slope_crowd": 0.4643,
+            "crowd_low_variance": true,
+            "slope_user_round1": -0.0054,
+            "slope_user_model_fe": 0.0301
+          },
+          "sci_moon_mean_distance_km": {
+            "n": 16,
+            "slope_user": -0.0001,
+            "slope_crowd": 0.0001,
+            "crowd_low_variance": true,
+            "slope_user_round1": -0.0002,
+            "slope_user_model_fe": -0.0002
+          },
+          "sci_prem_cmb_depth_km": {
+            "n": 16,
+            "slope_user": 0.0086,
+            "slope_crowd": -0.2246,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.001,
+            "slope_user_model_fe": 0.032
+          },
+          "sci_rcrs_mtdna_bp": {
+            "n": 16,
+            "slope_user": 0.0,
+            "slope_crowd": 0.0,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.0,
+            "slope_user_model_fe": 0.0
+          },
+          "sci_solar_effective_temp_k": {
+            "n": 16,
+            "slope_user": 0.0001,
+            "slope_crowd": -0.0007,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.0,
+            "slope_user_model_fe": 0.0001
+          },
+          "sci_tungsten_melting_c": {
+            "n": 16,
+            "slope_user": 0.0,
+            "slope_crowd": 0.0,
+            "crowd_low_variance": true,
+            "slope_user_round1": 0.0,
+            "slope_user_model_fe": 0.0
+          }
+        },
+        "slope_crowd": {
+          "mean": -1.1062,
+          "ci95": [
+            -3.3966,
+            0.0782
+          ],
+          "n_questions": 12
+        },
+        "slope_user_model_fe": {
+          "mean": 0.0161,
+          "ci95": [
+            -0.0001,
+            0.0409
+          ],
+          "n_questions": 12
+        }
+      }
+    },
+    "crowd_pull_vs_c1_r1": {
+      "P1": {
+        "slope": 0.0144,
+        "intercept": -0.0017,
+        "n_questions": 12
+      },
+      "P2": {
+        "slope": 0.0142,
+        "intercept": -0.0019,
+        "n_questions": 12
+      }
+    }
+  },
+  "by_stratum": {
+    "control": {
+      "questions": [
+        "sci_c14_half_life_yr",
+        "sci_earth_mean_radius_km",
+        "sci_moon_mean_distance_km",
+        "sci_solar_effective_temp_k"
+      ],
+      "by_condition_final": {
+        "P0": {
+          "n_cells": 4,
+          "crowd_error": 0.015183,
+          "avg_individual_error": 0.023393,
+          "diversity": 0.00821,
+          "between_model_diversity": 0.0,
+          "within_model_diversity": 0.00821,
+          "excess_between_model_diversity": 0.0,
+          "between_share": 0.0,
+          "iqr": 0.095498,
+          "miss_rate": 0.0,
+          "evrr": 0.999807,
+          "evrr_between": 0.0,
+          "evrr_within": 0.999807,
+          "evrr_cumulative": 0.999807
+        },
+        "P1": {
+          "n_cells": 4,
+          "crowd_error": 0.015184,
+          "avg_individual_error": 0.023396,
+          "diversity": 0.008212,
+          "between_model_diversity": 0.0,
+          "within_model_diversity": 0.008212,
+          "excess_between_model_diversity": 0.0,
+          "between_share": 0.0,
+          "iqr": 0.095506,
+          "miss_rate": 0.0,
+          "evrr": 1.000042,
+          "evrr_between": 0.0,
+          "evrr_within": 1.000042,
+          "evrr_cumulative": 1.000026
+        },
+        "P2": {
+          "n_cells": 4,
+          "crowd_error": 0.015184,
+          "avg_individual_error": 0.023397,
+          "diversity": 0.008213,
+          "between_model_diversity": 0.0,
+          "within_model_diversity": 0.008213,
+          "excess_between_model_diversity": 0.0,
+          "between_share": 0.0,
+          "iqr": 0.095479,
+          "miss_rate": 0.0,
+          "evrr": 0.999978,
+          "evrr_between": 0.0,
+          "evrr_within": 0.999978,
+          "evrr_cumulative": 1.00011
+        },
+        "P3": {
+          "n_cells": 4,
+          "crowd_error": 0.0152,
+          "avg_individual_error": 0.023389,
+          "diversity": 0.008189,
+          "between_model_diversity": 0.004407,
+          "within_model_diversity": 0.003782,
+          "excess_between_model_diversity": 0.001571,
+          "between_share": 0.520134,
+          "iqr": 0.095498,
+          "miss_rate": 0.0,
+          "evrr": 0.999999,
+          "evrr_between": 0.520133,
+          "evrr_within": 0.479865,
+          "evrr_cumulative": 0.998193
+        },
+        "P4": {
+          "n_cells": 4,
+          "crowd_error": 0.015188,
+          "avg_individual_error": 0.023395,
+          "diversity": 0.008206,
+          "between_model_diversity": 0.004418,
+          "within_model_diversity": 0.003788,
+          "excess_between_model_diversity": 0.001577,
+          "between_share": 0.52015,
+          "iqr": 0.095541,
+          "miss_rate": 0.0,
+          "evrr": 0.999582,
+          "evrr_between": 0.519871,
+          "evrr_within": 0.479711,
+          "evrr_cumulative": 0.999541
+        }
+      },
+      "h4_slopes": {
+        "method": "Per condition and question: OLS of (assistant_log10 - log_truth) on (agent_log10_before - log_truth) [+ (pop_median_log10 - log_truth) for C2..C6/P1..P4]; slopes averaged over questions with a bootstrap 95% CI over questions.",
+        "interpretation": "slope_user ~0: the assistant answers from its own view; ~1: it echoes the user's guess. slope_crowd separates echoing the crowd median. Descriptive, not causal.",
+        "by_condition": {
+          "P0": {
+            "slope_user": {
+              "mean": -0.0001,
+              "ci95": [
+                -0.0002,
+                0.0
+              ],
+              "n_questions": 4
+            },
+            "slope_user_round1": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "n_questions": 4
+            },
+            "n_observations": 64,
+            "per_question": {
+              "sci_c14_half_life_yr": {
+                "n": 16,
+                "slope_user": 0.0,
+                "slope_user_round1": 0.0
+              },
+              "sci_earth_mean_radius_km": {
+                "n": 16,
+                "slope_user": 0.0,
+                "slope_user_round1": 0.0
+              },
+              "sci_moon_mean_distance_km": {
+                "n": 16,
+                "slope_user": 0.0,
+                "slope_user_round1": 0.0
+              },
+              "sci_solar_effective_temp_k": {
+                "n": 16,
+                "slope_user": -0.0003,
+                "slope_user_round1": 0.0
+              }
+            }
+          },
+          "P1": {
+            "slope_user": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "n_questions": 4
+            },
+            "slope_user_round1": {
+              "mean": -0.0,
+              "ci95": [
+                -0.0001,
+                0.0
+              ],
+              "n_questions": 4
+            },
+            "n_observations": 64,
+            "per_question": {
+              "sci_c14_half_life_yr": {
+                "n": 16,
+                "slope_user": 0.0,
+                "slope_crowd": 0.0,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.0
+              },
+              "sci_earth_mean_radius_km": {
+                "n": 16,
+                "slope_user": 0.0,
+                "slope_crowd": 0.0,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.0
+              },
+              "sci_moon_mean_distance_km": {
+                "n": 16,
+                "slope_user": 0.0,
+                "slope_crowd": 0.0,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.0
+              },
+              "sci_solar_effective_temp_k": {
+                "n": 16,
+                "slope_user": 0.0,
+                "slope_crowd": -0.0008,
+                "crowd_low_variance": true,
+                "slope_user_round1": -0.0001
+              }
+            },
+            "slope_crowd": {
+              "mean": -0.0002,
+              "ci95": [
+                -0.0006,
+                0.0
+              ],
+              "n_questions": 4
+            }
+          },
+          "P2": {
+            "slope_user": {
+              "mean": 0.0001,
+              "ci95": [
+                0.0,
+                0.0003
+              ],
+              "n_questions": 4
+            },
+            "slope_user_round1": {
+              "mean": 0.0002,
+              "ci95": [
+                0.0,
+                0.0005
+              ],
+              "n_questions": 4
+            },
+            "n_observations": 64,
+            "per_question": {
+              "sci_c14_half_life_yr": {
+                "n": 16,
+                "slope_user": 0.0,
+                "slope_crowd": 0.0,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.0
+              },
+              "sci_earth_mean_radius_km": {
+                "n": 16,
+                "slope_user": 0.0,
+                "slope_crowd": 0.0,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.0
+              },
+              "sci_moon_mean_distance_km": {
+                "n": 16,
+                "slope_user": 0.0,
+                "slope_crowd": 0.0,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.0
+              },
+              "sci_solar_effective_temp_k": {
+                "n": 16,
+                "slope_user": 0.0004,
+                "slope_crowd": 0.0004,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.0006
+              }
+            },
+            "slope_crowd": {
+              "mean": 0.0001,
+              "ci95": [
+                0.0,
+                0.0003
+              ],
+              "n_questions": 4
+            }
+          },
+          "P3": {
+            "slope_user": {
+              "mean": -0.0014,
+              "ci95": [
+                -0.0043,
+                0.0
+              ],
+              "n_questions": 4
+            },
+            "slope_user_round1": {
+              "mean": -0.0021,
+              "ci95": [
+                -0.0064,
+                0.0001
+              ],
+              "n_questions": 4
+            },
+            "n_observations": 64,
+            "per_question": {
+              "sci_c14_half_life_yr": {
+                "n": 16,
+                "slope_user": -0.0058,
+                "slope_crowd": 0.0436,
+                "crowd_low_variance": true,
+                "slope_user_round1": -0.0086,
+                "slope_user_model_fe": -0.0063
+              },
+              "sci_earth_mean_radius_km": {
+                "n": 16,
+                "slope_user": 0.0,
+                "slope_crowd": 0.0,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.0,
+                "slope_user_model_fe": 0.0
+              },
+              "sci_moon_mean_distance_km": {
+                "n": 16,
+                "slope_user": 0.0,
+                "slope_crowd": 0.0,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.0,
+                "slope_user_model_fe": 0.0
+              },
+              "sci_solar_effective_temp_k": {
+                "n": 16,
+                "slope_user": 0.0,
+                "slope_crowd": -0.0,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.0001,
+                "slope_user_model_fe": -0.0001
+              }
+            },
+            "slope_crowd": {
+              "mean": 0.0109,
+              "ci95": [
+                -0.0,
+                0.0327
+              ],
+              "n_questions": 4
+            },
+            "slope_user_model_fe": {
+              "mean": -0.0016,
+              "ci95": [
+                -0.0047,
+                0.0
+              ],
+              "n_questions": 4
+            }
+          },
+          "P4": {
+            "slope_user": {
+              "mean": -0.0002,
+              "ci95": [
+                -0.0005,
+                0.0
+              ],
+              "n_questions": 4
+            },
+            "slope_user_round1": {
+              "mean": -0.0,
+              "ci95": [
+                -0.0002,
+                0.0
+              ],
+              "n_questions": 4
+            },
+            "n_observations": 64,
+            "per_question": {
+              "sci_c14_half_life_yr": {
+                "n": 16,
+                "slope_user": -0.0007,
+                "slope_crowd": -0.0055,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.0,
+                "slope_user_model_fe": -0.0003
+              },
+              "sci_earth_mean_radius_km": {
+                "n": 16,
+                "slope_user": 0.0,
+                "slope_crowd": -0.0002,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.0,
+                "slope_user_model_fe": 0.0
+              },
+              "sci_moon_mean_distance_km": {
+                "n": 16,
+                "slope_user": -0.0001,
+                "slope_crowd": 0.0001,
+                "crowd_low_variance": true,
+                "slope_user_round1": -0.0002,
+                "slope_user_model_fe": -0.0002
+              },
+              "sci_solar_effective_temp_k": {
+                "n": 16,
+                "slope_user": 0.0001,
+                "slope_crowd": -0.0007,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.0,
+                "slope_user_model_fe": 0.0001
+              }
+            },
+            "slope_crowd": {
+              "mean": -0.0015,
+              "ci95": [
+                -0.0041,
+                -0.0
+              ],
+              "n_questions": 4
+            },
+            "slope_user_model_fe": {
+              "mean": -0.0001,
+              "ci95": [
+                -0.0003,
+                0.0
+              ],
+              "n_questions": 4
+            }
+          }
+        },
+        "crowd_pull_vs_c1_r1": {
+          "P1": {
+            "slope": 0.0001,
+            "intercept": 0.0,
+            "n_questions": 4
+          },
+          "P2": {
+            "slope": 0.0001,
+            "intercept": 0.0,
+            "n_questions": 4
+          }
+        }
+      }
+    },
+    "high_spread": {
+      "questions": [
+        "sci_arecibo_diameter_m",
+        "sci_hoover_dam_capacity_mw",
+        "sci_kola_borehole_depth_m",
+        "sci_rcrs_mtdna_bp"
+      ],
+      "by_condition_final": {
+        "P0": {
+          "n_cells": 4,
+          "crowd_error": 0.004647,
+          "avg_individual_error": 0.014825,
+          "diversity": 0.010178,
+          "between_model_diversity": 0.0,
+          "within_model_diversity": 0.010178,
+          "excess_between_model_diversity": 0.0,
+          "between_share": 0.0,
+          "iqr": 0.105137,
+          "miss_rate": 0.0,
+          "evrr": 1.06885,
+          "evrr_between": 0.0,
+          "evrr_within": 1.06885,
+          "evrr_cumulative": 1.100924
+        },
+        "P1": {
+          "n_cells": 4,
+          "crowd_error": 0.005286,
+          "avg_individual_error": 0.014524,
+          "diversity": 0.009238,
+          "between_model_diversity": 0.0,
+          "within_model_diversity": 0.009238,
+          "excess_between_model_diversity": 0.0,
+          "between_share": 0.0,
+          "iqr": 0.096626,
+          "miss_rate": 0.0,
+          "evrr": 0.997574,
+          "evrr_between": 0.0,
+          "evrr_within": 0.997574,
+          "evrr_cumulative": 0.997378
+        },
+        "P2": {
+          "n_cells": 4,
+          "crowd_error": 0.005037,
+          "avg_individual_error": 0.014453,
+          "diversity": 0.009416,
+          "between_model_diversity": 0.0,
+          "within_model_diversity": 0.009416,
+          "excess_between_model_diversity": 0.0,
+          "between_share": 0.0,
+          "iqr": 0.106054,
+          "miss_rate": 0.0,
+          "evrr": 1.006646,
+          "evrr_between": 0.0,
+          "evrr_within": 1.006646,
+          "evrr_cumulative": 1.010693
+        },
+        "P3": {
+          "n_cells": 4,
+          "crowd_error": 0.004773,
+          "avg_individual_error": 0.014147,
+          "diversity": 0.009375,
+          "between_model_diversity": 0.003275,
+          "within_model_diversity": 0.006099,
+          "excess_between_model_diversity": -0.001299,
+          "between_share": 0.317888,
+          "iqr": 0.104489,
+          "miss_rate": 0.0,
+          "evrr": 1.005818,
+          "evrr_between": 0.320279,
+          "evrr_within": 0.685539,
+          "evrr_cumulative": 1.006371
+        },
+        "P4": {
+          "n_cells": 4,
+          "crowd_error": 0.004523,
+          "avg_individual_error": 0.014204,
+          "diversity": 0.009681,
+          "between_model_diversity": 0.003391,
+          "within_model_diversity": 0.006291,
+          "excess_between_model_diversity": -0.001327,
+          "between_share": 0.326495,
+          "iqr": 0.100406,
+          "miss_rate": 0.0,
+          "evrr": 0.99596,
+          "evrr_between": 0.326123,
+          "evrr_within": 0.669837,
+          "evrr_cumulative": 1.044878
+        }
+      },
+      "h4_slopes": {
+        "method": "Per condition and question: OLS of (assistant_log10 - log_truth) on (agent_log10_before - log_truth) [+ (pop_median_log10 - log_truth) for C2..C6/P1..P4]; slopes averaged over questions with a bootstrap 95% CI over questions.",
+        "interpretation": "slope_user ~0: the assistant answers from its own view; ~1: it echoes the user's guess. slope_crowd separates echoing the crowd median. Descriptive, not causal.",
+        "by_condition": {
+          "P0": {
+            "slope_user": {
+              "mean": 0.0376,
+              "ci95": [
+                -0.0061,
+                0.1189
+              ],
+              "n_questions": 4
+            },
+            "slope_user_round1": {
+              "mean": 0.0256,
+              "ci95": [
+                0.0,
+                0.0768
+              ],
+              "n_questions": 4
+            },
+            "n_observations": 64,
+            "per_question": {
+              "sci_arecibo_diameter_m": {
+                "n": 16,
+                "slope_user": 0.0,
+                "slope_user_round1": 0.0
+              },
+              "sci_hoover_dam_capacity_mw": {
+                "n": 16,
+                "slope_user": 0.1585,
+                "slope_user_round1": 0.1024
+              },
+              "sci_kola_borehole_depth_m": {
+                "n": 16,
+                "slope_user": -0.0081,
+                "slope_user_round1": 0.0
+              },
+              "sci_rcrs_mtdna_bp": {
+                "n": 16,
+                "slope_user": 0.0,
+                "slope_user_round1": 0.0
+              }
+            }
+          },
+          "P1": {
+            "slope_user": {
+              "mean": -0.0064,
+              "ci95": [
+                -0.0225,
+                0.0034
+              ],
+              "n_questions": 4
+            },
+            "slope_user_round1": {
+              "mean": -0.0045,
+              "ci95": [
+                -0.009,
+                0.0
+              ],
+              "n_questions": 4
+            },
+            "n_observations": 64,
+            "per_question": {
+              "sci_arecibo_diameter_m": {
+                "n": 16,
+                "slope_user": 0.0,
+                "slope_crowd": 0.0,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.0
+              },
+              "sci_hoover_dam_capacity_mw": {
+                "n": 16,
+                "slope_user": 0.0045,
+                "slope_crowd": -0.4554,
+                "crowd_low_variance": true,
+                "slope_user_round1": -0.0113
+              },
+              "sci_kola_borehole_depth_m": {
+                "n": 16,
+                "slope_user": -0.03,
+                "slope_crowd": 8.3735,
+                "crowd_low_variance": true,
+                "slope_user_round1": -0.0066
+              },
+              "sci_rcrs_mtdna_bp": {
+                "n": 16,
+                "slope_user": 0.0,
+                "slope_crowd": 0.0,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.0
+              }
+            },
+            "slope_crowd": {
+              "mean": 1.9795,
+              "ci95": [
+                -0.3416,
+                6.2801
+              ],
+              "n_questions": 4
+            }
+          },
+          "P2": {
+            "slope_user": {
+              "mean": 0.0012,
+              "ci95": [
+                -0.0,
+                0.0036
+              ],
+              "n_questions": 4
+            },
+            "slope_user_round1": {
+              "mean": 0.0001,
+              "ci95": [
+                -0.005,
+                0.0054
+              ],
+              "n_questions": 4
+            },
+            "n_observations": 64,
+            "per_question": {
+              "sci_arecibo_diameter_m": {
+                "n": 16,
+                "slope_user": 0.0,
+                "slope_crowd": 0.0,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.0
+              },
+              "sci_hoover_dam_capacity_mw": {
+                "n": 16,
+                "slope_user": 0.0048,
+                "slope_crowd": 1.0592,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.0072
+              },
+              "sci_kola_borehole_depth_m": {
+                "n": 16,
+                "slope_user": -0.0001,
+                "slope_crowd": 14.922,
+                "crowd_low_variance": true,
+                "slope_user_round1": -0.0067
+              },
+              "sci_rcrs_mtdna_bp": {
+                "n": 16,
+                "slope_user": 0.0,
+                "slope_crowd": 0.0,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.0
+              }
+            },
+            "slope_crowd": {
+              "mean": 3.9953,
+              "ci95": [
+                0.0,
+                11.1915
+              ],
+              "n_questions": 4
+            }
+          },
+          "P3": {
+            "slope_user": {
+              "mean": -0.0,
+              "ci95": [
+                -0.0031,
+                0.003
+              ],
+              "n_questions": 4
+            },
+            "slope_user_round1": {
+              "mean": -0.0015,
+              "ci95": [
+                -0.0041,
+                0.0
+              ],
+              "n_questions": 4
+            },
+            "n_observations": 64,
+            "per_question": {
+              "sci_arecibo_diameter_m": {
+                "n": 16,
+                "slope_user": 0.0,
+                "slope_crowd": 0.0,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.0,
+                "slope_user_model_fe": 0.0
+              },
+              "sci_hoover_dam_capacity_mw": {
+                "n": 16,
+                "slope_user": -0.0041,
+                "slope_crowd": 0.4641,
+                "crowd_low_variance": true,
+                "slope_user_round1": -0.0054,
+                "slope_user_model_fe": -0.0007
+              },
+              "sci_kola_borehole_depth_m": {
+                "n": 16,
+                "slope_user": 0.0039,
+                "slope_crowd": 0.1176,
+                "crowd_low_variance": true,
+                "slope_user_round1": -0.0005,
+                "slope_user_model_fe": 0.08
+              },
+              "sci_rcrs_mtdna_bp": {
+                "n": 16,
+                "slope_user": 0.0,
+                "slope_crowd": 0.0,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.0,
+                "slope_user_model_fe": 0.0
+              }
+            },
+            "slope_crowd": {
+              "mean": 0.1454,
+              "ci95": [
+                0.0,
+                0.3481
+              ],
+              "n_questions": 4
+            },
+            "slope_user_model_fe": {
+              "mean": 0.0198,
+              "ci95": [
+                -0.0005,
+                0.06
+              ],
+              "n_questions": 4
+            }
+          },
+          "P4": {
+            "slope_user": {
+              "mean": 0.0293,
+              "ci95": [
+                -0.0027,
+                0.0905
+              ],
+              "n_questions": 4
+            },
+            "slope_user_round1": {
+              "mean": 0.0493,
+              "ci95": [
+                -0.0041,
+                0.1519
+              ],
+              "n_questions": 4
+            },
+            "n_observations": 64,
+            "per_question": {
+              "sci_arecibo_diameter_m": {
+                "n": 16,
+                "slope_user": 0.0,
+                "slope_crowd": 0.0,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.0,
+                "slope_user_model_fe": 0.0
+              },
+              "sci_hoover_dam_capacity_mw": {
+                "n": 16,
+                "slope_user": 0.1207,
+                "slope_crowd": -13.5104,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.2026,
+                "slope_user_model_fe": 0.1324
+              },
+              "sci_kola_borehole_depth_m": {
+                "n": 16,
+                "slope_user": -0.0037,
+                "slope_crowd": 0.4643,
+                "crowd_low_variance": true,
+                "slope_user_round1": -0.0054,
+                "slope_user_model_fe": 0.0301
+              },
+              "sci_rcrs_mtdna_bp": {
+                "n": 16,
+                "slope_user": 0.0,
+                "slope_crowd": 0.0,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.0,
+                "slope_user_model_fe": 0.0
+              }
+            },
+            "slope_crowd": {
+              "mean": -3.2615,
+              "ci95": [
+                -10.1328,
+                0.3482
+              ],
+              "n_questions": 4
+            },
+            "slope_user_model_fe": {
+              "mean": 0.0406,
+              "ci95": [
+                0.0,
+                0.0993
+              ],
+              "n_questions": 4
+            }
+          }
+        },
+        "crowd_pull_vs_c1_r1": {
+          "P1": {
+            "slope": 0.1145,
+            "intercept": -0.003,
+            "n_questions": 4
+          },
+          "P2": {
+            "slope": 0.1125,
+            "intercept": -0.0035,
+            "n_questions": 4
+          }
+        }
+      }
+    },
+    "low_spread": {
+      "questions": [
+        "sci_canakkale_bridge_span_m",
+        "sci_earth_sidereal_day_s",
+        "sci_prem_cmb_depth_km",
+        "sci_tungsten_melting_c"
+      ],
+      "by_condition_final": {
+        "P0": {
+          "n_cells": 4,
+          "crowd_error": 0.009965,
+          "avg_individual_error": 0.020697,
+          "diversity": 0.010731,
+          "between_model_diversity": 0.0,
+          "within_model_diversity": 0.010731,
+          "excess_between_model_diversity": 0.0,
+          "between_share": 0.0,
+          "iqr": 0.135099,
+          "miss_rate": 0.0,
+          "evrr": 1.0,
+          "evrr_between": 0.0,
+          "evrr_within": 1.0,
+          "evrr_cumulative": 1.0
+        },
+        "P1": {
+          "n_cells": 4,
+          "crowd_error": 0.010223,
+          "avg_individual_error": 0.020912,
+          "diversity": 0.010689,
+          "between_model_diversity": 0.0,
+          "within_model_diversity": 0.010689,
+          "excess_between_model_diversity": 0.0,
+          "between_share": 0.0,
+          "iqr": 0.133012,
+          "miss_rate": 0.0,
+          "evrr": 0.991041,
+          "evrr_between": 0.0,
+          "evrr_within": 0.991041,
+          "evrr_cumulative": 0.991041
+        },
+        "P2": {
+          "n_cells": 4,
+          "crowd_error": 0.010207,
+          "avg_individual_error": 0.021268,
+          "diversity": 0.011062,
+          "between_model_diversity": 0.0,
+          "within_model_diversity": 0.011062,
+          "excess_between_model_diversity": 0.0,
+          "between_share": 0.0,
+          "iqr": 0.139567,
+          "miss_rate": 0.0,
+          "evrr": 1.014725,
+          "evrr_between": 0.0,
+          "evrr_within": 1.014725,
+          "evrr_cumulative": 1.014719
+        },
+        "P3": {
+          "n_cells": 4,
+          "crowd_error": 0.011049,
+          "avg_individual_error": 0.022635,
+          "diversity": 0.011586,
+          "between_model_diversity": 0.006566,
+          "within_model_diversity": 0.00502,
+          "excess_between_model_diversity": 0.002801,
+          "between_share": 0.627446,
+          "iqr": 0.151835,
+          "miss_rate": 0.0,
+          "evrr": 1.046167,
+          "evrr_between": 0.6575,
+          "evrr_within": 0.388667,
+          "evrr_cumulative": 1.101819
+        },
+        "P4": {
+          "n_cells": 4,
+          "crowd_error": 0.010073,
+          "avg_individual_error": 0.020933,
+          "diversity": 0.01086,
+          "between_model_diversity": 0.005578,
+          "within_model_diversity": 0.005282,
+          "excess_between_model_diversity": 0.001616,
+          "between_share": 0.577282,
+          "iqr": 0.136545,
+          "miss_rate": 0.0,
+          "evrr": 1.005391,
+          "evrr_between": 0.579871,
+          "evrr_within": 0.42552,
+          "evrr_cumulative": 1.005226
+        }
+      },
+      "h4_slopes": {
+        "method": "Per condition and question: OLS of (assistant_log10 - log_truth) on (agent_log10_before - log_truth) [+ (pop_median_log10 - log_truth) for C2..C6/P1..P4]; slopes averaged over questions with a bootstrap 95% CI over questions.",
+        "interpretation": "slope_user ~0: the assistant answers from its own view; ~1: it echoes the user's guess. slope_crowd separates echoing the crowd median. Descriptive, not causal.",
+        "by_condition": {
+          "P0": {
+            "slope_user": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "n_questions": 4
+            },
+            "slope_user_round1": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "n_questions": 4
+            },
+            "n_observations": 64,
+            "per_question": {
+              "sci_canakkale_bridge_span_m": {
+                "n": 16,
+                "slope_user": 0.0,
+                "slope_user_round1": 0.0
+              },
+              "sci_earth_sidereal_day_s": {
+                "n": 16,
+                "slope_user": 0.0,
+                "slope_user_round1": 0.0
+              },
+              "sci_prem_cmb_depth_km": {
+                "n": 16,
+                "slope_user": 0.0,
+                "slope_user_round1": 0.0
+              },
+              "sci_tungsten_melting_c": {
+                "n": 16,
+                "slope_user": 0.0,
+                "slope_user_round1": 0.0
+              }
+            }
+          },
+          "P1": {
+            "slope_user": {
+              "mean": -0.004,
+              "ci95": [
+                -0.012,
+                0.0
+              ],
+              "n_questions": 4
+            },
+            "slope_user_round1": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "n_questions": 4
+            },
+            "n_observations": 64,
+            "per_question": {
+              "sci_canakkale_bridge_span_m": {
+                "n": 16,
+                "slope_user": 0.0,
+                "slope_crowd": 0.0,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.0
+              },
+              "sci_earth_sidereal_day_s": {
+                "n": 16,
+                "slope_user": 0.0,
+                "slope_crowd": 0.0,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.0
+              },
+              "sci_prem_cmb_depth_km": {
+                "n": 16,
+                "slope_user": 0.0,
+                "slope_crowd": 0.0,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.0
+              },
+              "sci_tungsten_melting_c": {
+                "n": 16,
+                "slope_user": -0.016,
+                "slope_crowd": -0.1206,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.0
+              }
+            },
+            "slope_crowd": {
+              "mean": -0.0301,
+              "ci95": [
+                -0.0904,
+                0.0
+              ],
+              "n_questions": 4
+            }
+          },
+          "P2": {
+            "slope_user": {
+              "mean": 0.0041,
+              "ci95": [
+                0.0,
+                0.0124
+              ],
+              "n_questions": 4
+            },
+            "slope_user_round1": {
+              "mean": -0.0,
+              "ci95": [
+                -0.0,
+                0.0
+              ],
+              "n_questions": 4
+            },
+            "n_observations": 64,
+            "per_question": {
+              "sci_canakkale_bridge_span_m": {
+                "n": 16,
+                "slope_user": 0.0,
+                "slope_crowd": 0.0,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.0
+              },
+              "sci_earth_sidereal_day_s": {
+                "n": 16,
+                "slope_user": 0.0,
+                "slope_crowd": 0.0,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.0
+              },
+              "sci_prem_cmb_depth_km": {
+                "n": 16,
+                "slope_user": 0.0166,
+                "slope_crowd": -0.5295,
+                "crowd_low_variance": true,
+                "slope_user_round1": -0.0
+              },
+              "sci_tungsten_melting_c": {
+                "n": 16,
+                "slope_user": 0.0,
+                "slope_crowd": 0.0,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.0
+              }
+            },
+            "slope_crowd": {
+              "mean": -0.1324,
+              "ci95": [
+                -0.3972,
+                0.0
+              ],
+              "n_questions": 4
+            }
+          },
+          "P3": {
+            "slope_user": {
+              "mean": 0.0411,
+              "ci95": [
+                -0.0001,
+                0.114
+              ],
+              "n_questions": 4
+            },
+            "slope_user_round1": {
+              "mean": 0.0463,
+              "ci95": [
+                -0.0001,
+                0.139
+              ],
+              "n_questions": 4
+            },
+            "n_observations": 64,
+            "per_question": {
+              "sci_canakkale_bridge_span_m": {
+                "n": 16,
+                "slope_user": 0.152,
+                "slope_crowd": -0.1507,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.1853,
+                "slope_user_model_fe": -0.0261
+              },
+              "sci_earth_sidereal_day_s": {
+                "n": 16,
+                "slope_user": 0.0,
+                "slope_crowd": -0.0,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.0,
+                "slope_user_model_fe": 0.0
+              },
+              "sci_prem_cmb_depth_km": {
+                "n": 16,
+                "slope_user": -0.0001,
+                "slope_crowd": 0.0042,
+                "crowd_low_variance": true,
+                "slope_user_round1": -0.0001,
+                "slope_user_model_fe": -0.0008
+              },
+              "sci_tungsten_melting_c": {
+                "n": 16,
+                "slope_user": 0.0125,
+                "slope_crowd": -0.0535,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.0,
+                "slope_user_model_fe": -0.0165
+              }
+            },
+            "slope_crowd": {
+              "mean": -0.05,
+              "ci95": [
+                -0.1131,
+                0.0021
+              ],
+              "n_questions": 4
+            },
+            "slope_user_model_fe": {
+              "mean": -0.0108,
+              "ci95": [
+                -0.0213,
+                -0.0004
+              ],
+              "n_questions": 4
+            }
+          },
+          "P4": {
+            "slope_user": {
+              "mean": 0.0017,
+              "ci95": [
+                -0.0014,
+                0.0064
+              ],
+              "n_questions": 4
+            },
+            "slope_user_round1": {
+              "mean": -0.0002,
+              "ci95": [
+                -0.0014,
+                0.0008
+              ],
+              "n_questions": 4
+            },
+            "n_observations": 64,
+            "per_question": {
+              "sci_canakkale_bridge_span_m": {
+                "n": 16,
+                "slope_user": -0.0019,
+                "slope_crowd": 0.0025,
+                "crowd_low_variance": true,
+                "slope_user_round1": -0.0018,
+                "slope_user_model_fe": -0.0009
+              },
+              "sci_earth_sidereal_day_s": {
+                "n": 16,
+                "slope_user": 0.0,
+                "slope_crowd": 0.0,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.0,
+                "slope_user_model_fe": -0.0
+              },
+              "sci_prem_cmb_depth_km": {
+                "n": 16,
+                "slope_user": 0.0086,
+                "slope_crowd": -0.2246,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.001,
+                "slope_user_model_fe": 0.032
+              },
+              "sci_tungsten_melting_c": {
+                "n": 16,
+                "slope_user": 0.0,
+                "slope_crowd": 0.0,
+                "crowd_low_variance": true,
+                "slope_user_round1": 0.0,
+                "slope_user_model_fe": 0.0
+              }
+            },
+            "slope_crowd": {
+              "mean": -0.0555,
+              "ci95": [
+                -0.1684,
+                0.0019
+              ],
+              "n_questions": 4
+            },
+            "slope_user_model_fe": {
+              "mean": 0.0078,
+              "ci95": [
+                -0.0007,
+                0.024
+              ],
+              "n_questions": 4
+            }
+          }
+        },
+        "crowd_pull_vs_c1_r1": {
+          "P1": {
+            "slope": 0.0,
+            "intercept": 0.0,
+            "n_questions": 4
+          },
+          "P2": {
+            "slope": -0.0,
+            "intercept": -0.0,
+            "n_questions": 4
+          }
+        }
+      }
+    }
+  },
+  "by_condition_final": {
+    "P0": {
+      "condition_id": "P0",
+      "round_idx": 2,
+      "crowd_error": 0.009932,
+      "avg_individual_error": 0.019638,
+      "diversity": 0.009706,
+      "between_model_diversity": 0.0,
+      "within_model_diversity": 0.009706,
+      "excess_between_model_diversity": 0.0,
+      "between_share": 0.0,
+      "iqr": 0.111911,
+      "miss_rate": 0.0,
+      "evrr": 1.022885,
+      "evrr_between": 0.0,
+      "evrr_within": 1.022885,
+      "evrr_cumulative": 1.033577
+    },
+    "P1": {
+      "condition_id": "P1",
+      "round_idx": 2,
+      "crowd_error": 0.010231,
+      "avg_individual_error": 0.019611,
+      "diversity": 0.00938,
+      "between_model_diversity": 0.0,
+      "within_model_diversity": 0.00938,
+      "excess_between_model_diversity": 0.0,
+      "between_share": 0.0,
+      "iqr": 0.108381,
+      "miss_rate": 0.0,
+      "evrr": 0.996219,
+      "evrr_between": 0.0,
+      "evrr_within": 0.996219,
+      "evrr_cumulative": 0.996149
+    },
+    "P2": {
+      "condition_id": "P2",
+      "round_idx": 2,
+      "crowd_error": 0.010143,
+      "avg_individual_error": 0.019706,
+      "diversity": 0.009563,
+      "between_model_diversity": 0.0,
+      "within_model_diversity": 0.009563,
+      "excess_between_model_diversity": 0.0,
+      "between_share": 0.0,
+      "iqr": 0.1137,
+      "miss_rate": 0.0,
+      "evrr": 1.007116,
+      "evrr_between": 0.0,
+      "evrr_within": 1.007116,
+      "evrr_cumulative": 1.008507
+    },
+    "P3": {
+      "condition_id": "P3",
+      "round_idx": 2,
+      "crowd_error": 0.01034,
+      "avg_individual_error": 0.020057,
+      "diversity": 0.009717,
+      "between_model_diversity": 0.00475,
+      "within_model_diversity": 0.004967,
+      "excess_between_model_diversity": 0.001024,
+      "between_share": 0.488489,
+      "iqr": 0.117274,
+      "miss_rate": 0.0,
+      "evrr": 1.017328,
+      "evrr_between": 0.499304,
+      "evrr_within": 0.518024,
+      "evrr_cumulative": 1.035461
+    },
+    "P4": {
+      "condition_id": "P4",
+      "round_idx": 2,
+      "crowd_error": 0.009928,
+      "avg_individual_error": 0.019511,
+      "diversity": 0.009583,
+      "between_model_diversity": 0.004462,
+      "within_model_diversity": 0.00512,
+      "excess_between_model_diversity": 0.000622,
+      "between_share": 0.474642,
+      "iqr": 0.110831,
+      "miss_rate": 0.0,
+      "evrr": 1.000311,
+      "evrr_between": 0.475288,
+      "evrr_within": 0.525023,
+      "evrr_cumulative": 1.016548
+    }
+  },
+  "condition_round_metrics": [
+    {
+      "condition_id": "P0",
+      "round_idx": 1,
+      "crowd_error": 0.02008,
+      "avg_individual_error": 0.039437,
+      "diversity": 0.019357,
+      "between_model_diversity": 0.0,
+      "within_model_diversity": 0.019357,
+      "excess_between_model_diversity": 0.0,
+      "between_share": 0.0,
+      "iqr": 0.156582,
+      "miss_rate": 0.0,
+      "evrr": 1.008485,
+      "evrr_between": 0.0,
+      "evrr_within": 1.008485,
+      "evrr_cumulative": 1.008485
+    },
+    {
+      "condition_id": "P0",
+      "round_idx": 2,
+      "crowd_error": 0.009932,
+      "avg_individual_error": 0.019638,
+      "diversity": 0.009706,
+      "between_model_diversity": 0.0,
+      "within_model_diversity": 0.009706,
+      "excess_between_model_diversity": 0.0,
+      "between_share": 0.0,
+      "iqr": 0.111911,
+      "miss_rate": 0.0,
+      "evrr": 1.022885,
+      "evrr_between": 0.0,
+      "evrr_within": 1.022885,
+      "evrr_cumulative": 1.033577
+    },
+    {
+      "condition_id": "P1",
+      "round_idx": 1,
+      "crowd_error": 0.02039,
+      "avg_individual_error": 0.039603,
+      "diversity": 0.019213,
+      "between_model_diversity": 0.0,
+      "within_model_diversity": 0.019213,
+      "excess_between_model_diversity": 0.0,
+      "between_share": 0.0,
+      "iqr": 0.158146,
+      "miss_rate": 0.0,
+      "evrr": 0.999986,
+      "evrr_between": 0.0,
+      "evrr_within": 0.999986,
+      "evrr_cumulative": 0.999986
+    },
+    {
+      "condition_id": "P1",
+      "round_idx": 2,
+      "crowd_error": 0.010231,
+      "avg_individual_error": 0.019611,
+      "diversity": 0.00938,
+      "between_model_diversity": 0.0,
+      "within_model_diversity": 0.00938,
+      "excess_between_model_diversity": 0.0,
+      "between_share": 0.0,
+      "iqr": 0.108381,
+      "miss_rate": 0.0,
+      "evrr": 0.996219,
+      "evrr_between": 0.0,
+      "evrr_within": 0.996219,
+      "evrr_cumulative": 0.996149
+    },
+    {
+      "condition_id": "P2",
+      "round_idx": 1,
+      "crowd_error": 0.020387,
+      "avg_individual_error": 0.039624,
+      "diversity": 0.019237,
+      "between_model_diversity": 0.0,
+      "within_model_diversity": 0.019237,
+      "excess_between_model_diversity": 0.0,
+      "between_share": 0.0,
+      "iqr": 0.158116,
+      "miss_rate": 0.0,
+      "evrr": 1.001371,
+      "evrr_between": 0.0,
+      "evrr_within": 1.001371,
+      "evrr_cumulative": 1.001371
+    },
+    {
+      "condition_id": "P2",
+      "round_idx": 2,
+      "crowd_error": 0.010143,
+      "avg_individual_error": 0.019706,
+      "diversity": 0.009563,
+      "between_model_diversity": 0.0,
+      "within_model_diversity": 0.009563,
+      "excess_between_model_diversity": 0.0,
+      "between_share": 0.0,
+      "iqr": 0.1137,
+      "miss_rate": 0.0,
+      "evrr": 1.007116,
+      "evrr_between": 0.0,
+      "evrr_within": 1.007116,
+      "evrr_cumulative": 1.008507
+    },
+    {
+      "condition_id": "P3",
+      "round_idx": 1,
+      "crowd_error": 0.020488,
+      "avg_individual_error": 0.039975,
+      "diversity": 0.019487,
+      "between_model_diversity": 0.009349,
+      "within_model_diversity": 0.010138,
+      "excess_between_model_diversity": 0.001746,
+      "between_share": 0.481292,
+      "iqr": 0.15769,
+      "miss_rate": 0.0,
+      "evrr": 1.015707,
+      "evrr_between": 0.488423,
+      "evrr_within": 0.527285,
+      "evrr_cumulative": 1.015707
+    },
+    {
+      "condition_id": "P3",
+      "round_idx": 2,
+      "crowd_error": 0.01034,
+      "avg_individual_error": 0.020057,
+      "diversity": 0.009717,
+      "between_model_diversity": 0.00475,
+      "within_model_diversity": 0.004967,
+      "excess_between_model_diversity": 0.001024,
+      "between_share": 0.488489,
+      "iqr": 0.117274,
+      "miss_rate": 0.0,
+      "evrr": 1.017328,
+      "evrr_between": 0.499304,
+      "evrr_within": 0.518024,
+      "evrr_cumulative": 1.035461
+    },
+    {
+      "condition_id": "P4",
+      "round_idx": 1,
+      "crowd_error": 0.020177,
+      "avg_individual_error": 0.039679,
+      "diversity": 0.019502,
+      "between_model_diversity": 0.009179,
+      "within_model_diversity": 0.010323,
+      "excess_between_model_diversity": 0.001437,
+      "between_share": 0.477085,
+      "iqr": 0.157602,
+      "miss_rate": 0.0,
+      "evrr": 1.0165,
+      "evrr_between": 0.478624,
+      "evrr_within": 0.537876,
+      "evrr_cumulative": 1.0165
+    },
+    {
+      "condition_id": "P4",
+      "round_idx": 2,
+      "crowd_error": 0.009928,
+      "avg_individual_error": 0.019511,
+      "diversity": 0.009583,
+      "between_model_diversity": 0.004462,
+      "within_model_diversity": 0.00512,
+      "excess_between_model_diversity": 0.000622,
+      "between_share": 0.474642,
+      "iqr": 0.110831,
+      "miss_rate": 0.0,
+      "evrr": 1.000311,
+      "evrr_between": 0.475288,
+      "evrr_within": 0.525023,
+      "evrr_cumulative": 1.016548
+    }
+  ],
+  "interaction_2x2": {
+    "crowd_error": {
+      "mean_interaction": -0.000324,
+      "ci_low": -0.001042,
+      "ci_high": 0.000119,
+      "wilcoxon_p": 0.375,
+      "holm_adjusted_p": 0.826172,
+      "n_cells": 12
+    },
+    "avg_individual_error": {
+      "mean_interaction": -0.000642,
+      "ci_low": -0.002002,
+      "ci_high": 0.000255,
+      "wilcoxon_p": 0.769531,
+      "holm_adjusted_p": 0.826172,
+      "n_cells": 12
+    },
+    "diversity": {
+      "mean_interaction": -0.000318,
+      "ci_low": -0.001014,
+      "ci_high": 0.000241,
+      "wilcoxon_p": 0.275391,
+      "holm_adjusted_p": 0.826172,
+      "n_cells": 12
+    },
+    "evrr": {
+      "mean_interaction": -0.027914,
+      "ci_low": -0.058864,
+      "ci_high": -0.003458,
+      "wilcoxon_p": 0.164062,
+      "holm_adjusted_p": 0.65625,
+      "n_cells": 12
+    }
+  },
+  "contrasts": [
+    {
+      "contrast_id": "p4_vs_p1_crowd_error",
+      "metric": "crowd_error",
+      "condition_a": "P1",
+      "condition_b": "P4",
+      "mean_diff": -0.000303,
+      "ci_low": -0.000832,
+      "ci_high": 4.7e-05,
+      "wilcoxon_p": 0.769531,
+      "holm_adjusted_p": 1.0,
+      "n_cells": 12
+    },
+    {
+      "contrast_id": "p3_vs_p1_crowd_error",
+      "metric": "crowd_error",
+      "condition_a": "P1",
+      "condition_b": "P3",
+      "mean_diff": 0.00011,
+      "ci_low": -0.000506,
+      "ci_high": 0.000946,
+      "wilcoxon_p": 0.84375,
+      "holm_adjusted_p": 1.0,
+      "n_cells": 12
+    },
+    {
+      "contrast_id": "p2_vs_p1_crowd_error",
+      "metric": "crowd_error",
+      "condition_a": "P1",
+      "condition_b": "P2",
+      "mean_diff": -8.8e-05,
+      "ci_low": -0.000347,
+      "ci_high": 0.000161,
+      "wilcoxon_p": 0.4375,
+      "holm_adjusted_p": 1.0,
+      "n_cells": 12
+    },
+    {
+      "contrast_id": "p4_vs_p3_crowd_error",
+      "metric": "crowd_error",
+      "condition_a": "P3",
+      "condition_b": "P4",
+      "mean_diff": -0.000412,
+      "ci_low": -0.001139,
+      "ci_high": 2.3e-05,
+      "wilcoxon_p": 0.130859,
+      "holm_adjusted_p": 1.0,
+      "n_cells": 12
+    },
+    {
+      "contrast_id": "p4_vs_p2_crowd_error",
+      "metric": "crowd_error",
+      "condition_a": "P2",
+      "condition_b": "P4",
+      "mean_diff": -0.000215,
+      "ci_low": -0.000578,
+      "ci_high": 3e-06,
+      "wilcoxon_p": 0.496094,
+      "holm_adjusted_p": 1.0,
+      "n_cells": 12
+    },
+    {
+      "contrast_id": "p4_vs_p0_crowd_error",
+      "metric": "crowd_error",
+      "condition_a": "P0",
+      "condition_b": "P4",
+      "mean_diff": -4e-06,
+      "ci_low": -0.000154,
+      "ci_high": 0.000108,
+      "wilcoxon_p": 0.359375,
+      "holm_adjusted_p": 1.0,
+      "n_cells": 12
+    },
+    {
+      "contrast_id": "p1_vs_p0_crowd_error",
+      "metric": "crowd_error",
+      "condition_a": "P0",
+      "condition_b": "P1",
+      "mean_diff": 0.000299,
+      "ci_low": 1e-06,
+      "ci_high": 0.000718,
+      "wilcoxon_p": 0.125,
+      "holm_adjusted_p": 1.0,
+      "n_cells": 12
+    },
+    {
+      "contrast_id": "p3_vs_p0_crowd_error",
+      "metric": "crowd_error",
+      "condition_a": "P0",
+      "condition_b": "P3",
+      "mean_diff": 0.000409,
+      "ci_low": 3e-05,
+      "ci_high": 0.001097,
+      "wilcoxon_p": 0.007812,
+      "holm_adjusted_p": 0.125,
+      "n_cells": 12
+    },
+    {
+      "contrast_id": "p2_vs_p0_crowd_error",
+      "metric": "crowd_error",
+      "condition_a": "P0",
+      "condition_b": "P2",
+      "mean_diff": 0.000211,
+      "ci_low": 1e-06,
+      "ci_high": 0.000477,
+      "wilcoxon_p": 0.125,
+      "holm_adjusted_p": 1.0,
+      "n_cells": 12
+    },
+    {
+      "contrast_id": "p4_vs_p1_diversity",
+      "metric": "diversity",
+      "condition_a": "P1",
+      "condition_b": "P4",
+      "mean_diff": 0.000203,
+      "ci_low": 2.4e-05,
+      "ci_high": 0.000461,
+      "wilcoxon_p": 0.193359,
+      "holm_adjusted_p": 1.0,
+      "n_cells": 12
+    },
+    {
+      "contrast_id": "p3_vs_p1_diversity",
+      "metric": "diversity",
+      "condition_a": "P1",
+      "condition_b": "P3",
+      "mean_diff": 0.000337,
+      "ci_low": -2.8e-05,
+      "ci_high": 0.000936,
+      "wilcoxon_p": 0.640625,
+      "holm_adjusted_p": 1.0,
+      "n_cells": 12
+    },
+    {
+      "contrast_id": "p2_vs_p1_diversity",
+      "metric": "diversity",
+      "condition_a": "P1",
+      "condition_b": "P2",
+      "mean_diff": 0.000183,
+      "ci_low": -8e-06,
+      "ci_high": 0.000438,
+      "wilcoxon_p": 0.1875,
+      "holm_adjusted_p": 1.0,
+      "n_cells": 12
+    },
+    {
+      "contrast_id": "p3_vs_p1_excess_between_model_diversity",
+      "metric": "excess_between_model_diversity",
+      "condition_a": "P1",
+      "condition_b": "P3",
+      "mean_diff": 0.001024,
+      "ci_low": -0.000595,
+      "ci_high": 0.002595,
+      "wilcoxon_p": 0.266113,
+      "holm_adjusted_p": 1.0,
+      "n_cells": 12
+    },
+    {
+      "contrast_id": "p4_vs_p1_excess_between_model_diversity",
+      "metric": "excess_between_model_diversity",
+      "condition_a": "P1",
+      "condition_b": "P4",
+      "mean_diff": 0.000622,
+      "ci_low": -0.001088,
+      "ci_high": 0.002182,
+      "wilcoxon_p": 0.380371,
+      "holm_adjusted_p": 1.0,
+      "n_cells": 12
+    },
+    {
+      "contrast_id": "p4_vs_p3_between_model_diversity",
+      "metric": "between_model_diversity",
+      "condition_a": "P3",
+      "condition_b": "P4",
+      "mean_diff": -0.000287,
+      "ci_low": -0.000889,
+      "ci_high": 6.3e-05,
+      "wilcoxon_p": 0.921875,
+      "holm_adjusted_p": 1.0,
+      "n_cells": 12
+    },
+    {
+      "contrast_id": "p4_vs_p1_evrr",
+      "metric": "evrr",
+      "condition_a": "P1",
+      "condition_b": "P4",
+      "mean_diff": 0.004092,
+      "ci_low": -0.008545,
+      "ci_high": 0.016204,
+      "wilcoxon_p": 0.84375,
+      "holm_adjusted_p": 1.0,
+      "n_cells": 12
+    }
+  ],
+  "polyphony_contrast_matrix": {
+    "crowd_error": [
+      {
+        "contrast_id": "p4_vs_p1_crowd_error",
+        "metric": "crowd_error",
+        "condition_a": "P1",
+        "condition_b": "P4",
+        "mean_diff": -0.000303,
+        "ci_low": -0.000832,
+        "ci_high": 4.7e-05,
+        "wilcoxon_p": 0.769531,
+        "holm_adjusted_p": 1.0,
+        "n_cells": 12
+      },
+      {
+        "contrast_id": "p3_vs_p1_crowd_error",
+        "metric": "crowd_error",
+        "condition_a": "P1",
+        "condition_b": "P3",
+        "mean_diff": 0.00011,
+        "ci_low": -0.000506,
+        "ci_high": 0.000946,
+        "wilcoxon_p": 0.84375,
+        "holm_adjusted_p": 1.0,
+        "n_cells": 12
+      },
+      {
+        "contrast_id": "p2_vs_p1_crowd_error",
+        "metric": "crowd_error",
+        "condition_a": "P1",
+        "condition_b": "P2",
+        "mean_diff": -8.8e-05,
+        "ci_low": -0.000347,
+        "ci_high": 0.000161,
+        "wilcoxon_p": 0.4375,
+        "holm_adjusted_p": 1.0,
+        "n_cells": 12
+      },
+      {
+        "contrast_id": "p4_vs_p3_crowd_error",
+        "metric": "crowd_error",
+        "condition_a": "P3",
+        "condition_b": "P4",
+        "mean_diff": -0.000412,
+        "ci_low": -0.001139,
+        "ci_high": 2.3e-05,
+        "wilcoxon_p": 0.130859,
+        "holm_adjusted_p": 1.0,
+        "n_cells": 12
+      },
+      {
+        "contrast_id": "p4_vs_p2_crowd_error",
+        "metric": "crowd_error",
+        "condition_a": "P2",
+        "condition_b": "P4",
+        "mean_diff": -0.000215,
+        "ci_low": -0.000578,
+        "ci_high": 3e-06,
+        "wilcoxon_p": 0.496094,
+        "holm_adjusted_p": 1.0,
+        "n_cells": 12
+      },
+      {
+        "contrast_id": "p4_vs_p0_crowd_error",
+        "metric": "crowd_error",
+        "condition_a": "P0",
+        "condition_b": "P4",
+        "mean_diff": -4e-06,
+        "ci_low": -0.000154,
+        "ci_high": 0.000108,
+        "wilcoxon_p": 0.359375,
+        "holm_adjusted_p": 1.0,
+        "n_cells": 12
+      },
+      {
+        "contrast_id": "p1_vs_p0_crowd_error",
+        "metric": "crowd_error",
+        "condition_a": "P0",
+        "condition_b": "P1",
+        "mean_diff": 0.000299,
+        "ci_low": 1e-06,
+        "ci_high": 0.000718,
+        "wilcoxon_p": 0.125,
+        "holm_adjusted_p": 1.0,
+        "n_cells": 12
+      },
+      {
+        "contrast_id": "p3_vs_p0_crowd_error",
+        "metric": "crowd_error",
+        "condition_a": "P0",
+        "condition_b": "P3",
+        "mean_diff": 0.000409,
+        "ci_low": 3e-05,
+        "ci_high": 0.001097,
+        "wilcoxon_p": 0.007812,
+        "holm_adjusted_p": 0.070312,
+        "n_cells": 12
+      },
+      {
+        "contrast_id": "p2_vs_p0_crowd_error",
+        "metric": "crowd_error",
+        "condition_a": "P0",
+        "condition_b": "P2",
+        "mean_diff": 0.000211,
+        "ci_low": 1e-06,
+        "ci_high": 0.000477,
+        "wilcoxon_p": 0.125,
+        "holm_adjusted_p": 1.0,
+        "n_cells": 12
+      }
+    ],
+    "diversity": [
+      {
+        "contrast_id": "p4_vs_p1_diversity",
+        "metric": "diversity",
+        "condition_a": "P1",
+        "condition_b": "P4",
+        "mean_diff": 0.000203,
+        "ci_low": 2.4e-05,
+        "ci_high": 0.000461,
+        "wilcoxon_p": 0.193359,
+        "holm_adjusted_p": 1.0,
+        "n_cells": 12
+      },
+      {
+        "contrast_id": "p3_vs_p1_diversity",
+        "metric": "diversity",
+        "condition_a": "P1",
+        "condition_b": "P3",
+        "mean_diff": 0.000337,
+        "ci_low": -2.8e-05,
+        "ci_high": 0.000936,
+        "wilcoxon_p": 0.640625,
+        "holm_adjusted_p": 1.0,
+        "n_cells": 12
+      },
+      {
+        "contrast_id": "p2_vs_p1_diversity",
+        "metric": "diversity",
+        "condition_a": "P1",
+        "condition_b": "P2",
+        "mean_diff": 0.000183,
+        "ci_low": -8e-06,
+        "ci_high": 0.000438,
+        "wilcoxon_p": 0.1875,
+        "holm_adjusted_p": 1.0,
+        "n_cells": 12
+      },
+      {
+        "contrast_id": "p4_vs_p3_diversity",
+        "metric": "diversity",
+        "condition_a": "P3",
+        "condition_b": "P4",
+        "mean_diff": -0.000134,
+        "ci_low": -0.00084,
+        "ci_high": 0.000374,
+        "wilcoxon_p": 1.0,
+        "holm_adjusted_p": 1.0,
+        "n_cells": 12
+      },
+      {
+        "contrast_id": "p4_vs_p2_diversity",
+        "metric": "diversity",
+        "condition_a": "P2",
+        "condition_b": "P4",
+        "mean_diff": 1.9e-05,
+        "ci_low": -0.000228,
+        "ci_high": 0.000328,
+        "wilcoxon_p": 0.25,
+        "holm_adjusted_p": 1.0,
+        "n_cells": 12
+      },
+      {
+        "contrast_id": "p4_vs_p0_diversity",
+        "metric": "diversity",
+        "condition_a": "P0",
+        "condition_b": "P4",
+        "mean_diff": -0.000124,
+        "ci_low": -0.000474,
+        "ci_high": 9.9e-05,
+        "wilcoxon_p": 0.425781,
+        "holm_adjusted_p": 1.0,
+        "n_cells": 12
+      },
+      {
+        "contrast_id": "p1_vs_p0_diversity",
+        "metric": "diversity",
+        "condition_a": "P0",
+        "condition_b": "P1",
+        "mean_diff": -0.000327,
+        "ci_low": -0.00089,
+        "ci_high": 1e-06,
+        "wilcoxon_p": 0.25,
+        "holm_adjusted_p": 1.0,
+        "n_cells": 12
+      },
+      {
+        "contrast_id": "p3_vs_p0_diversity",
+        "metric": "diversity",
+        "condition_a": "P0",
+        "condition_b": "P3",
+        "mean_diff": 1e-05,
+        "ci_low": -0.000824,
+        "ci_high": 0.000831,
+        "wilcoxon_p": 0.640625,
+        "holm_adjusted_p": 1.0,
+        "n_cells": 12
+      },
+      {
+        "contrast_id": "p2_vs_p0_diversity",
+        "metric": "diversity",
+        "condition_a": "P0",
+        "condition_b": "P2",
+        "mean_diff": -0.000143,
+        "ci_low": -0.000801,
+        "ci_high": 0.00033,
+        "wilcoxon_p": 0.875,
+        "holm_adjusted_p": 1.0,
+        "n_cells": 12
+      }
+    ],
+    "excess_between_model_diversity": [
+      {
+        "contrast_id": "p4_vs_p1_excess_between_model_diversity",
+        "metric": "excess_between_model_diversity",
+        "condition_a": "P1",
+        "condition_b": "P4",
+        "mean_diff": 0.000622,
+        "ci_low": -0.001088,
+        "ci_high": 0.002182,
+        "wilcoxon_p": 0.380371,
+        "holm_adjusted_p": 1.0,
+        "n_cells": 12
+      },
+      {
+        "contrast_id": "p3_vs_p1_excess_between_model_diversity",
+        "metric": "excess_between_model_diversity",
+        "condition_a": "P1",
+        "condition_b": "P3",
+        "mean_diff": 0.001024,
+        "ci_low": -0.000595,
+        "ci_high": 0.002595,
+        "wilcoxon_p": 0.266113,
+        "holm_adjusted_p": 1.0,
+        "n_cells": 12
+      },
+      {
+        "contrast_id": "p2_vs_p1_excess_between_model_diversity",
+        "metric": "excess_between_model_diversity",
+        "condition_a": "P1",
+        "condition_b": "P2",
+        "mean_diff": 0.0,
+        "ci_low": 0.0,
+        "ci_high": 0.0,
+        "wilcoxon_p": 1.0,
+        "holm_adjusted_p": 1.0,
+        "n_cells": 12
+      },
+      {
+        "contrast_id": "p4_vs_p3_excess_between_model_diversity",
+        "metric": "excess_between_model_diversity",
+        "condition_a": "P3",
+        "condition_b": "P4",
+        "mean_diff": -0.000402,
+        "ci_low": -0.001072,
+        "ci_high": 7.8e-05,
+        "wilcoxon_p": 0.375,
+        "holm_adjusted_p": 1.0,
+        "n_cells": 12
+      },
+      {
+        "contrast_id": "p4_vs_p2_excess_between_model_diversity",
+        "metric": "excess_between_model_diversity",
+        "condition_a": "P2",
+        "condition_b": "P4",
+        "mean_diff": 0.000622,
+        "ci_low": -0.001088,
+        "ci_high": 0.002182,
+        "wilcoxon_p": 0.380371,
+        "holm_adjusted_p": 1.0,
+        "n_cells": 12
+      },
+      {
+        "contrast_id": "p4_vs_p0_excess_between_model_diversity",
+        "metric": "excess_between_model_diversity",
+        "condition_a": "P0",
+        "condition_b": "P4",
+        "mean_diff": 0.000622,
+        "ci_low": -0.001088,
+        "ci_high": 0.002182,
+        "wilcoxon_p": 0.380371,
+        "holm_adjusted_p": 1.0,
+        "n_cells": 12
+      },
+      {
+        "contrast_id": "p1_vs_p0_excess_between_model_diversity",
+        "metric": "excess_between_model_diversity",
+        "condition_a": "P0",
+        "condition_b": "P1",
+        "mean_diff": 0.0,
+        "ci_low": 0.0,
+        "ci_high": 0.0,
+        "wilcoxon_p": 1.0,
+        "holm_adjusted_p": 1.0,
+        "n_cells": 12
+      },
+      {
+        "contrast_id": "p3_vs_p0_excess_between_model_diversity",
+        "metric": "excess_between_model_diversity",
+        "condition_a": "P0",
+        "condition_b": "P3",
+        "mean_diff": 0.001024,
+        "ci_low": -0.000595,
+        "ci_high": 0.002595,
+        "wilcoxon_p": 0.266113,
+        "holm_adjusted_p": 1.0,
+        "n_cells": 12
+      },
+      {
+        "contrast_id": "p2_vs_p0_excess_between_model_diversity",
+        "metric": "excess_between_model_diversity",
+        "condition_a": "P0",
+        "condition_b": "P2",
+        "mean_diff": 0.0,
+        "ci_low": 0.0,
+        "ci_high": 0.0,
+        "wilcoxon_p": 1.0,
+        "holm_adjusted_p": 1.0,
+        "n_cells": 12
+      }
+    ],
+    "between_model_diversity": [
+      {
+        "contrast_id": "p4_vs_p1_between_model_diversity",
+        "metric": "between_model_diversity",
+        "condition_a": "P1",
+        "condition_b": "P4",
+        "mean_diff": 0.004462,
+        "ci_low": 0.002944,
+        "ci_high": 0.006053,
+        "wilcoxon_p": 0.000488,
+        "holm_adjusted_p": 0.004395,
+        "n_cells": 12
+      },
+      {
+        "contrast_id": "p3_vs_p1_between_model_diversity",
+        "metric": "between_model_diversity",
+        "condition_a": "P1",
+        "condition_b": "P3",
+        "mean_diff": 0.00475,
+        "ci_low": 0.003207,
+        "ci_high": 0.00641,
+        "wilcoxon_p": 0.000488,
+        "holm_adjusted_p": 0.004395,
+        "n_cells": 12
+      },
+      {
+        "contrast_id": "p2_vs_p1_between_model_diversity",
+        "metric": "between_model_diversity",
+        "condition_a": "P1",
+        "condition_b": "P2",
+        "mean_diff": 0.0,
+        "ci_low": 0.0,
+        "ci_high": 0.0,
+        "wilcoxon_p": 1.0,
+        "holm_adjusted_p": 1.0,
+        "n_cells": 12
+      },
+      {
+        "contrast_id": "p4_vs_p3_between_model_diversity",
+        "metric": "between_model_diversity",
+        "condition_a": "P3",
+        "condition_b": "P4",
+        "mean_diff": -0.000287,
+        "ci_low": -0.000889,
+        "ci_high": 6.3e-05,
+        "wilcoxon_p": 0.921875,
+        "holm_adjusted_p": 1.0,
+        "n_cells": 12
+      },
+      {
+        "contrast_id": "p4_vs_p2_between_model_diversity",
+        "metric": "between_model_diversity",
+        "condition_a": "P2",
+        "condition_b": "P4",
+        "mean_diff": 0.004462,
+        "ci_low": 0.002944,
+        "ci_high": 0.006053,
+        "wilcoxon_p": 0.000488,
+        "holm_adjusted_p": 0.004395,
+        "n_cells": 12
+      },
+      {
+        "contrast_id": "p4_vs_p0_between_model_diversity",
+        "metric": "between_model_diversity",
+        "condition_a": "P0",
+        "condition_b": "P4",
+        "mean_diff": 0.004462,
+        "ci_low": 0.002944,
+        "ci_high": 0.006053,
+        "wilcoxon_p": 0.000488,
+        "holm_adjusted_p": 0.004395,
+        "n_cells": 12
+      },
+      {
+        "contrast_id": "p1_vs_p0_between_model_diversity",
+        "metric": "between_model_diversity",
+        "condition_a": "P0",
+        "condition_b": "P1",
+        "mean_diff": 0.0,
+        "ci_low": 0.0,
+        "ci_high": 0.0,
+        "wilcoxon_p": 1.0,
+        "holm_adjusted_p": 1.0,
+        "n_cells": 12
+      },
+      {
+        "contrast_id": "p3_vs_p0_between_model_diversity",
+        "metric": "between_model_diversity",
+        "condition_a": "P0",
+        "condition_b": "P3",
+        "mean_diff": 0.00475,
+        "ci_low": 0.003207,
+        "ci_high": 0.00641,
+        "wilcoxon_p": 0.000488,
+        "holm_adjusted_p": 0.004395,
+        "n_cells": 12
+      },
+      {
+        "contrast_id": "p2_vs_p0_between_model_diversity",
+        "metric": "between_model_diversity",
+        "condition_a": "P0",
+        "condition_b": "P2",
+        "mean_diff": 0.0,
+        "ci_low": 0.0,
+        "ci_high": 0.0,
+        "wilcoxon_p": 1.0,
+        "holm_adjusted_p": 1.0,
+        "n_cells": 12
+      }
+    ],
+    "evrr": [
+      {
+        "contrast_id": "p4_vs_p1_evrr",
+        "metric": "evrr",
+        "condition_a": "P1",
+        "condition_b": "P4",
+        "mean_diff": 0.004092,
+        "ci_low": -0.008545,
+        "ci_high": 0.016204,
+        "wilcoxon_p": 0.84375,
+        "holm_adjusted_p": 1.0,
+        "n_cells": 12
+      },
+      {
+        "contrast_id": "p3_vs_p1_evrr",
+        "metric": "evrr",
+        "condition_a": "P1",
+        "condition_b": "P3",
+        "mean_diff": 0.021109,
+        "ci_low": -0.002816,
+        "ci_high": 0.051976,
+        "wilcoxon_p": 0.46875,
+        "holm_adjusted_p": 1.0,
+        "n_cells": 12
+      },
+      {
+        "contrast_id": "p2_vs_p1_evrr",
+        "metric": "evrr",
+        "condition_a": "P1",
+        "condition_b": "P2",
+        "mean_diff": 0.010898,
+        "ci_low": -0.002639,
+        "ci_high": 0.02755,
+        "wilcoxon_p": 0.3125,
+        "holm_adjusted_p": 1.0,
+        "n_cells": 12
+      },
+      {
+        "contrast_id": "p4_vs_p3_evrr",
+        "metric": "evrr",
+        "condition_a": "P3",
+        "condition_b": "P4",
+        "mean_diff": -0.017017,
+        "ci_low": -0.045422,
+        "ci_high": 0.000921,
+        "wilcoxon_p": 0.203125,
+        "holm_adjusted_p": 1.0,
+        "n_cells": 12
+      },
+      {
+        "contrast_id": "p4_vs_p2_evrr",
+        "metric": "evrr",
+        "condition_a": "P2",
+        "condition_b": "P4",
+        "mean_diff": -0.006805,
+        "ci_low": -0.013923,
+        "ci_high": -0.000563,
+        "wilcoxon_p": 0.078125,
+        "holm_adjusted_p": 0.703125,
+        "n_cells": 12
+      },
+      {
+        "contrast_id": "p4_vs_p0_evrr",
+        "metric": "evrr",
+        "condition_a": "P0",
+        "condition_b": "P4",
+        "mean_diff": -0.022574,
+        "ci_low": -0.070631,
+        "ci_high": 0.003971,
+        "wilcoxon_p": 0.46875,
+        "holm_adjusted_p": 1.0,
+        "n_cells": 12
+      },
+      {
+        "contrast_id": "p1_vs_p0_evrr",
+        "metric": "evrr",
+        "condition_a": "P0",
+        "condition_b": "P1",
+        "mean_diff": -0.026667,
+        "ci_low": -0.067674,
+        "ci_high": 7.8e-05,
+        "wilcoxon_p": 0.25,
+        "holm_adjusted_p": 1.0,
+        "n_cells": 12
+      },
+      {
+        "contrast_id": "p3_vs_p0_evrr",
+        "metric": "evrr",
+        "condition_a": "P0",
+        "condition_b": "P3",
+        "mean_diff": -0.005558,
+        "ci_low": -0.061294,
+        "ci_high": 0.04036,
+        "wilcoxon_p": 0.46875,
+        "holm_adjusted_p": 1.0,
+        "n_cells": 12
+      },
+      {
+        "contrast_id": "p2_vs_p0_evrr",
+        "metric": "evrr",
+        "condition_a": "P0",
+        "condition_b": "P2",
+        "mean_diff": -0.015769,
+        "ci_low": -0.063855,
+        "ci_high": 0.014725,
+        "wilcoxon_p": 0.875,
+        "holm_adjusted_p": 1.0,
+        "n_cells": 12
+      }
+    ]
+  }
+}

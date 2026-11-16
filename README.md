@@ -9,6 +9,8 @@
 
 **Live React explorer:** [https://vikramwish.github.io/apart-epistemics/](https://vikramwish.github.io/apart-epistemics/)
 
+**Paper:** [`reports/submission/main.pdf`](reports/submission/main.pdf) (source: [`main.tex`](reports/submission/main.tex)) · **Post-sprint controls & 40-task replication:** [`results/polyphony-replication-2025/REPORT.md`](results/polyphony-replication-2025/REPORT.md)
+
 ---
 
 ## About
@@ -66,9 +68,9 @@ Verified from `apart-epistemics demo --out reports/results --site docs` (`11` Tr
 
 - **Numeric Core (`C1 / C2 / C3` Page Identity)**: Max algebraic identity residual verified at `1.09e-16`; `C2` social median sharing reduces diversity vs `C1` (`mean_diff = -0.0137`, Holm-adjusted `p = 0.00195`), while `C3` persona + conversation history preserves diversity (`0.0189`) and cuts crowd error (`0.00095` vs `0.00341`, Holm `p = 0.00293`).
 - **Live Local Ollama Verification**: Executed single-call live inference against `ollama` (`llama3.1:8b`), extracting `Final estimate: 6853` (`log10 = 3.8359`) via [`parse_numeric_estimate`](src/apart_epistemics/parsers.py).
-- **Live Cross-Architecture Polyphony (`P0`–`P4` & `C1`–`C6`, Adaption API — [`POLYPHONY_EXPERIMENT_REPORT.md`](reports/POLYPHONY_EXPERIMENT_REPORT.md))**:
+- **Live Cross-Architecture Polyphony (`P0`–`P4`, Adaption API — [`POLYPHONY_EXPERIMENT_REPORT.md`](reports/POLYPHONY_EXPERIMENT_REPORT.md))**:
   - **Standalone 16-Task High-Uncertainty Benchmark (`P0`–`P4`, [`results/polyphony-p0-p4/`](results/polyphony-p0-p4/))**: `1,280/1,280` rows (`0` misses, `0` truncations, `$0.4863 USD`, `alpha=0.4`) routing `gemma-4-26b-a4b-it`, `deepseek-v4-flash`, `qwen3.8-27b`, and `glm-5.2` with neutral prompt isolation (`p_series_system_prompt`). Exact two-level Page identity holds to `1.39e-16` across agent and assistant estimates; monoculture social telemetry (`P1`) nearly doubles `crowd_error` vs. `P0` (`0.022899` vs. `0.011944`, matrix Holm `p = 0.0496`), counter-anchoring (`P2 = 0.011818`, `p_Holm = 0.0080`) and polyphony (`P3 = 0.010058`, `p_Holm = 0.0229`; direct assistant MSE `-86.5%` to `0.002339`, `p_Holm = 0.0310`) independently rescue herding, and combined `P4` reaches the lowest crowd error (`0.007692`, `-66.4%` vs. `P1`, `p_Holm = 0.0229`) with significant sub-additive `2x2` interaction (`DiD = +0.008715`, Holm `p = 0.0055`). See [`reports/figures/`](reports/figures/).
-  - **High-Uncertainty V3 Replication (`C1`–`C6`, [`results/numeric-polyphony-c1-c6/`](results/numeric-polyphony-c1-c6/))**: `1,056/1,056` rows (`0` misses, `0` truncations, `$0.3479 USD`, `max_identity_residual = 3.123e-16`); homogeneous consensus (`C2`) degrades `crowd_error` to `0.039766` (vs. `C1 = 0.021548`), while combined polyphony + counter-anchoring (`C6`) cuts `crowd_error` by **47.6%** vs. `C2` (`0.020837`, Wilcoxon `p = 0.041992`, `evrr = 1.414287`).
+  - **Pre-Registered Out-of-Sample Replication (post-sprint, [`results/polyphony-replication-2025/REPORT.md`](results/polyphony-replication-2025/REPORT.md))**: `40` post-cutoff tasks × `3` replicates (`24,960/24,960` cells, `$17.28`, [pre-registration](docs/PREREGISTRATION_replication_2025.md)) with the `P0_POLY`, `P1_REFLECT`, and homogeneous DeepSeek/Qwen/GLM control arms. Herding replicates and generalizes to all four model families; two-sided critique beats length-matched reflection (`p_holm = 0.00048`); `P4 < P3` becomes significant (`p_holm = 0.000904`). Boundaries: silent `P0_POLY` beats social `P3`/`P4` (`+64.0%`/`+40.6%` E2), and `P4` does not beat silent Gemma `P0` (`p_holm = 0.6368`). Raw JSONL (>100 MB) is kept out of git; SHA-256 checksums are in [`PROVENANCE.md`](results/polyphony-replication-2025/PROVENANCE.md).
 
 ---
 

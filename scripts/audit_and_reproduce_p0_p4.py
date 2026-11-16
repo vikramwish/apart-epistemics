@@ -29,7 +29,6 @@ Usage:
 
 from __future__ import annotations
 
-import itertools
 import json
 import math
 import re
@@ -45,12 +44,10 @@ from apart_epistemics.engine.numeric_core import (
     _compute_cell_metrics,
     analyze_numeric_core,
     build_numeric_prompts,
-    compute_h4_slopes,
 )
 from apart_epistemics.metrics import (
     bootstrap_ci,
     compute_hierarchical_page_decomposition,
-    compute_page_decomposition,
     holm_bonferroni,
     paired_wilcoxon_p,
 )
@@ -77,9 +74,7 @@ def load_records(path: Path) -> list[NumericEstimateRecord]:
 
 def load_jsonl(path: Path) -> list[dict[str, Any]]:
     return [
-        json.loads(line)
-        for line in path.read_text(encoding="utf-8").splitlines()
-        if line.strip()
+        json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()
     ]
 
 
@@ -216,7 +211,9 @@ def exact_wilcoxon_tests(xs: list[float], ys: list[float]) -> dict[str, Any]:
 
     # Paired t-test via Student's t regularized incomplete beta (pure stdlib / math or scipy check)
     mean_d = sum(all_diffs) / n_total
-    sd_d = math.sqrt(sum((d - mean_d) ** 2 for d in all_diffs) / (n_total - 1)) if n_total > 1 else 0.0
+    sd_d = (
+        math.sqrt(sum((d - mean_d) ** 2 for d in all_diffs) / (n_total - 1)) if n_total > 1 else 0.0
+    )
     se_d = sd_d / math.sqrt(n_total) if n_total > 0 else 0.0
     t_stat = mean_d / se_d if se_d > 1e-15 else 0.0
 
@@ -291,12 +288,12 @@ def match_requests_to_cells(
     # Note for gemma, P1 vs P3 and P2 vs P4 prompts can still be distinguished by their exact
     # "Prior estimate: X" or "Peer consensus telemetry ... median of M (interquartile range Q25 to Q75)"!
 
-    rec_by_cell = {
-        (r.condition_id, r.question_id, r.round_idx, r.agent_id): r for r in records
-    }
+    rec_by_cell = {(r.condition_id, r.question_id, r.round_idx, r.agent_id): r for r in records}
     # Build expected R1 prompt signature -> list of matching (cond, qid, agent_id)
     # and also map retained records directly by exact raw_reply + model_slug + tokens
-    sig_to_retained: dict[tuple[str, str, int, int], list[NumericEstimateRecord]] = defaultdict(list)
+    sig_to_retained: dict[tuple[str, str, int, int], list[NumericEstimateRecord]] = defaultdict(
+        list
+    )
     for r in records:
         sig_to_retained[(r.model_slug, r.raw_reply, r.input_tokens, r.output_tokens)].append(r)
 
@@ -317,7 +314,9 @@ def match_requests_to_cells(
         # Determine prior line
         m_prior = re.search(r"Prior estimate:\s*([0-9,]+)", inp)
         prior_str = m_prior.group(1) if m_prior else None
-        m_tel = re.search(r"median of ([0-9,]+) \(interquartile range ([0-9,]+) to ([0-9,]+)\)", inp)
+        m_tel = re.search(
+            r"median of ([0-9,]+) \(interquartile range ([0-9,]+) to ([0-9,]+)\)", inp
+        )
         tel_tuple = m_tel.groups() if m_tel else None
 
         # Match to retained record if exact match exists
@@ -352,8 +351,9 @@ def match_requests_to_cells(
     # Identify Round-1 & Round-2 cells even for replaced / dropped records by matching
     # (qid, round_idx, agent_id, condition_id) from exact prompts of the trajectory.
     # For Round 1 of any (cond, qid, agent), initial prompt `inp` is deterministic given seed=42!
-    from apart_epistemics.datasets import generate_agent_population
     import random
+
+    from apart_epistemics.datasets import generate_agent_population
 
     agents = generate_agent_population(num_agents=8, seed=42)
     models_p34 = ("gemma-4-26b-a4b-it", "deepseek-v4-flash", "qwen3.8-27b", "glm-5.2")
@@ -366,8 +366,7 @@ def match_requests_to_cells(
         log_truth = math.log10(truth)
         rng = random.Random(42 * 313 + sum(ord(c) for c in t.id) * 19 + 0 * 7)
         c_logs = [
-            log_truth + 0.22 * t.popular_misconception_bias + rng.gauss(0.0, 0.24)
-            for _ in range(8)
+            log_truth + 0.22 * t.popular_misconception_bias + rng.gauss(0.0, 0.24) for _ in range(8)
         ]
         init_logs_by_qid[t.id] = c_logs
         sorted_x = sorted(10.0**lg for lg in c_logs)
@@ -380,9 +379,7 @@ def match_requests_to_cells(
         )
         for cond in COND_ORDER:
             for a_idx, agent in enumerate(agents):
-                m_slug = (
-                    models_p34[a_idx % 4] if cond in ("P3", "P4") else "gemma-4-26b-a4b-it"
-                )
+                m_slug = models_p34[a_idx % 4] if cond in ("P3", "P4") else "gemma-4-26b-a4b-it"
                 _, usr_p = build_numeric_prompts(
                     cond,
                     agent,
@@ -405,7 +402,9 @@ def match_requests_to_cells(
         r for r in parsed_requests if r["finish_reason"] in ("length", "max_output_tokens")
     ]
     retry_format_reqs = [
-        r for r in parsed_requests if "Respond with a single positive number prefixed by" in r["prompt"]
+        r
+        for r in parsed_requests
+        if "Respond with a single positive number prefixed by" in r["prompt"]
     ]
 
     # Retained totals
@@ -507,23 +506,26 @@ def reconstruct_first_attempt(
     # Wait: in (b), the R2 prompt matches the retained R2 prompt EXACTLY because R1 did NOT change!
     # Build retained (cond, qid, agent_id) -> expected R2 prompt from prior_str & tel_tuple!
     from apart_epistemics.datasets import generate_agent_population
-    from apart_epistemics.metrics import quantile_sorted
     from apart_epistemics.engine.numeric_core import format_prompt_number
+    from apart_epistemics.metrics import quantile_sorted
 
     agents = generate_agent_population(num_agents=8, seed=42)
-    r2_sig_to_cell: dict[tuple[str, str, str, tuple[str, str, str] | None, bool, bool], list[tuple[str, str, int, str]]] = defaultdict(list)
+    r2_sig_to_cell: dict[
+        tuple[str, str, str, tuple[str, str, str] | None, bool, bool],
+        list[tuple[str, str, int, str]],
+    ] = defaultdict(list)
     for (c, q, rnd, aid), rec in rec_by_cell.items():
         if rnd != 2:
             continue
         # Compute cell R1 pop stats from retained R1 records
         r1_recs = [rec_by_cell[(c, q, 1, agents[i].agent_id)] for i in range(8)]
-        sorted_x = sorted(10.0 ** r.agent_log10_after for r in r1_recs)
+        sorted_x = sorted(10.0**r.agent_log10_after for r in r1_recs)
         tel = (
             format_prompt_number(statistics.median(sorted_x)),
             format_prompt_number(quantile_sorted(sorted_x, 0.25)),
             format_prompt_number(quantile_sorted(sorted_x, 0.75)),
         )
-        prior_s = format_prompt_number(10.0 ** rec.agent_log10_before)
+        prior_s = format_prompt_number(10.0**rec.agent_log10_before)
         sig = (
             q,
             rec.model_slug,
@@ -575,11 +577,18 @@ def reconstruct_first_attempt(
         else:
             # Handle the Pass-1 R2 waves whose R1 telemetry shifted after R1 replacement (P2 France nuclear,
             # or P2 env_ipcc where prompt signature matches R2 prior)!
-            if idx < 1050 and u["qid"] == "nrg_france_nuclear_2022_twh" and u["has_tel"] and u["has_ca"]:
+            if (
+                idx < 1050
+                and u["qid"] == "nrg_france_nuclear_2022_twh"
+                and u["has_tel"]
+                and u["has_ca"]
+            ):
                 if u["prior_str"] == "257":
                     exact_cell = ("P2", "nrg_france_nuclear_2022_twh", 2, "agent_00")
                 else:
-                    exact_cell = r2_prior_lookup[("P2", "nrg_france_nuclear_2022_twh", str(u["prior_str"]))]
+                    exact_cell = r2_prior_lookup[
+                        ("P2", "nrg_france_nuclear_2022_twh", str(u["prior_str"]))
+                    ]
 
         assert exact_cell is not None, f"Failed to resolve exact cell for req_idx={idx}"
 
@@ -687,8 +696,8 @@ def evaluate_first_attempt_datasets(
                 for i in range(8):
                     r2_row = rec_map[(cond, q, 2, f"agent_{i:02d}")]
                     r2_row.agent_log10_after = (
-                        (1.0 - ALPHA) * r2_row.agent_log10_before + ALPHA * r2_row.assistant_log10
-                    )
+                        1.0 - ALPHA
+                    ) * r2_row.agent_log10_before + ALPHA * r2_row.assistant_log10
                 r2_vals = sorted(
                     rec_map[(cond, q, 2, f"agent_{i:02d}")].agent_log10_after for i in range(8)
                 )
@@ -798,7 +807,9 @@ def main() -> None:
     reproduced = analyze_numeric_core(records, tasks)
     from apart_epistemics.cli import _serialize_numeric_analysis
 
-    repro_serialized = json.loads(json.dumps(_serialize_numeric_analysis(reproduced), allow_nan=False))
+    repro_serialized = json.loads(
+        json.dumps(_serialize_numeric_analysis(reproduced), allow_nan=False)
+    )
     matches_saved = repro_serialized == saved_analysis
 
     # 1b. Summarize 12-task archive vs 16-task archive
@@ -865,20 +876,20 @@ def main() -> None:
 
     # Also compute exact 2x2 DiD stats and Global m=20 Holm exact vs pipeline
     did_stats: dict[str, Any] = {}
-    did_metrics = ("crowd_error", "assistant_crowd_error", "avg_individual_error", "diversity", "evrr")
+    did_metrics = (
+        "crowd_error",
+        "assistant_crowd_error",
+        "avg_individual_error",
+        "diversity",
+        "evrr",
+    )
     raw_did_norm, raw_did_exact = [], []
     did_tmp = []
     for metric in did_metrics:
         xs = [0.0] * len(qids)
         ys = [
-            (
-                float(cell_map[("P4", q, 0, 2)][metric])
-                - float(cell_map[("P3", q, 0, 2)][metric])
-            )
-            - (
-                float(cell_map[("P2", q, 0, 2)][metric])
-                - float(cell_map[("P1", q, 0, 2)][metric])
-            )
+            (float(cell_map[("P4", q, 0, 2)][metric]) - float(cell_map[("P3", q, 0, 2)][metric]))
+            - (float(cell_map[("P2", q, 0, 2)][metric]) - float(cell_map[("P1", q, 0, 2)][metric]))
             for q in qids
         ]
         st = exact_wilcoxon_tests(xs, ys)
@@ -887,7 +898,9 @@ def main() -> None:
         raw_did_norm.append(st["pipeline_wilcoxon_p"])
         raw_did_exact.append(st["exact_wilcoxon_nz_p"])
         did_tmp.append({"metric": metric, "ci_low": ci_lo, "ci_high": ci_hi, "t_p": t_p, **st})
-    for r, hn, he in zip(did_tmp, holm_bonferroni(raw_did_norm), holm_bonferroni(raw_did_exact), strict=True):
+    for r, hn, he in zip(
+        did_tmp, holm_bonferroni(raw_did_norm), holm_bonferroni(raw_did_exact), strict=True
+    ):
         r["holm5_pipeline"] = hn
         r["holm5_exact_nz"] = he
         did_stats[r["metric"]] = r
@@ -924,10 +937,18 @@ def main() -> None:
                 "n_total": len(m_all),
                 "n_r1": len(m_r1),
                 "n_r2": len(m_r2),
-                "mse_combined": sum((r.assistant_log10 - truth_by_qid[r.question_id]) ** 2 for r in m_all) / len(m_all),
-                "mse_r1": sum((r.assistant_log10 - truth_by_qid[r.question_id]) ** 2 for r in m_r1) / len(m_r1),
-                "mse_r2": sum((r.assistant_log10 - truth_by_qid[r.question_id]) ** 2 for r in m_r2) / len(m_r2),
-                "agent_mse_r2": sum((r.agent_log10_after - truth_by_qid[r.question_id]) ** 2 for r in m_r2) / len(m_r2),
+                "mse_combined": sum(
+                    (r.assistant_log10 - truth_by_qid[r.question_id]) ** 2 for r in m_all
+                )
+                / len(m_all),
+                "mse_r1": sum((r.assistant_log10 - truth_by_qid[r.question_id]) ** 2 for r in m_r1)
+                / len(m_r1),
+                "mse_r2": sum((r.assistant_log10 - truth_by_qid[r.question_id]) ** 2 for r in m_r2)
+                / len(m_r2),
+                "agent_mse_r2": sum(
+                    (r.agent_log10_after - truth_by_qid[r.question_id]) ** 2 for r in m_r2
+                )
+                / len(m_r2),
             }
 
     # 6. Two definitions of between_share & Exact permutation null check for P3, P4
@@ -943,15 +964,20 @@ def main() -> None:
             mean_adb = sum(c["assistant_between_model_diversity"] for c in cells) / len(cells)
             mean_adw = sum(c["assistant_within_model_diversity"] for c in cells) / len(cells)
             diversity_audit[cond][f"R{rnd}"] = {
-                "agent_mean_of_task_ratios_between_share": sum(c["between_share"] for c in cells) / len(cells),
+                "agent_mean_of_task_ratios_between_share": sum(c["between_share"] for c in cells)
+                / len(cells),
                 "agent_ratio_of_aggregate_means": mean_db / mean_d if mean_d > 1e-15 else 0.0,
-                "asst_mean_of_task_ratios_between_share": sum(c["assistant_between_share"] for c in cells) / len(cells),
+                "asst_mean_of_task_ratios_between_share": sum(
+                    c["assistant_between_share"] for c in cells
+                )
+                / len(cells),
                 "asst_ratio_of_aggregate_means": mean_adb / mean_ad if mean_ad > 1e-15 else 0.0,
             }
 
     # Exact permutation verification on balanced N=8, K=4, n_k=2 partitions (105 partitions/task):
     # E_null[D_between | y] = (K-1)/(N-K) * E_null[D_within | y] = 0.75 * E_null[D_within | y]
     all_partitions: list[tuple[tuple[int, ...], ...]] = []
+
     # Generate all 105 unlabeled partitions of {0..7} into 4 pairs
     def _gen_pairs(items: tuple[int, ...]) -> list[list[tuple[int, int]]]:
         if not items:
@@ -975,7 +1001,9 @@ def main() -> None:
             null_ratios = []
             for q in qids:
                 q_recs = [
-                    r for r in records if r.condition_id == cond and r.question_id == q and r.round_idx == 2
+                    r
+                    for r in records
+                    if r.condition_id == cond and r.question_id == q and r.round_idx == 2
                 ]
                 vals = [
                     r.agent_log10_after if level == "agent" else float(r.assistant_log10)
@@ -997,7 +1025,9 @@ def main() -> None:
                 e_db = sum(null_db) / len(null_db)
                 e_dw = sum(null_dw) / len(null_dw)
                 null_ratios.append(e_db / e_dw if e_dw > 1e-15 else 0.75)
-                ge_count = sum(1 for db in null_db if db >= obs_decomp["between_model_diversity"] - 1e-15)
+                ge_count = sum(
+                    1 for db in null_db if db >= obs_decomp["between_model_diversity"] - 1e-15
+                )
                 perm_ps.append(ge_count / len(null_db))
             perm_audit[f"{cond}_{level}_R2"] = {
                 "mean_obs_D_excess": sum(obs_dex) / len(obs_dex),
@@ -1020,11 +1050,19 @@ def main() -> None:
         var_w_shares_within_cell = []
         for q in qids:
             r1_recs = sorted(
-                [r for r in records if r.condition_id == cond and r.question_id == q and r.round_idx == 1],
+                [
+                    r
+                    for r in records
+                    if r.condition_id == cond and r.question_id == q and r.round_idx == 1
+                ],
                 key=lambda r: r.agent_id,
             )
             r2_recs = sorted(
-                [r for r in records if r.condition_id == cond and r.question_id == q and r.round_idx == 2],
+                [
+                    r
+                    for r in records
+                    if r.condition_id == cond and r.question_id == q and r.round_idx == 2
+                ],
                 key=lambda r: r.agent_id,
             )
             lt = truth_by_qid[q]
@@ -1056,11 +1094,11 @@ def main() -> None:
             a1s = [float(r.assistant_log10) for r in r1_recs]
             a2s = [float(r.assistant_log10) for r in r2_recs]
             x2s = [r.agent_log10_after for r in r2_recs]
-            mx0, ma1, ma2, mx2 = sum(x0s)/8, sum(a1s)/8, sum(a2s)/8, sum(x2s)/8
-            vx0 = sum((v - mx0)**2 for v in x0s)/8
-            vx2 = sum((v - mx2)**2 for v in x2s)/8
+            mx0, ma1, ma2, mx2 = sum(x0s) / 8, sum(a1s) / 8, sum(a2s) / 8, sum(x2s) / 8
+            vx0 = sum((v - mx0) ** 2 for v in x0s) / 8
+            vx2 = sum((v - mx2) ** 2 for v in x2s) / 8
             # Covariance share = Cov(0.36*x0, x2) / Var(x2), vs pure 0.36^2 * Var(x0) / Var(x2)
-            cov_036x0_x2 = sum(0.36*(x0s[i]-mx0)*(x2s[i]-mx2) for i in range(8))/8
+            cov_036x0_x2 = sum(0.36 * (x0s[i] - mx0) * (x2s[i] - mx2) for i in range(8)) / 8
             var_w_shares_within_cell.append(
                 {
                     "pure_01296_vx0_over_vx2": (0.1296 * vx0) / vx2 if vx2 > 1e-15 else 0.0,
@@ -1087,12 +1125,17 @@ def main() -> None:
             "cross_x0_a2": sum(u_c02) / 16.0,
             "cross_a1_a2": sum(u_c12) / 16.0,
             "sum_check": sum(
-                sum(x) / 16.0
-                for x in (u_036e0_sq, u_024a1_sq, u_040a2_sq, u_c01, u_c02, u_c12)
+                sum(x) / 16.0 for x in (u_036e0_sq, u_024a1_sq, u_040a2_sq, u_c01, u_c02, u_c12)
             ),
-            "mean_ratio_01296vx0_over_vx2": sum(d["pure_01296_vx0_over_vx2"] for d in var_w_shares_within_cell) / 16.0,
+            "mean_ratio_01296vx0_over_vx2": sum(
+                d["pure_01296_vx0_over_vx2"] for d in var_w_shares_within_cell
+            )
+            / 16.0,
             "agg_ratio_01296vx0_over_vx2": mean_pure / mean_vx2 if mean_vx2 > 1e-15 else 0.0,
-            "mean_cov_share_036x0_over_vx2": sum(d["cov_share_036x0_x2_over_vx2"] for d in var_w_shares_within_cell) / 16.0,
+            "mean_cov_share_036x0_over_vx2": sum(
+                d["cov_share_036x0_x2_over_vx2"] for d in var_w_shares_within_cell
+            )
+            / 16.0,
         }
 
     # 8. Leave-One-Task-Out (LOTO, n=15) & Influential-Task Shares
@@ -1119,13 +1162,17 @@ def main() -> None:
         lake_sup_shares[key] = {
             "lake_superior_diff": full_diffs[ls_idx],
             "total_16task_sum_diff": tot_diff,
-            "lake_superior_share_pct": (100.0 * full_diffs[ls_idx] / tot_diff) if abs(tot_diff) > 1e-15 else 0.0,
+            "lake_superior_share_pct": (100.0 * full_diffs[ls_idx] / tot_diff)
+            if abs(tot_diff) > 1e-15
+            else 0.0,
             "top_3_contributors": sorted(
                 [
                     {
                         "qid": qids[i],
                         "diff": full_diffs[i],
-                        "pct_of_total": (100.0 * full_diffs[i] / tot_diff) if abs(tot_diff) > 1e-15 else 0.0,
+                        "pct_of_total": (100.0 * full_diffs[i] / tot_diff)
+                        if abs(tot_diff) > 1e-15
+                        else 0.0,
                     }
                     for i in range(16)
                 ],
@@ -1201,10 +1248,20 @@ def main() -> None:
     loto_summary: dict[str, Any] = {}
     for pair_key in ("P1_vs_P0", "P2_vs_P1", "P3_vs_P1", "P4_vs_P1", "P4_vs_P3", "P4_vs_P0"):
         diffs = [loto_by_dropped_qid[q]["crowd_error_pairs"][pair_key]["mean_diff"] for q in qids]
-        p_norm = [loto_by_dropped_qid[q]["crowd_error_pairs"][pair_key]["pipeline_wilcoxon_p"] for q in qids]
-        p_ex = [loto_by_dropped_qid[q]["crowd_error_pairs"][pair_key]["exact_wilcoxon_nz_p"] for q in qids]
-        h9_norm = [loto_by_dropped_qid[q]["crowd_error_pairs"][pair_key]["holm9_pipeline"] for q in qids]
-        h9_ex = [loto_by_dropped_qid[q]["crowd_error_pairs"][pair_key]["holm9_exact_nz"] for q in qids]
+        p_norm = [
+            loto_by_dropped_qid[q]["crowd_error_pairs"][pair_key]["pipeline_wilcoxon_p"]
+            for q in qids
+        ]
+        p_ex = [
+            loto_by_dropped_qid[q]["crowd_error_pairs"][pair_key]["exact_wilcoxon_nz_p"]
+            for q in qids
+        ]
+        h9_norm = [
+            loto_by_dropped_qid[q]["crowd_error_pairs"][pair_key]["holm9_pipeline"] for q in qids
+        ]
+        h9_ex = [
+            loto_by_dropped_qid[q]["crowd_error_pairs"][pair_key]["holm9_exact_nz"] for q in qids
+        ]
         cid_map = {
             "P1_vs_P0": "p1_vs_p0_crowd_error",
             "P2_vs_P1": "p2_vs_p1_crowd_error",
@@ -1213,7 +1270,9 @@ def main() -> None:
             "P4_vs_P3": "p4_vs_p3_crowd_error",
             "P4_vs_P0": "p4_vs_p0_crowd_error",
         }
-        h20_norm = [loto_by_dropped_qid[q]["holm20_map"][cid_map[pair_key]]["holm20_pipeline"] for q in qids]
+        h20_norm = [
+            loto_by_dropped_qid[q]["holm20_map"][cid_map[pair_key]]["holm20_pipeline"] for q in qids
+        ]
         loto_summary[pair_key] = {
             "diff_min_max": [min(diffs), max(diffs)],
             "raw_p_norm_min_max": [min(p_norm), max(p_norm)],
@@ -1225,12 +1284,22 @@ def main() -> None:
             "n_subsets_holm9_norm_lt_005": sum(1 for v in h9_norm if v < 0.05),
             "n_subsets_holm9_exact_lt_005": sum(1 for v in h9_ex if v < 0.05),
             "n_subsets_holm20_norm_lt_005": sum(1 for v in h20_norm if v < 0.05),
-            "drop_lake_superior": loto_by_dropped_qid["hyd_lake_superior_vol_km3"]["crowd_error_pairs"][pair_key],
-            "drop_lake_superior_holm20": loto_by_dropped_qid["hyd_lake_superior_vol_km3"]["holm20_map"][cid_map[pair_key]],
+            "drop_lake_superior": loto_by_dropped_qid["hyd_lake_superior_vol_km3"][
+                "crowd_error_pairs"
+            ][pair_key],
+            "drop_lake_superior_holm20": loto_by_dropped_qid["hyd_lake_superior_vol_km3"][
+                "holm20_map"
+            ][cid_map[pair_key]],
         }
 
     # 9. Inspect LHC exact tie + Molybdenum Kelvin/Celsius + Norway/EIA model answers & sensitivity
-    lhc_vals = sorted({round(r.agent_log10_after, 6) for r in records if r.question_id == "sci_lhc_dipole_magnets_count"})
+    lhc_vals = sorted(
+        {
+            round(r.agent_log10_after, 6)
+            for r in records
+            if r.question_id == "sci_lhc_dipole_magnets_count"
+        }
+    )
     lhc_raw_parsed = Counter(
         r.parsed_value for r in records if r.question_id == "sci_lhc_dipole_magnets_count"
     )
@@ -1277,15 +1346,23 @@ def main() -> None:
             mod_truth = {
                 qid: math.log10(overrides.get(qid, val)) for qid, val in base_truth_map.items()
             }
-            by_cell_s: dict[tuple[str, str, int, int], list[NumericEstimateRecord]] = defaultdict(list)
+            by_cell_s: dict[tuple[str, str, int, int], list[NumericEstimateRecord]] = defaultdict(
+                list
+            )
             for rec in records:
-                by_cell_s[(rec.condition_id, rec.question_id, rec.replicate, rec.round_idx)].append(rec)
+                by_cell_s[(rec.condition_id, rec.question_id, rec.replicate, rec.round_idx)].append(
+                    rec
+                )
             s_cell_map, _ = _compute_cell_metrics(by_cell_s, mod_truth, ALPHA)
 
         cond_means_r2 = {
             c: {
-                "crowd_error": sum(float(s_cell_map[(c, q, 0, 2)]["crowd_error"]) for q in sub_q) / len(sub_q),
-                "assistant_crowd_error": sum(float(s_cell_map[(c, q, 0, 2)]["assistant_crowd_error"]) for q in sub_q) / len(sub_q),
+                "crowd_error": sum(float(s_cell_map[(c, q, 0, 2)]["crowd_error"]) for q in sub_q)
+                / len(sub_q),
+                "assistant_crowd_error": sum(
+                    float(s_cell_map[(c, q, 0, 2)]["assistant_crowd_error"]) for q in sub_q
+                )
+                / len(sub_q),
             }
             for c in COND_ORDER
         }
@@ -1297,7 +1374,9 @@ def main() -> None:
             p_norm_s.append(st["pipeline_wilcoxon_p"])
             p_ex_s.append(st["exact_wilcoxon_nz_p"])
             pair_s.append({"pair": f"{cb}_vs_{ca}", **st})
-        for pr, hn, he in zip(pair_s, holm_bonferroni(p_norm_s), holm_bonferroni(p_ex_s), strict=True):
+        for pr, hn, he in zip(
+            pair_s, holm_bonferroni(p_norm_s), holm_bonferroni(p_ex_s), strict=True
+        ):
             pr["holm9_pipeline"] = hn
             pr["holm9_exact_nz"] = he
         source_sensitivity[sname] = {
@@ -1337,10 +1416,23 @@ def main() -> None:
         "r1_and_r2_four_errors": {
             cond: {
                 f"R{rnd}": {
-                    "crowd_error": sum(float(cell_map[(cond, q, 0, rnd)]["crowd_error"]) for q in qids) / 16.0,
-                    "avg_individual_error": sum(float(cell_map[(cond, q, 0, rnd)]["avg_individual_error"]) for q in qids) / 16.0,
-                    "assistant_crowd_error": sum(float(cell_map[(cond, q, 0, rnd)]["assistant_crowd_error"]) for q in qids) / 16.0,
-                    "assistant_avg_individual_error": sum(float(cell_map[(cond, q, 0, rnd)]["assistant_avg_individual_error"]) for q in qids) / 16.0,
+                    "crowd_error": sum(
+                        float(cell_map[(cond, q, 0, rnd)]["crowd_error"]) for q in qids
+                    )
+                    / 16.0,
+                    "avg_individual_error": sum(
+                        float(cell_map[(cond, q, 0, rnd)]["avg_individual_error"]) for q in qids
+                    )
+                    / 16.0,
+                    "assistant_crowd_error": sum(
+                        float(cell_map[(cond, q, 0, rnd)]["assistant_crowd_error"]) for q in qids
+                    )
+                    / 16.0,
+                    "assistant_avg_individual_error": sum(
+                        float(cell_map[(cond, q, 0, rnd)]["assistant_avg_individual_error"])
+                        for q in qids
+                    )
+                    / 16.0,
                 }
                 for rnd in (1, 2)
             }
@@ -1356,7 +1448,9 @@ def main() -> None:
         "exact_vs_pipeline_global_m20": g20_rows,
         "lake_superior_and_influential_shares": lake_sup_shares,
         "loto_summary": loto_summary,
-        "loto_drop_lake_superior_did": loto_by_dropped_qid["hyd_lake_superior_vol_km3"]["crowd_error_did"],
+        "loto_drop_lake_superior_did": loto_by_dropped_qid["hyd_lake_superior_vol_km3"][
+            "crowd_error_did"
+        ],
         "benchmark_answer_distributions": {
             "lhc_exact_tie_values": lhc_vals,
             "lhc_parsed_values_top": dict(lhc_raw_parsed.most_common(10)),

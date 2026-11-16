@@ -217,7 +217,11 @@ def condition_errors(
 
 
 def arm_family(idx: dict, cond: str) -> str | None:
-    fams = {family_of(rec["model_slug"]) for cells in idx.get(cond, {}).values() for rec in cells.values()}
+    fams = {
+        family_of(rec["model_slug"])
+        for cells in idx.get(cond, {}).values()
+        for rec in cells.values()
+    }
     if not fams:
         return None
     if len(fams) != 1:
@@ -381,7 +385,11 @@ def interpret(conf: dict[str, dict], sec: dict[str, dict], desc: dict[str, dict]
         return bool(r.get("n_tasks")) and r.get("p_holm", 1.0) < ALPHA
 
     out: dict[str, str] = {}
-    herd = [k for k in ("herding_ds", "herding_qwen", "herding_glm") if sig(conf[k]) and conf[k]["mean_diff_b_minus_a"] > 0]
+    herd = [
+        k
+        for k in ("herding_ds", "herding_qwen", "herding_glm")
+        if sig(conf[k]) and conf[k]["mean_diff_b_minus_a"] > 0
+    ]
     out["herding_generalises"] = (
         f"Telemetry significantly worsens crowd error in {len(herd)}/3 additional models "
         f"({', '.join(herd) or 'none'}), plus Gemma from P0-P4."
@@ -389,7 +397,9 @@ def interpret(conf: dict[str, dict], sec: dict[str, dict], desc: dict[str, dict]
 
     cr = conf["critique_vs_reflect"]
     if sig(cr) and cr["mean_diff_b_minus_a"] < 0:
-        out["critique_mechanism"] = "Two-sided critique beats length-matched generic reflection: 'dialectical' is supported."
+        out["critique_mechanism"] = (
+            "Two-sided critique beats length-matched generic reflection: 'dialectical' is supported."
+        )
     elif sig(cr) and cr["mean_diff_b_minus_a"] > 0:
         out["critique_mechanism"] = "Generic reflection beats the two-sided critique."
     elif equivalent(cr, DELTA_REFLECT):
@@ -398,21 +408,30 @@ def interpret(conf: dict[str, dict], sec: dict[str, dict], desc: dict[str, dict]
             "drop 'dialectical'; the effect is structured pre-commitment reasoning."
         )
     else:
-        out["critique_mechanism"] = "Inconclusive: neither a difference nor equivalence is shown. Report the CI."
+        out["critique_mechanism"] = (
+            "Inconclusive: neither a difference nor equivalence is shown. Report the CI."
+        )
 
     vs = conf["p3_vs_virtual_social"]
     if sig(vs) and vs["mean_diff_b_minus_a"] < 0:
-        out["cross_model_social_benefit"] = "A heterogeneous median herds less than a homogeneous one: genuine cross-architecture social benefit."
+        out["cross_model_social_benefit"] = (
+            "A heterogeneous median herds less than a homogeneous one: genuine cross-architecture social benefit."
+        )
     elif sig(vs) and vs["mean_diff_b_minus_a"] > 0:
-        out["cross_model_social_benefit"] = "Mixing models under shared telemetry is worse than a static mix of single-model panels."
+        out["cross_model_social_benefit"] = (
+            "Mixing models under shared telemetry is worse than a static mix of single-model panels."
+        )
     else:
-        out["cross_model_social_benefit"] = "No evidence that mixing adds anything beyond static averaging of model biases."
+        out["cross_model_social_benefit"] = (
+            "No evidence that mixing adds anything beyond static averaging of model biases."
+        )
 
     sp = [conf[k] for k in ("p3_vs_silent_poly", "p4_vs_silent_poly")]
     out["social_vs_silent_mixed_panel"] = "; ".join(
         f"{r['b']} vs P0_POLY: {'better' if r['mean_diff_b_minus_a'] < 0 else 'worse'}"
         f" ({'significant' if sig(r) else 'n.s.'}, p_holm={r.get('p_holm')})"
-        for r in sp if r.get("n_tasks")
+        for r in sp
+        if r.get("n_tasks")
     )
 
     sanity = desc["silent_poly_vs_virtual_silent"]
@@ -441,9 +460,7 @@ def _evaluate_metric(
     conds: list[str],
     metric: str,
 ) -> tuple[dict[str, Any], list[str], list[str], dict[str, dict[tuple, float]]]:
-    per_cell = {
-        c: condition_errors(idx, c, truth, rnd, n_agents, metric=metric) for c in conds
-    }
+    per_cell = {c: condition_errors(idx, c, truth, rnd, n_agents, metric=metric) for c in conds}
 
     v_social, prob_social = virtual_panel_errors(
         idx, "P3", K1_SOCIAL, truth, rnd, n_agents, metric=metric
@@ -493,8 +510,12 @@ def _evaluate_metric(
 
 
 def main(argv: list[str] | None = None) -> int:
-    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("runs", nargs="+", type=Path, help="numeric_runs.jsonl files (baseline + controls)")
+    ap = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    ap.add_argument(
+        "runs", nargs="+", type=Path, help="numeric_runs.jsonl files (baseline + controls)"
+    )
     ap.add_argument("--out", type=Path, default=None)
     ap.add_argument("--n-agents", type=int, default=8)
     args = ap.parse_args(argv)
@@ -568,7 +589,9 @@ def main(argv: list[str] | None = None) -> int:
         args.out.write_text(text + "\n", encoding="utf-8")
     print(text)
     if audit["differing_keys"]:
-        print("\nWARNING: run specs differ beyond conditions/models; see spec_audit.", file=sys.stderr)
+        print(
+            "\nWARNING: run specs differ beyond conditions/models; see spec_audit.", file=sys.stderr
+        )
     return 0
 
 

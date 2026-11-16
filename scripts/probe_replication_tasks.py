@@ -77,8 +77,7 @@ def _probe_one_cell(
         if parsed.miss:
             retries_used = 1
             retry_prompt = (
-                f"{usr_p}\n\n"
-                "Respond with a single positive number prefixed by 'Final estimate: '."
+                f"{usr_p}\n\nRespond with a single positive number prefixed by 'Final estimate: '."
             )
             resp = backend.generate_numeric_reply(
                 system_prompt=sys_p,
@@ -117,9 +116,7 @@ def _probe_one_cell(
     log_est = parsed.log10_value if not parsed.miss else None
     err = (log_est - y_star) if log_est is not None else None
     total_cost = (
-        sum(float(c) for c in costs if c is not None)
-        if all(c is not None for c in costs)
-        else None
+        sum(float(c) for c in costs if c is not None) if all(c is not None for c in costs) else None
     )
     return {
         "task_id": task.id,
@@ -347,12 +344,7 @@ def main(argv: list[str] | None = None, base_backend: Any | None = None) -> int:
     records_path = args.probe_dir / "cold_probe_records.jsonl"
     existing = _load_existing(records_path)
 
-    pending = [
-        (task, m)
-        for task in tasks
-        for m in MODELS
-        if (task.id, m) not in existing
-    ]
+    pending = [(task, m) for task in tasks for m in MODELS if (task.id, m) not in existing]
 
     if pending:
         if base_backend is None:
@@ -360,9 +352,10 @@ def main(argv: list[str] | None = None, base_backend: Any | None = None) -> int:
         configure_budget(base_backend, args.probe_dir, args.budget, args.request_allowance)
         routed = {m: base_backend.for_model(m) for m in MODELS}
         write_lock = threading.Lock()
-        with records_path.open("a", encoding="utf-8") as fh, ThreadPoolExecutor(
-            max_workers=args.workers
-        ) as pool:
+        with (
+            records_path.open("a", encoding="utf-8") as fh,
+            ThreadPoolExecutor(max_workers=args.workers) as pool,
+        ):
             futs = {
                 pool.submit(_probe_one_cell, routed[m], task, m, args.current_date): (task.id, m)
                 for task, m in pending

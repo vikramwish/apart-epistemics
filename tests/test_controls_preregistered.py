@@ -191,9 +191,7 @@ def test_virtual_panel_null_false_positive_rate_20_seeds(tmp_path: Path) -> None
         _generate_synthetic_null(p, seed=s * 100, n_tasks=16, replicates=3)
         assert acp.main([str(p), "--out", str(out)]) == 0
         res = json.loads(out.read_text(encoding="utf-8"))
-        e2_vs = next(
-            r for r in res["confirmatory_holm_m8"] if r["name"] == "p3_vs_virtual_social"
-        )
+        e2_vs = next(r for r in res["confirmatory_holm_m8"] if r["name"] == "p3_vs_virtual_social")
         abs_vs = next(
             r
             for r in res["secondary_metric_abs_log_error"]["confirmatory_holm_m8"]

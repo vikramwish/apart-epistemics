@@ -2,7 +2,7 @@
   <title>Hierarchical Page Decomposition Across P0..P4</title>
   <rect width="920" height="540" fill="#FFFFFF" rx="6"/>
   <text x="24" y="34" font-family="Georgia,serif" font-size="18" font-weight="700" fill="#171614">Hierarchical Page Decomposition Across Architecture &amp; Counter-Anchoring</text>
-  <text x="24" y="54" font-family="sans-serif" font-size="12" fill="#5E5A52">Identity E_ind = E_crowd + D_within + D_between at agent and direct-assistant levels</text>
+  <text x="24" y="54" font-family="sans-serif" font-size="12" fill="#5E5A52">Identity E_ind = E_crowd + D_within + D_between; Btwn% = unweighted mean task ratio</text>
   <line x1="78" y1="378.0" x2="608" y2="378.0" stroke="#E5E0D5" stroke-width="1"/>
   <text x="68" y="382.0" text-anchor="end" font-family="monospace" font-size="10.5" fill="#5E5A52">0.000</text>
   <line x1="78" y1="305.5" x2="608" y2="305.5" stroke="#E5E0D5" stroke-width="1"/>

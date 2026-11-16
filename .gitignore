@@ -20,10 +20,14 @@ htmlcov/
 *.pem
 *.key
 
-# Local run artifacts (keep compact summaries/figures/docs tracked; ignore large raw JSONL traces)
-# results/ holds the recorded live runs and IS tracked; only the throwaway offline demo output
-# that `make check`/`make smoke` can write there is ignored.
-/results/smoke*
+# Local run artifacts. results/ tracks only the runs behind the submitted paper and its
+# replication; earlier pilot/exploratory runs stay local-only.
+/results/*
+!/results/README.md
+!/results/polyphony-p0-p4/
+!/results/polyphony-p0-p4-12task-alpha03/
+!/results/polyphony-controls/
+!/results/polyphony-replication-2025/
 reports/results/*.jsonl
 tmp/
 .DS_Store
@@ -34,3 +38,18 @@ node_modules/
 
 /frontend/.designs/
 *.cpgz
+
+# LaTeX build byproducts (sources and final PDFs stay tracked)
+reports/**/*.aux
+reports/**/*.bbl
+reports/**/*.blg
+reports/**/*.log
+reports/**/*.out
+reports/**/*.synctex.gz
+reports/**/__pycache__/
+
+# Raw replication traces exceed GitHub's 100 MB limit; SHA-256 checksums are
+# recorded in results/polyphony-replication-2025/PROVENANCE.md.
+/results/polyphony-replication-2025/numeric_runs.jsonl
+/results/polyphony-replication-2025/provider_requests.jsonl
+/results/polyphony-replication-2025/dry_run/

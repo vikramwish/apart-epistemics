@@ -1,0 +1,23 @@
+suite_name: "Cross-Architecture Polyphony & Dialectical Counter-Anchoring (P0-P4)"
+seed: 42
+num_agents: 8
+num_rounds: 2
+tasks_per_track: 12
+numeric_tasks: 12
+numeric_tasks_file: "configs/polyphony_benchmark_tasks.json"
+numeric_start_bias_weight: 0.22
+numeric_start_sd: 0.24
+numeric_replicates: 1
+alpha: 0.3
+numeric_conditions:
+  - P0
+  - P1
+  - P2
+  - P3
+  - P4
+numeric_models:
+  - gemma-4-26b-a4b-it
+  - deepseek-v4-flash
+  - qwen3.8-27b
+  - glm-5.2
+conditions: []
